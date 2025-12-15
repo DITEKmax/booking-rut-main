@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Book Room - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="booking-page">
+                <div class="booking-header">
+                    <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">&larr; Back to Room</a>
+                    <h1>Book Room</h1>
+                </div>
+
+                <!-- User Profile -->
+                <div class="user-profile-card">
+                    <h3 th:text="${user.fullName}">User Name</h3>
+                    <p class="user-role" th:text="${user.roleDisplayName}">Teacher</p>
+                </div>
+
+                <!-- Room Info -->
+                <div class="booking-room-info">
+                    <h2 th:text="'Room ' + ${room.number}">Room 1234</h2>
+                    <p th:text="${room.roomType.displayName}">Lecture Hall</p>
+                    <p th:text="'Building ' + ${room.building} + ', Floor ' + ${room.floor}">Building A, Floor 1</p>
+                    <p th:text="${room.capacity} + ' seats'">30 seats</p>
+                </div>
+
+                <!-- Alert Messages -->
+                <div th:if="${error}" class="alert alert-error">
+                    <span th:text="${error}">Error message</span>
+                </div>
+
+                <!-- Booking Form -->
+                <form th:action="@{/booking/create}" method="post" th:object="${bookingRequest}" class="booking-form">
+                    <input type="hidden" th:field="*{roomId}">
+
+                    <div class="form-section">
+                        <h3>Select Date and Time</h3>
+
+                        <div class="form-group">
+                            <label for="bookingDate">Date</label>
+                            <input type="date" id="bookingDate" th:field="*{bookingDate}"
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   class="form-control" required onchange="loadAvailablePeriods()">
+                            <span th:if="${#fields.hasErrors('bookingDate')}" class="error-message"
+                                  th:errors="*{bookingDate}">Date error</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Available Time Slots</label>
+                            <div class="time-slots" id="timeSlots">
+                                <div th:each="period : ${allPeriods}" class="time-slot"
+                                     th:classappend="${#lists.contains(availablePeriods, period)} ? '' : 'disabled'">
+                                    <input type="radio" th:id="${'period_' + period.name()}" name="classPeriod"
+                                           th:value="${period.name()}"
+                                           th:disabled="${!#lists.contains(availablePeriods, period)}"
+                                           required>
+                                    <label th:for="${'period_' + period.name()}" class="time-slot-label">
+                                        <span class="period-name" th:text="${period.displayName}">1st Period</span>
+                                        <span class="period-time" th:text="${period.timeRange}">8:30 – 9:50</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <span th:if="${#fields.hasErrors('classPeriod')}" class="error-message"
+                                  th:errors="*{classPeriod}">Period error</span>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Booking Details</h3>
+
+                        <div class="form-group">
+                            <label for="purpose">Purpose of Booking *</label>
+                            <input type="text" id="purpose" th:field="*{purpose}" class="form-control"
+                                   placeholder="e.g., Lecture on Mathematics, Seminar, Exam" required
+                                   minlength="5" maxlength="500">
+                            <span th:if="${#fields.hasErrors('purpose')}" class="error-message"
+                                  th:errors="*{purpose}">Purpose error</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Additional Notes (optional)</label>
+                            <textarea id="notes" th:field="*{notes}" class="form-control" rows="3"
+                                      placeholder="Any special requirements or notes..."
+                                      maxlength="1000"></textarea>
+                            <span th:if="${#fields.hasErrors('notes')}" class="error-message"
+                                  th:errors="*{notes}">Notes error</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Book Room</button>
+                    </div>
+                </form>
+
+                <!-- Similar Rooms -->
+                <div th:if="${!#lists.isEmpty(similarRooms)}" class="similar-rooms-section">
+                    <h3>Might Be Suitable</h3>
+                    <div class="similar-rooms-grid">
+                        <div th:each="similarRoom : ${similarRooms}" class="room-card small">
+                            <div class="room-info">
+                                <h4 th:text="'Room ' + ${similarRoom.number}">Room 1234</h4>
+                                <p th:text="${similarRoom.capacity} + ' seats'">30 seats</p>
+                                <a th:href="@{/rooms/{id}(id=${similarRoom.id})}" class="btn btn-outline btn-sm">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:inline="javascript">
+        const roomId = [[${room.id}]];
+
+        function loadAvailablePeriods() {
+            const date = document.getElementById('bookingDate').value;
+            if (!date) return;
+
+            fetch('/rooms/api/available-periods/' + roomId + '?date=' + date)
+                .then(response => response.json())
+                .then(periods => {
+                    const availableNames = periods.map(p => p.name);
+                    document.querySelectorAll('.time-slot').forEach(slot => {
+                        const input = slot.querySelector('input');
+                        const periodName = input.value;
+                        if (availableNames.includes(periodName)) {
+                            slot.classList.remove('disabled');
+                            input.disabled = false;
+                        } else {
+                            slot.classList.add('disabled');
+                            input.disabled = true;
+                            input.checked = false;
+                        }
+                    });
+                });
+        }
+    </script>
+</body>
+</html>

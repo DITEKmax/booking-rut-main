@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Available Rooms - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>Available Rooms</h1>
+                    <p class="subtitle">
+                        For <span th:text="${#temporals.format(date, 'dd MMMM yyyy')}">01 January 2025</span>,
+                        <span th:text="${period.displayName}">1st Period</span>
+                        (<span th:text="${period.timeRange}">8:30 – 9:50</span>)
+                    </p>
+                </div>
+                <a th:href="@{/rooms}" class="btn btn-outline">&larr; Back to All Rooms</a>
+            </div>
+
+            <!-- Search Form -->
+            <div class="search-filters">
+                <form th:action="@{/rooms/available}" method="get" class="search-form">
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label for="date">Date</label>
+                            <input type="date" name="date" id="date" th:value="${date}"
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   class="form-control" required>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="period">Time Slot</label>
+                            <select name="period" id="period" class="filter-select" required>
+                                <option th:each="p : ${periods}" th:value="${p.name()}"
+                                        th:text="${p.displayName} + ' (' + ${p.timeRange} + ')'"
+                                        th:selected="${period == p}">Period</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-actions">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results -->
+            <div th:if="${#lists.isEmpty(rooms)}" class="empty-state">
+                <p>No rooms are available for the selected date and time.</p>
+                <p>Please try a different date or time slot.</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(rooms)}" class="rooms-grid">
+                <div th:each="room : ${rooms}" class="room-card">
+                    <div class="room-image">
+                        <div th:if="${room.imagePath != null}" class="image-container">
+                            <img th:src="${room.imagePath}" th:alt="${room.number}">
+                        </div>
+                        <div th:unless="${room.imagePath != null}" class="image-placeholder">
+                            <span th:text="${room.number}">Room</span>
+                        </div>
+                        <span class="availability-badge available">Available</span>
+                    </div>
+                    <div class="room-info">
+                        <h3 class="room-number" th:text="'Room ' + ${room.number}">Room 1234</h3>
+                        <p class="room-type" th:text="${room.roomType.displayName}">Lecture Hall</p>
+                        <div class="room-meta">
+                            <span class="meta-item" th:text="'Building ' + ${room.building}">Building A</span>
+                            <span class="meta-item" th:text="'Floor ' + ${room.floor}">Floor 1</span>
+                            <span class="meta-item" th:text="${room.capacity} + ' seats'">30 seats</span>
+                        </div>
+                        <div class="room-features">
+                            <span th:if="${room.hasComputers}" class="feature-badge">Computers</span>
+                            <span th:if="${room.hasProjector}" class="feature-badge">Projector</span>
+                            <span th:if="${room.hasWhiteboard}" class="feature-badge">Whiteboard</span>
+                        </div>
+                        <div class="room-actions">
+                            <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">Details</a>
+                            <a th:href="@{/booking/room/{id}(id=${room.id}, date=${date})}" class="btn btn-primary">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <style>
+        .subtitle {
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+        .availability-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--success-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .filter-group label {
+            font-size: 0.875rem;
+            color: var(--gray-color);
+        }
+    </style>
+</body>
+</html>

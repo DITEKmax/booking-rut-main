@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Policies - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Policies</h1>
+            </div>
+
+            <div class="content-section">
+                <h2>Privacy Policy</h2>
+                <div class="policy-card">
+                    <p>The Russian University of Transport respects your privacy and is committed to protecting your personal data. This privacy policy will inform you about how we handle your personal data when you use our auditorium booking system.</p>
+                    <h4>Data We Collect</h4>
+                    <ul>
+                        <li>Name and contact information (email, phone)</li>
+                        <li>Booking history and preferences</li>
+                        <li>Reviews and ratings you submit</li>
+                    </ul>
+                    <h4>How We Use Your Data</h4>
+                    <ul>
+                        <li>To process your booking requests</li>
+                        <li>To send booking confirmations</li>
+                        <li>To improve our services</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>Booking Policy</h2>
+                <div class="policy-card">
+                    <h4>Booking Rules</h4>
+                    <ul>
+                        <li>Bookings can be made up to 30 days in advance</li>
+                        <li>Each booking is limited to one class period (approx. 80 minutes)</li>
+                        <li>Cancellations must be made at least 24 hours before the scheduled time</li>
+                        <li>No-shows may result in temporary booking restrictions</li>
+                    </ul>
+                    <h4>Usage Guidelines</h4>
+                    <ul>
+                        <li>Rooms must be left in the same condition as found</li>
+                        <li>Report any equipment issues immediately</li>
+                        <li>Food and drinks are not allowed in computer labs</li>
+                        <li>Smoking is prohibited in all university buildings</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>Terms of Service</h2>
+                <div class="policy-card">
+                    <p>By using the RUT Booking system, you agree to:</p>
+                    <ul>
+                        <li>Provide accurate and complete information</li>
+                        <li>Use booked rooms only for educational purposes</li>
+                        <li>Follow all university rules and regulations</li>
+                        <li>Respect other users and staff</li>
+                    </ul>
+                    <p>The university reserves the right to cancel bookings in case of emergencies or special events.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Write Review - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="review-form-page">
+                <div class="back-link">
+                    <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">&larr; Back</a>
+                </div>
+
+                <h1>Rate Room <span th:text="${room.number}">1234</span></h1>
+
+                <form th:action="@{/reviews/create}" method="post" th:object="${reviewRequest}"
+                      enctype="multipart/form-data" class="review-form">
+                    <input type="hidden" th:field="*{roomId}">
+
+                    <div class="form-group">
+                        <label>Your Rating</label>
+                        <div class="star-rating-input">
+                            <span th:each="i : ${#numbers.sequence(5, 1, -1)}">
+                                <input type="radio" th:id="${'star' + i}" name="rating" th:value="${i}" required>
+                                <label th:for="${'star' + i}">&#9733;</label>
+                            </span>
+                        </div>
+                        <span th:if="${#fields.hasErrors('rating')}" class="error-message"
+                              th:errors="*{rating}">Rating error</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Attach Photo (optional)</label>
+                        <input type="file" id="image" name="image" accept="image/*" class="form-control">
+                        <div id="imagePreview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment">Tell us more details (optional)</label>
+                        <textarea id="comment" th:field="*{comment}" class="form-control" rows="5"
+                                  placeholder="Share your experience with this room..."
+                                  maxlength="2000"></textarea>
+                        <span th:if="${#fields.hasErrors('comment')}" class="error-message"
+                              th:errors="*{comment}">Comment error</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        document.getElementById('image').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    preview.appendChild(img);
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
+</body>
+</html>

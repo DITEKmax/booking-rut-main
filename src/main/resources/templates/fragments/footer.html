@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<footer th:fragment="footer" class="main-footer">
+    <div class="footer-container">
+        <div class="footer-left">
+            <div class="footer-logo">
+                <span class="logo-text">RUT Booking</span>
+            </div>
+            <div class="footer-contacts">
+                <p><strong>Hotline:</strong> +7 (499) 978-33-33</p>
+                <p><strong>Email:</strong> info@rut-miit.ru</p>
+                <p><strong>Address:</strong> 9 Obraztsova St., Bldg. 9, Moscow, 127994</p>
+            </div>
+        </div>
+
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h4>Home</h4>
+                <ul>
+                    <li><a th:href="@{/}">Home</a></li>
+                    <li><a th:href="@{/#about}">About Us</a></li>
+                    <li><a th:href="@{/#advantages}">Advantages</a></li>
+                    <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Login</a></li>
+                    <li sec:authorize="isAuthenticated()"><a href="#" onclick="alert('You are already registered'); return false;">Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Social Networks</h4>
+                <ul>
+                    <li><a href="https://vk.com/rut_miit" target="_blank">VKontakte</a></li>
+                    <li><a href="https://rutube.ru/channel/23901047/" target="_blank">RuTube</a></li>
+                    <li><a href="https://t.me/rut_miit" target="_blank">Telegram</a></li>
+                    <li><a href="https://dzen.ru/rut_miit" target="_blank">Zen</a></li>
+                    <li><a href="https://ok.ru/rut.miit" target="_blank">OK</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Information</h4>
+                <ul>
+                    <li><a th:href="@{/#faq}">FAQ</a></li>
+                    <li><a th:href="@{/contacts}">Contacts</a></li>
+                    <li><a th:href="@{/licenses}">Licenses</a></li>
+                    <li><a th:href="@{/policies}">Policies</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 "Russian University of Transport"</p>
+        <p>Founder: Ministry of Transport of the Russian Federation</p>
+    </div>
+</footer>
+</html>

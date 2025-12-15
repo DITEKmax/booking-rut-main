@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Licenses - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Licenses</h1>
+            </div>
+
+            <div class="content-section">
+                <h2>Educational License</h2>
+                <div class="license-card">
+                    <p><strong>License Number:</strong> No. 1234 dated January 15, 2020</p>
+                    <p><strong>Issued by:</strong> Ministry of Education and Science of the Russian Federation</p>
+                    <p><strong>Valid until:</strong> Unlimited</p>
+                    <p>The Russian University of Transport is licensed to conduct educational activities at all levels of higher education and additional professional education.</p>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>State Accreditation</h2>
+                <div class="license-card">
+                    <p><strong>Certificate Number:</strong> No. 5678 dated March 20, 2021</p>
+                    <p><strong>Issued by:</strong> Federal Service for Supervision in Education and Science</p>
+                    <p><strong>Valid until:</strong> March 20, 2027</p>
+                    <p>All educational programs of the university have state accreditation.</p>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>Software Licenses</h2>
+                <div class="license-card">
+                    <p>This booking system uses the following open-source software:</p>
+                    <ul>
+                        <li>Spring Boot - Apache License 2.0</li>
+                        <li>Thymeleaf - Apache License 2.0</li>
+                        <li>PostgreSQL - PostgreSQL License</li>
+                        <li>iText PDF - AGPL License</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Booking Confirmation - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="confirmation-page">
+                <div class="confirmation-card">
+                    <div class="confirmation-icon success">&#10003;</div>
+                    <h1>Booking Confirmed!</h1>
+                    <p class="confirmation-message">Your room has been successfully booked.</p>
+
+                    <div class="booking-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Booking ID:</span>
+                            <span class="detail-value" th:text="'#' + ${booking.id}">#123</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Room:</span>
+                            <span class="detail-value" th:text="${booking.roomDisplayName}">Room 1234</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date:</span>
+                            <span class="detail-value" th:text="${#temporals.format(booking.bookingDate, 'dd MMMM yyyy')}">01 January 2025</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Time:</span>
+                            <span class="detail-value" th:text="${booking.timeRange}">8:30 – 9:50</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Period:</span>
+                            <span class="detail-value" th:text="${booking.classPeriod.displayName}">1st Period</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Purpose:</span>
+                            <span class="detail-value" th:text="${booking.purpose}">Lecture</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value status-badge"
+                                  th:classappend="${booking.status.name()}"
+                                  th:text="${booking.status.displayName}">Approved</span>
+                        </div>
+                    </div>
+
+                    <div class="confirmation-actions">
+                        <a th:if="${booking.approved}" th:href="@{/booking/pdf/{id}(id=${booking.id})}"
+                           class="btn btn-primary" download>
+                            Download PDF Confirmation
+                        </a>
+                        <a th:href="@{/my-bookings}" class="btn btn-secondary">View All Bookings</a>
+                        <a th:href="@{/rooms}" class="btn btn-outline">Book Another Room</a>
+                    </div>
+                </div>
+
+                <!-- Room Info -->
+                <div class="room-info-card">
+                    <h3>Room Details</h3>
+                    <p><strong>Building:</strong> <span th:text="${room.building}">A</span></p>
+                    <p><strong>Floor:</strong> <span th:text="${room.floor}">1</span></p>
+                    <p><strong>Capacity:</strong> <span th:text="${room.capacity} + ' seats'">30 seats</span></p>
+                    <div class="room-features">
+                        <span th:if="${room.hasComputers}" class="feature-badge">Computers</span>
+                        <span th:if="${room.hasProjector}" class="feature-badge">Projector</span>
+                        <span th:if="${room.hasWhiteboard}" class="feature-badge">Whiteboard</span>
+                    </div>
+                </div>
+
+                <!-- Similar Rooms -->
+                <div th:if="${!#lists.isEmpty(similarRooms)}" class="similar-rooms-section">
+                    <h3>Might Be Suitable</h3>
+                    <div class="similar-rooms-grid">
+                        <div th:each="similarRoom : ${similarRooms}" class="room-card small">
+                            <div class="room-info">
+                                <h4 th:text="'Room ' + ${similarRoom.number}">Room 1234</h4>
+                                <p th:text="${similarRoom.capacity} + ' seats'">30 seats</p>
+                                <a th:href="@{/rooms/{id}(id=${similarRoom.id})}" class="btn btn-outline btn-sm">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Booking Details - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link active">All Bookings</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <div class="back-link">
+                    <a th:href="@{/admin/bookings}" class="btn btn-outline">&larr; Back to Bookings</a>
+                </div>
+
+                <h1>Booking #<span th:text="${booking.id}">123</span></h1>
+
+                <div class="booking-detail-card">
+                    <div class="detail-section">
+                        <h3>Booking Information</h3>
+                        <div class="detail-grid">
+                            <div class="detail-row">
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value">
+                                    <span class="status-badge" th:classappend="${booking.status.name()}"
+                                          th:text="${booking.status.displayName}">Status</span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Created:</span>
+                                <span class="detail-value" th:text="${#temporals.format(booking.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Teacher Information</h3>
+                        <div class="detail-grid">
+                            <div class="detail-row">
+                                <span class="detail-label">Name:</span>
+                                <span class="detail-value" th:text="${booking.teacherName}">Teacher Name</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Room Information</h3>
+                        <div class="detail-grid">
+                            <div class="detail-row">
+                                <span class="detail-label">Room:</span>
+                                <span class="detail-value" th:text="${booking.roomDisplayName}">Room 1234</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Building:</span>
+                                <span class="detail-value" th:text="${room.building}">A</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Floor:</span>
+                                <span class="detail-value" th:text="${room.floor}">1</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Capacity:</span>
+                                <span class="detail-value" th:text="${room.capacity} + ' seats'">30 seats</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Schedule</h3>
+                        <div class="detail-grid">
+                            <div class="detail-row">
+                                <span class="detail-label">Date:</span>
+                                <span class="detail-value" th:text="${#temporals.format(booking.bookingDate, 'dd MMMM yyyy')}">01 January 2025</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Time:</span>
+                                <span class="detail-value" th:text="${booking.timeRange}">8:30 – 9:50</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Period:</span>
+                                <span class="detail-value" th:text="${booking.classPeriod.displayName}">1st Period</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Purpose</h3>
+                        <p th:text="${booking.purpose}">Booking purpose</p>
+                        <div th:if="${booking.notes != null}">
+                            <h4>Notes:</h4>
+                            <p th:text="${booking.notes}">Additional notes</p>
+                        </div>
+                    </div>
+
+                    <div th:if="${booking.rejectionReason != null}" class="detail-section error-section">
+                        <h3>Rejection Reason</h3>
+                        <p th:text="${booking.rejectionReason}">Rejection reason</p>
+                    </div>
+
+                    <div th:if="${booking.pending}" class="detail-actions">
+                        <button class="btn btn-danger" onclick="showRejectModal()">Reject Booking</button>
+                    </div>
+
+                    <div th:if="${booking.approved}" class="detail-actions">
+                        <a th:href="@{/booking/pdf/{id}(id=${booking.id})}" class="btn btn-primary" download>
+                            Download PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <h3>Reject Booking</h3>
+            <form th:action="@{/admin/bookings/{id}/reject(id=${booking.id})}" method="post">
+                <div class="form-group">
+                    <label for="reason">Rejection Reason *</label>
+                    <textarea id="reason" name="reason" class="form-control" rows="3" required
+                              placeholder="Please provide a reason for rejection..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="hideRejectModal()">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Reject Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function showRejectModal() {
+            document.getElementById('rejectModal').classList.add('show');
+        }
+
+        function hideRejectModal() {
+            document.getElementById('rejectModal').classList.remove('show');
+        }
+
+        document.getElementById('rejectModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideRejectModal();
+            }
+        });
+    </script>
+</body>
+</html>

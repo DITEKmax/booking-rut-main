@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>All Bookings - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link active">All Bookings</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <h1>All Bookings</h1>
+
+                <div th:if="${success}" class="alert alert-success">
+                    <span th:text="${success}">Success message</span>
+                </div>
+
+                <div th:if="${error}" class="alert alert-error">
+                    <span th:text="${error}">Error message</span>
+                </div>
+
+                <!-- Filters -->
+                <form th:action="@{/admin/bookings}" method="get" class="filter-form admin-filters">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="status">Status</label>
+                            <select name="status" id="status" class="filter-select">
+                                <option value="">All Statuses</option>
+                                <option th:each="s : ${statuses}" th:value="${s.name()}"
+                                        th:text="${s.displayName}" th:selected="${selectedStatus == s}">Status</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="roomId">Room</label>
+                            <select name="roomId" id="roomId" class="filter-select">
+                                <option value="">All Rooms</option>
+                                <option th:each="r : ${rooms}" th:value="${r.id}"
+                                        th:text="'Room ' + ${r.number}" th:selected="${selectedRoomId == r.id}">Room</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="startDate">From Date</label>
+                            <input type="date" name="startDate" id="startDate" th:value="${startDate}" class="form-control">
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="endDate">To Date</label>
+                            <input type="date" name="endDate" id="endDate" th:value="${endDate}" class="form-control">
+                        </div>
+
+                        <div class="filter-actions">
+                            <button type="submit" class="btn btn-primary">Apply</button>
+                            <a th:href="@{/admin/bookings}" class="btn btn-outline">Clear</a>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Bookings Table -->
+                <div class="bookings-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Teacher</th>
+                                <th>Room</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Purpose</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(bookings)}">
+                                <td colspan="8" class="no-data">No bookings found</td>
+                            </tr>
+                            <tr th:each="booking : ${bookings}">
+                                <td th:text="${booking.id}">#123</td>
+                                <td th:text="${booking.teacherName}">Teacher Name</td>
+                                <td th:text="${booking.roomNumber}">1234</td>
+                                <td th:text="${#temporals.format(booking.bookingDate, 'dd.MM.yyyy')}">01.01.2025</td>
+                                <td th:text="${booking.timeRange}">8:30 – 9:50</td>
+                                <td class="purpose-cell" th:text="${booking.purpose}">Lecture</td>
+                                <td>
+                                    <span class="status-badge" th:classappend="${booking.status.name()}"
+                                          th:text="${booking.status.displayName}">Status</span>
+                                </td>
+                                <td class="actions-cell">
+                                    <a th:href="@{/admin/bookings/{id}(id=${booking.id})}"
+                                       class="btn btn-outline btn-sm">View</a>
+                                    <button th:if="${booking.pending}"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="showRejectModal(this)"
+                                            th:data-id="${booking.id}">Reject</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <h3>Reject Booking</h3>
+            <form id="rejectForm" method="post">
+                <div class="form-group">
+                    <label for="reason">Rejection Reason *</label>
+                    <textarea id="reason" name="reason" class="form-control" rows="3" required
+                              placeholder="Please provide a reason for rejection..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="hideRejectModal()">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Reject Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function showRejectModal(btn) {
+            const bookingId = btn.getAttribute('data-id');
+            document.getElementById('rejectForm').action = '/admin/bookings/' + bookingId + '/reject';
+            document.getElementById('rejectModal').classList.add('show');
+        }
+
+        function hideRejectModal() {
+            document.getElementById('rejectModal').classList.remove('show');
+        }
+
+        document.getElementById('rejectModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideRejectModal();
+            }
+        });
+    </script>
+</body>
+</html>

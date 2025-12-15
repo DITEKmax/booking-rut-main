@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Admin Dashboard - RUT Booking</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <a th:href="@{/admin}" class="admin-nav-link active">Dashboard</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <h1>Admin Dashboard</h1>
+
+                <div class="stats-grid">
+                    <div class="stat-card pending">
+                        <div class="stat-value" th:text="${pendingCount}">0</div>
+                        <div class="stat-label">Pending Bookings</div>
+                        <a th:href="@{/admin/bookings(status='CREATED')}" class="stat-link">View</a>
+                    </div>
+
+                    <div class="stat-card approved">
+                        <div class="stat-value" th:text="${approvedCount}">0</div>
+                        <div class="stat-label">Approved Bookings</div>
+                        <a th:href="@{/admin/bookings(status='APPROVED')}" class="stat-link">View</a>
+                    </div>
+
+                    <div class="stat-card rejected">
+                        <div class="stat-value" th:text="${rejectedCount}">0</div>
+                        <div class="stat-label">Rejected Bookings</div>
+                        <a th:href="@{/admin/bookings(status='REJECTED')}" class="stat-link">View</a>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="actions-grid">
+                        <a th:href="@{/admin/bookings}" class="action-card">
+                            <span class="action-icon">&#128203;</span>
+                            <span class="action-text">View All Bookings</span>
+                        </a>
+                        <a th:href="@{/admin/calendar}" class="action-card">
+                            <span class="action-icon">&#128197;</span>
+                            <span class="action-text">View Calendar</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

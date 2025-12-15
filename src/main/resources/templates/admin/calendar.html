@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Calendar - RUT Booking</title>
+    <link rel="stylesheet" th:href="@{/css/calendar.css}">
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link active">Calendar</a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <h1>Classroom Occupancy Calendar</h1>
+
+                <!-- Room Filter -->
+                <div class="calendar-filters">
+                    <form th:action="@{/admin/calendar}" method="get" class="filter-form">
+                        <div class="filter-group">
+                            <label for="roomId">Room</label>
+                            <select name="roomId" id="roomId" class="filter-select" onchange="this.form.submit()">
+                                <option value="">All Rooms</option>
+                                <option th:each="r : ${rooms}" th:value="${r.id}"
+                                        th:text="'Room ' + ${r.number}" th:selected="${selectedRoomId == r.id}">Room</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Calendar -->
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="btn btn-outline" onclick="navigateMonth(-1)">&larr; Previous</button>
+                        <h2 id="currentMonth">January 2025</h2>
+                        <button class="btn btn-outline" onclick="navigateMonth(1)">Next &rarr;</button>
+                    </div>
+
+                    <div class="calendar-legend">
+                        <span class="legend-item"><span class="legend-color approved"></span> Approved</span>
+                        <span class="legend-item"><span class="legend-color pending"></span> Pending</span>
+                        <span class="legend-item"><span class="legend-color rejected"></span> Rejected</span>
+                    </div>
+
+                    <div class="calendar-grid">
+                        <div class="calendar-day-header">Mon</div>
+                        <div class="calendar-day-header">Tue</div>
+                        <div class="calendar-day-header">Wed</div>
+                        <div class="calendar-day-header">Thu</div>
+                        <div class="calendar-day-header">Fri</div>
+                        <div class="calendar-day-header">Sat</div>
+                        <div class="calendar-day-header">Sun</div>
+                        <div id="calendarDays" class="calendar-days"></div>
+                    </div>
+                </div>
+
+                <!-- Event Details -->
+                <div id="eventDetails" class="event-details" style="display: none;">
+                    <h3>Bookings for <span id="selectedDate"></span></h3>
+                    <div id="eventsList" class="events-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:inline="javascript">
+        const selectedRoomId = [[${selectedRoomId}]];
+        let currentDate = new Date();
+        let events = [];
+
+        function navigateMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+            loadEvents();
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            document.getElementById('currentMonth').textContent =
+                new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            let startDay = firstDay.getDay() - 1;
+            if (startDay < 0) startDay = 6;
+
+            const calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+
+            // Empty cells for days before the first day
+            for (let i = 0; i < startDay; i++) {
+                calendarDays.innerHTML += '<div class="calendar-day empty"></div>';
+            }
+
+            // Days of the month
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayEvents = events.filter(e => e.date === dateStr);
+
+                let dayClass = 'calendar-day';
+                if (dayEvents.length > 0) {
+                    dayClass += ' has-events';
+                }
+
+                let eventsHtml = '';
+                dayEvents.slice(0, 3).forEach(e => {
+                    eventsHtml += `<div class="day-event ${e.status.toLowerCase()}">${e.roomNumber} - ${e.startTime}</div>`;
+                });
+                if (dayEvents.length > 3) {
+                    eventsHtml += `<div class="more-events">+${dayEvents.length - 3} more</div>`;
+                }
+
+                calendarDays.innerHTML += `
+                    <div class="${dayClass}" onclick="showDayEvents('${dateStr}')">
+                        <span class="day-number">${day}</span>
+                        <div class="day-events">${eventsHtml}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function loadEvents() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const start = new Date(year, month, 1).toISOString().split('T')[0];
+            const end = new Date(year, month + 1, 0).toISOString().split('T')[0];
+
+            let url = `/admin/api/calendar-events?start=${start}&end=${end}`;
+            if (selectedRoomId) {
+                url += `&roomId=${selectedRoomId}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    events = data;
+                    renderCalendar();
+                });
+        }
+
+        function showDayEvents(dateStr) {
+            const dayEvents = events.filter(e => e.date === dateStr);
+            const eventDetails = document.getElementById('eventDetails');
+            const eventsList = document.getElementById('eventsList');
+
+            document.getElementById('selectedDate').textContent =
+                new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+            if (dayEvents.length === 0) {
+                eventsList.innerHTML = '<p>No bookings for this day.</p>';
+            } else {
+                eventsList.innerHTML = dayEvents.map(e => `
+                    <div class="event-card ${e.status.toLowerCase()}">
+                        <div class="event-time">${e.startTime} - ${e.endTime}</div>
+                        <div class="event-room">Room ${e.roomNumber}</div>
+                        <div class="event-teacher">${e.teacherName}</div>
+                        <div class="event-purpose">${e.purpose}</div>
+                        <span class="event-status">${e.status}</span>
+                    </div>
+                `).join('');
+            }
+
+            eventDetails.style.display = 'block';
+        }
+
+        // Initial load
+        loadEvents();
+    </script>
+</body>
+</html>

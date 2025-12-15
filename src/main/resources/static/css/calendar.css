@@ -1,0 +1,249 @@
+/* ===== Calendar Styles ===== */
+.calendar-filters {
+    margin-bottom: 20px;
+}
+
+.calendar-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.calendar-legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.legend-color.approved {
+    background: var(--success-color);
+}
+
+.legend-color.pending {
+    background: var(--warning-color);
+}
+
+.legend-color.rejected {
+    background: var(--danger-color);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background: var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.calendar-day-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.calendar-days {
+    display: contents;
+}
+
+.calendar-day {
+    background: white;
+    min-height: 100px;
+    padding: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.calendar-day:hover {
+    background: var(--light-color);
+}
+
+.calendar-day.empty {
+    background: var(--light-color);
+    cursor: default;
+}
+
+.day-number {
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.day-events {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.day-event {
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+}
+
+.day-event.approved {
+    background: var(--success-color);
+}
+
+.day-event.pending,
+.day-event.created {
+    background: var(--warning-color);
+    color: var(--dark-color);
+}
+
+.day-event.rejected {
+    background: var(--danger-color);
+}
+
+.more-events {
+    font-size: 0.7rem;
+    color: var(--gray-color);
+    padding: 2px 5px;
+}
+
+/* ===== Event Details ===== */
+.event-details {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 30px;
+}
+
+.event-details h3 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.event-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    position: relative;
+}
+
+.event-card.approved {
+    border-left: 4px solid var(--success-color);
+}
+
+.event-card.pending,
+.event-card.created {
+    border-left: 4px solid var(--warning-color);
+}
+
+.event-card.rejected {
+    border-left: 4px solid var(--danger-color);
+}
+
+.event-time {
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.event-room {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.event-teacher {
+    color: var(--gray-color);
+    font-size: 0.875rem;
+    margin-bottom: 5px;
+}
+
+.event-purpose {
+    font-size: 0.875rem;
+}
+
+.event-status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.event-card.approved .event-status {
+    background: #d4edda;
+    color: #155724;
+}
+
+.event-card.pending .event-status,
+.event-card.created .event-status {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.event-card.rejected .event-status {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ===== Responsive Calendar ===== */
+@media (max-width: 768px) {
+    .calendar-day {
+        min-height: 60px;
+        padding: 5px;
+    }
+
+    .day-number {
+        font-size: 0.875rem;
+    }
+
+    .day-events {
+        display: none;
+    }
+
+    .calendar-day.has-events::after {
+        content: '';
+        display: block;
+        width: 8px;
+        height: 8px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        margin-top: 5px;
+    }
+}

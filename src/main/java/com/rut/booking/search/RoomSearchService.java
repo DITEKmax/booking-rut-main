@@ -57,7 +57,7 @@ public class RoomSearchService {
                     .filter(comment -> comment != null && !comment.isEmpty())
                     .collect(Collectors.joining(" "));
 
-            Double avgRating = reviewRepository.getAverageRatingByRoomId(room.getId());
+            Double avgRating = reviewRepository.getAverageRatingForRoom(room.getId());
             Integer reviewCount = reviews.size();
 
             RoomDocument document = RoomDocument.builder()

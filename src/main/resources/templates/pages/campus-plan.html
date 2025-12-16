@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>План кампуса - РУТ Навигатор</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>План кампуса</h1>
+            </div>
+
+            <div class="campus-plan-stub">
+                <div class="stub-card">
+                    <div class="stub-icon">&#128506;</div>
+                    <h2>Функция в разработке</h2>
+                    <p>Интерактивный план кампуса Российского университета транспорта находится в разработке.</p>
+                    <p>Скоро здесь появится возможность:</p>
+                    <ul class="feature-list">
+                        <li>Просматривать план всех корпусов университета</li>
+                        <li>Искать аудитории на интерактивной карте</li>
+                        <li>Строить маршруты между корпусами</li>
+                        <li>Находить важные объекты инфраструктуры</li>
+                    </ul>
+                    <div class="stub-actions">
+                        <a th:href="@{/}" class="btn btn-primary">На главную</a>
+                        <a th:href="@{/contacts}" class="btn btn-outline">Контакты</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+
+    <style>
+        .campus-plan-stub {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+        }
+
+        .stub-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2xl);
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .stub-icon {
+            font-size: 5rem;
+            margin-bottom: var(--space-lg);
+        }
+
+        .stub-card h2 {
+            color: var(--primary-dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .stub-card p {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+
+        .feature-list {
+            text-align: left;
+            margin: var(--space-lg) auto;
+            max-width: 400px;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li {
+            margin-bottom: var(--space-sm);
+            padding-left: var(--space-sm);
+        }
+
+        .stub-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            margin-top: var(--space-xl);
+        }
+    </style>
+</body>
+</html>

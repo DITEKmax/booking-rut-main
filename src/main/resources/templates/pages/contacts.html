@@ -1,64 +1,65 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Contacts - RUT Booking</title>
+    <title>Контакты - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1>Contacts</h1>
+                <h1>Контакты</h1>
             </div>
 
             <div class="contacts-grid">
                 <div class="contact-card">
-                    <h3>Main Office</h3>
+                    <h3>Главный офис</h3>
                     <div class="contact-info">
-                        <p><strong>Address:</strong> 9 Obraztsova St., Bldg. 9, Moscow, 127994</p>
-                        <p><strong>Phone:</strong> +7 (499) 978-33-33</p>
+                        <p><strong>Адрес:</strong> г. Москва, ул. Образцова, д. 9, стр. 9, 127994</p>
+                        <p><strong>Телефон:</strong> +7 (499) 978-33-33</p>
                         <p><strong>Email:</strong> info@rut-miit.ru</p>
-                        <p><strong>Working hours:</strong> Mon-Fri, 9:00 - 18:00</p>
+                        <p><strong>Часы работы:</strong> Пн-Пт, 9:00 - 18:00</p>
                     </div>
                 </div>
 
                 <div class="contact-card">
-                    <h3>Booking Support</h3>
+                    <h3>Поддержка бронирования</h3>
                     <div class="contact-info">
-                        <p><strong>Phone:</strong> +7 (499) 978-34-34</p>
+                        <p><strong>Телефон:</strong> +7 (499) 978-34-34</p>
                         <p><strong>Email:</strong> booking@rut-miit.ru</p>
-                        <p><strong>Working hours:</strong> Mon-Fri, 8:00 - 20:00</p>
-                        <p><strong>Sat:</strong> 9:00 - 15:00</p>
+                        <p><strong>Часы работы:</strong> Пн-Пт, 8:00 - 20:00</p>
+                        <p><strong>Сб:</strong> 9:00 - 15:00</p>
                     </div>
                 </div>
 
                 <div class="contact-card">
-                    <h3>Technical Support</h3>
+                    <h3>Техническая поддержка</h3>
                     <div class="contact-info">
-                        <p><strong>Phone:</strong> +7 (499) 978-35-35</p>
+                        <p><strong>Телефон:</strong> +7 (499) 978-35-35</p>
                         <p><strong>Email:</strong> support@rut-miit.ru</p>
-                        <p><strong>Working hours:</strong> Mon-Sun, 8:00 - 22:00</p>
+                        <p><strong>Часы работы:</strong> Пн-Вс, 8:00 - 22:00</p>
                     </div>
                 </div>
 
                 <div class="contact-card">
-                    <h3>Administration</h3>
+                    <h3>Администрация</h3>
                     <div class="contact-info">
-                        <p><strong>Phone:</strong> +7 (499) 978-36-36</p>
+                        <p><strong>Телефон:</strong> +7 (499) 978-36-36</p>
                         <p><strong>Email:</strong> admin@rut-miit.ru</p>
-                        <p><strong>Working hours:</strong> Mon-Fri, 9:00 - 17:00</p>
+                        <p><strong>Часы работы:</strong> Пн-Пт, 9:00 - 17:00</p>
                     </div>
                 </div>
             </div>
 
             <div class="map-section">
-                <h2>Location</h2>
-                <div class="map-placeholder">
-                    <p>Interactive map would be displayed here</p>
-                    <p>Russian University of Transport</p>
-                    <p>9 Obraztsova St., Moscow</p>
-                </div>
+                <h2>Расположение</h2>
+                <div id="map" style="height: 450px; border-radius: var(--radius-xl); box-shadow: var(--shadow);"></div>
             </div>
         </div>
     </main>
@@ -66,5 +67,33 @@
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <script th:src="@{/js/main.js}"></script>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <script>
+        // Initialize the map centered on RUT (MIIT) location
+        var map = L.map('map').setView([55.7947, 37.6061], 16);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker for RUT (MIIT)
+        var marker = L.marker([55.7947, 37.6061]).addTo(map);
+        marker.bindPopup("<b>Российский университет транспорта (МИИТ)</b><br>ул. Образцова, д. 9, стр. 9<br>Москва, 127994").openPopup();
+
+        // Add a circle to highlight the campus area
+        var circle = L.circle([55.7947, 37.6061], {
+            color: '#2E3A4D',
+            fillColor: '#2E3A4D',
+            fillOpacity: 0.1,
+            radius: 200
+        }).addTo(map);
+    </script>
 </body>
 </html>

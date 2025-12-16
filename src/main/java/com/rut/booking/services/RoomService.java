@@ -9,6 +9,8 @@ import com.rut.booking.models.exceptions.ResourceNotFoundException;
 import com.rut.booking.repository.BookingRepository;
 import com.rut.booking.repository.FavoriteRepository;
 import com.rut.booking.repository.RoomRepository;
+import com.rut.booking.search.RoomSearchService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +27,16 @@ public class RoomService {
     private final BookingRepository bookingRepository;
     private final FavoriteRepository favoriteRepository;
     private final DtoMapper dtoMapper;
+    private final RoomSearchService roomSearchService;
 
     public RoomService(RoomRepository roomRepository, BookingRepository bookingRepository,
-                       FavoriteRepository favoriteRepository, DtoMapper dtoMapper) {
+                       FavoriteRepository favoriteRepository, DtoMapper dtoMapper,
+                       @Lazy RoomSearchService roomSearchService) {
         this.roomRepository = roomRepository;
         this.bookingRepository = bookingRepository;
         this.favoriteRepository = favoriteRepository;
         this.dtoMapper = dtoMapper;
+        this.roomSearchService = roomSearchService;
     }
 
     public Room findById(Long id) {
@@ -66,6 +71,17 @@ public class RoomService {
     }
 
     public List<RoomDto> searchRooms(String search) {
+        // Try Elasticsearch first
+        List<Long> elasticResults = roomSearchService.searchRooms(search);
+        if (!elasticResults.isEmpty()) {
+            return elasticResults.stream()
+                    .map(id -> roomRepository.findById(id).orElse(null))
+                    .filter(room -> room != null)
+                    .map(dtoMapper::toRoomDto)
+                    .collect(Collectors.toList());
+        }
+
+        // Fallback to database search
         return roomRepository.searchRooms(search).stream()
                 .map(dtoMapper::toRoomDto)
                 .collect(Collectors.toList());
@@ -90,6 +106,54 @@ public class RoomService {
                     return dtoMapper.toRoomDto(room, isFavorite);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<RoomDto> filterRoomsWithAvailability(String building, Integer floor,
+                                                      LocalDate date, ClassPeriod period, Long userId) {
+        // Start with basic building/floor filter
+        List<Room> rooms;
+        if (building != null && !building.isEmpty() && floor != null) {
+            rooms = roomRepository.findByBuildingAndFloorAndIsActiveTrue(building, floor);
+        } else if (building != null && !building.isEmpty()) {
+            rooms = roomRepository.findByBuildingAndIsActiveTrue(building);
+        } else if (floor != null) {
+            rooms = roomRepository.findByFloorAndIsActiveTrue(floor);
+        } else {
+            rooms = roomRepository.findByIsActiveTrue();
+        }
+
+        // Apply availability filter if date or period is specified
+        List<RoomDto> result = new ArrayList<>();
+        for (Room room : rooms) {
+            boolean isAvailable = true;
+
+            if (date != null && period != null) {
+                // Check if room is available for specific date and period
+                isAvailable = !bookingRepository.isRoomBookedForPeriod(room.getId(), date, period);
+            } else if (date != null) {
+                // Check if room has any available period on this date
+                boolean hasAvailablePeriod = false;
+                for (ClassPeriod p : ClassPeriod.values()) {
+                    if (!bookingRepository.isRoomBookedForPeriod(room.getId(), date, p)) {
+                        hasAvailablePeriod = true;
+                        break;
+                    }
+                }
+                isAvailable = hasAvailablePeriod;
+            } else if (period != null) {
+                // Check if room is available for this period today or in the future
+                LocalDate today = LocalDate.now();
+                isAvailable = !bookingRepository.isRoomBookedForPeriod(room.getId(), today, period);
+            }
+
+            if (isAvailable) {
+                boolean isFavorite = userId != null &&
+                        favoriteRepository.existsByUserIdAndRoomId(userId, room.getId());
+                result.add(dtoMapper.toRoomDto(room, isFavorite));
+            }
+        }
+
+        return result;
     }
 
     public List<RoomDto> getAvailableRooms(LocalDate date, ClassPeriod period, Long userId) {

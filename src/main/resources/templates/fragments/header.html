@@ -3,6 +3,8 @@
 <head th:fragment="head">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${pageTitle != null} ? ${pageTitle} + ' - РУТ Навигатор' : 'РУТ Навигатор'">РУТ Навигатор</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,13 +16,14 @@
     <div class="header-container">
         <a th:href="@{/}" class="logo">
             <span class="logo-icon">&#128218;</span>
-            <span class="logo-text">Книжный Навигатор</span>
+            <span class="logo-text">РУТ Навигатор</span>
         </a>
 
         <nav class="main-nav">
             <a th:href="@{/#about}" class="nav-link">О нас</a>
-            <a th:href="@{/rooms}" class="nav-link" sec:authorize="isAuthenticated()">План кампуса</a>
-            <a th:href="@{/login}" class="nav-link" sec:authorize="!isAuthenticated()">План кампуса</a>
+            <a th:href="@{/rooms}" class="nav-link" sec:authorize="isAuthenticated()">Бронирование</a>
+            <a th:href="@{/login}" class="nav-link" sec:authorize="!isAuthenticated()">Бронирование</a>
+            <a th:href="@{/campus-plan}" class="nav-link">План кампуса</a>
             <a th:href="@{/contacts}" class="nav-link">Контакты</a>
         </nav>
 

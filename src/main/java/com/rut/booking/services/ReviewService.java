@@ -8,6 +8,8 @@ import com.rut.booking.models.entities.Room;
 import com.rut.booking.models.entities.User;
 import com.rut.booking.models.exceptions.ResourceNotFoundException;
 import com.rut.booking.repository.ReviewRepository;
+import com.rut.booking.search.RoomSearchService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,14 +30,17 @@ public class ReviewService {
     private final UserService userService;
     private final RoomService roomService;
     private final DtoMapper dtoMapper;
+    private final RoomSearchService roomSearchService;
     private final String uploadDir = "./uploads/reviews";
 
     public ReviewService(ReviewRepository reviewRepository, UserService userService,
-                         RoomService roomService, DtoMapper dtoMapper) {
+                         RoomService roomService, DtoMapper dtoMapper,
+                         @Lazy RoomSearchService roomSearchService) {
         this.reviewRepository = reviewRepository;
         this.userService = userService;
         this.roomService = roomService;
         this.dtoMapper = dtoMapper;
+        this.roomSearchService = roomSearchService;
     }
 
     public Review findById(Long id) {
@@ -108,7 +113,12 @@ public class ReviewService {
             review.setImagePath(imagePath);
         }
 
-        return dtoMapper.toReviewDto(reviewRepository.save(review));
+        ReviewDto saved = dtoMapper.toReviewDto(reviewRepository.save(review));
+
+        // Reindex room in Elasticsearch
+        roomSearchService.reindexRoomAfterReview(request.getRoomId());
+
+        return saved;
     }
 
     @Transactional
@@ -133,12 +143,18 @@ public class ReviewService {
             review.setImagePath(imagePath);
         }
 
-        return dtoMapper.toReviewDto(reviewRepository.save(review));
+        ReviewDto saved = dtoMapper.toReviewDto(reviewRepository.save(review));
+
+        // Reindex room in Elasticsearch
+        roomSearchService.reindexRoomAfterReview(review.getRoom().getId());
+
+        return saved;
     }
 
     @Transactional
     public void deleteReview(Long reviewId, Long userId) {
         Review review = findById(reviewId);
+        Long roomId = review.getRoom().getId();
 
         // Check ownership
         if (!review.getUser().getId().equals(userId)) {
@@ -151,6 +167,9 @@ public class ReviewService {
         }
 
         reviewRepository.delete(review);
+
+        // Reindex room in Elasticsearch
+        roomSearchService.reindexRoomAfterReview(roomId);
     }
 
     private String saveImage(MultipartFile file) {

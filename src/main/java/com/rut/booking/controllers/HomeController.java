@@ -56,4 +56,12 @@ public class HomeController {
         }
         return "error/403";
     }
+
+    @GetMapping("/campus-plan")
+    public String campusPlan(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        if (userDetails != null) {
+            model.addAttribute("user", userDetails);
+        }
+        return "pages/campus-plan";
+    }
 }

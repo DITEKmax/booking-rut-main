@@ -103,9 +103,11 @@
                     <p>Благодаря автоматическому одобрению для свободных помещений и мгновенной генерации PDF-подтверждений, бронирование аудитории стало проще, чем когда-либо.</p>
                     <div class="about-cta" sec:authorize="!isAuthenticated()">
                         <a th:href="@{/login}" class="btn btn-primary">Войти в систему</a>
+                        <a th:href="@{/campus-plan}" class="btn btn-outline">План кампуса</a>
                     </div>
                     <div class="about-cta" sec:authorize="isAuthenticated()">
-                        <span class="already-registered">Вы уже авторизованы в системе</span>
+                        <a th:href="@{/rooms}" class="btn btn-primary">Забронировать</a>
+                        <a th:href="@{/campus-plan}" class="btn btn-outline">План кампуса</a>
                     </div>
                 </div>
                 <div class="about-image">

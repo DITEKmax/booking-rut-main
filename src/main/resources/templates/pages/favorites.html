@@ -1,159 +1,80 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head th:replace="~{fragments/header :: head}">
-
     <title>Избранное - РУТ Навигатор</title>
-
 </head>
-
 <body>
-
-<header th:replace="~{fragments/header :: header}"></header>
-
-
-
-<main class="main-content">
-
-    <div class="favorites-page">
-
-        <!-- Breadcrumb -->
-
-        <div class="breadcrumb">
-
-            <a th:href="@{/rooms}">План</a> / Избранное
-
-        </div>
-
-
-
-        <div class="page-header">
-
-            <h1>Избранное</h1>
-
-        </div>
-
-
-
-        <!-- Search -->
-
-        <div class="search-filters" style="margin-bottom: 24px;">
-
-            <form th:action="@{/favorites}" method="get" class="search-form">
-
-                <div class="search-bar">
-
-                    <input type="text" name="search" th:value="${search}"
-
-                           placeholder="Поиск" class="search-input">
-
-                    <button type="submit" class="btn btn-primary">&#128269;</button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-
-
-        <!-- Empty State -->
-
-        <div th:if="${#lists.isEmpty(rooms)}" class="empty-state">
-
-            <p>У вас пока нет избранных аудиторий.</p>
-
-            <a th:href="@{/rooms}" class="btn btn-primary">Перейти к аудиториям</a>
-
-        </div>
-
-
-
-        <!-- Favorites Grid -->
-
-        <div th:unless="${#lists.isEmpty(rooms)}" class="favorites-grid">
-
-            <div th:each="room : ${rooms}" class="favorite-card">
-
-                <form th:action="@{/favorites/remove/{id}(id=${room.id})}" method="post" class="favorite-form">
-
-                    <button type="submit" class="favorite-btn active" title="Удалить из избранного">
-
-                        <span>&#9829;</span>
-
-                    </button>
-
-                </form>
-
-                <div class="room-info">
-
-                    <h3 class="room-number" th:text="${room.number}">1125</h3>
-
-                    <p class="room-type" th:text="${room.roomType.displayName}">Лекционная аудитория</p>
-
-                    <div class="room-meta">
-
-                        <span class="meta-item" th:text="'Корпус ' + ${room.building}">Корпус А</span>
-
-                        <span class="meta-item" th:text="'Этаж ' + ${room.floor}">Этаж 1</span>
-
-                    </div>
-
-                    <div class="room-rating">
-
-                            <span class="stars">
-
-                                <span th:each="i : ${#numbers.sequence(1, 5)}"
-
-                                      th:classappend="${i <= room.averageRating} ? 'filled' : ''">&#9733;</span>
-
-                            </span>
-
-                    </div>
-
-                    <div class="room-actions">
-
-                        <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline btn-sm">Подробнее</a>
-
-                        <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary btn-sm">Забронировать</a>
-
-                    </div>
-
-                </div>
-
-                <div class="room-image">
-
-                    <div th:if="${room.imagePath != null}" class="image-container">
-
-                        <img th:src="${room.imagePath}" th:alt="${room.number}">
-
-                    </div>
-
-                    <div th:unless="${room.imagePath != null}" class="image-placeholder">
-
-                        <span th:text="${room.number}">Аудитория</span>
-
-                    </div>
-
-                </div>
-
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="favorites-page">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a th:href="@{/rooms}">План</a> / Избранное
             </div>
 
+            <div class="page-header">
+                <h1>Избранное</h1>
+            </div>
+
+            <!-- Search -->
+            <div class="search-filters" style="margin-bottom: 24px;">
+                <form th:action="@{/favorites}" method="get" class="search-form">
+                    <div class="search-bar">
+                        <input type="text" name="search" th:value="${search}"
+                               placeholder="Поиск" class="search-input">
+                        <button type="submit" class="btn btn-primary">&#128269;</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(rooms)}" class="empty-state">
+                <p>У вас пока нет избранных аудиторий.</p>
+                <a th:href="@{/rooms}" class="btn btn-primary">Перейти к аудиториям</a>
+            </div>
+
+            <!-- Favorites Grid -->
+            <div th:unless="${#lists.isEmpty(rooms)}" class="favorites-grid">
+                <div th:each="room : ${rooms}" class="favorite-card">
+                    <form th:action="@{/favorites/remove/{id}(id=${room.id})}" method="post" class="favorite-form">
+                        <button type="submit" class="favorite-btn active" title="Удалить из избранного">
+                            <span>&#9829;</span>
+                        </button>
+                    </form>
+                    <div class="room-info">
+                        <h3 class="room-number" th:text="${room.number}">1125</h3>
+                        <p class="room-type" th:text="${room.roomType.displayName}">Лекционная аудитория</p>
+                        <div class="room-meta">
+                            <span class="meta-item" th:text="'Корпус ' + ${room.building}">Корпус А</span>
+                            <span class="meta-item" th:text="'Этаж ' + ${room.floor}">Этаж 1</span>
+                        </div>
+                        <div class="room-rating">
+                            <span class="stars">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                      th:classappend="${i <= room.averageRating} ? 'filled' : ''">&#9733;</span>
+                            </span>
+                        </div>
+                        <div class="room-actions">
+                            <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline btn-sm">Подробнее</a>
+                            <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary btn-sm">Забронировать</a>
+                        </div>
+                    </div>
+                    <div class="room-image">
+                        <div th:if="${room.imagePath != null}" class="image-container">
+                            <img th:src="${room.imagePath}" th:alt="${room.number}">
+                        </div>
+                        <div th:unless="${room.imagePath != null}" class="image-placeholder">
+                            <span th:text="${room.number}">Аудитория</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </main>
 
-    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-</main>
-
-
-
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-
-
-
-<script th:src="@{/js/main.js}"></script>
-
+    <script th:src="@{/js/main.js}"></script>
 </body>
-
 </html>

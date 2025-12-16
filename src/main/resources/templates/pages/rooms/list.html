@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Rooms - RUT Booking</title>
+    <title>Аудитории - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
@@ -15,12 +15,12 @@
                 </button>
                 <div class="sidebar-content">
                     <nav class="sidebar-nav">
-                        <a th:href="@{/my-bookings}" class="sidebar-link">My Bookings</a>
-                        <a th:href="@{/my-reviews}" class="sidebar-link">My Reviews</a>
-                        <a th:href="@{/favorites}" class="sidebar-link">Favorites</a>
+                        <a th:href="@{/my-bookings}" class="sidebar-link">Мои бронирования</a>
+                        <a th:href="@{/my-reviews}" class="sidebar-link">Мои отзывы</a>
+                        <a th:href="@{/favorites}" class="sidebar-link">Избранное</a>
                         <div class="sidebar-divider"></div>
                         <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="sidebar-link logout-link">Logout</button>
+                            <button type="submit" class="sidebar-link logout-link">Выйти</button>
                         </form>
                     </nav>
                 </div>
@@ -29,34 +29,34 @@
             <!-- Main Content -->
             <div class="rooms-content">
                 <div class="rooms-header">
-                    <h1>Classroom Selection</h1>
+                    <h1>Выбор аудитории</h1>
 
                     <!-- Search and Filters -->
                     <div class="search-filters">
                         <form th:action="@{/rooms}" method="get" class="search-form">
                             <div class="search-bar">
                                 <input type="text" name="search" th:value="${search}"
-                                       placeholder="Search by room number or building..."
+                                       placeholder="Поиск по номеру аудитории или корпусу..."
                                        class="search-input">
-                                <button type="submit" class="btn btn-primary">Search</button>
+                                <button type="submit" class="btn btn-primary">&#128269;</button>
                             </div>
 
                             <div class="filters">
                                 <select name="building" class="filter-select" id="buildingSelect"
                                         onchange="updateFloors()">
-                                    <option value="">All Buildings</option>
-                                    <option th:each="b : ${buildings}" th:value="${b}" th:text="'Building ' + ${b}"
-                                            th:selected="${selectedBuilding == b}">Building</option>
+                                    <option value="">Все корпуса</option>
+                                    <option th:each="b : ${buildings}" th:value="${b}" th:text="'Корпус ' + ${b}"
+                                            th:selected="${selectedBuilding == b}">Корпус</option>
                                 </select>
 
                                 <select name="floor" class="filter-select" id="floorSelect">
-                                    <option value="">All Floors</option>
-                                    <option th:each="f : ${floors}" th:value="${f}" th:text="'Floor ' + ${f}"
-                                            th:selected="${selectedFloor == f}">Floor</option>
+                                    <option value="">Все этажи</option>
+                                    <option th:each="f : ${floors}" th:value="${f}" th:text="'Этаж ' + ${f}"
+                                            th:selected="${selectedFloor == f}">Этаж</option>
                                 </select>
 
-                                <button type="submit" class="btn btn-secondary">Apply Filters</button>
-                                <a th:href="@{/rooms}" class="btn btn-outline">Clear</a>
+                                <button type="submit" class="btn btn-secondary">Применить</button>
+                                <a th:href="@{/rooms}" class="btn btn-outline">Сбросить</a>
                             </div>
                         </form>
                     </div>
@@ -65,7 +65,7 @@
                 <!-- Rooms Grid -->
                 <div class="rooms-grid">
                     <div th:if="${#lists.isEmpty(rooms)}" class="no-results">
-                        <p>No rooms found matching your criteria.</p>
+                        <p>Аудитории не найдены по вашему запросу.</p>
                     </div>
 
                     <div th:each="room : ${rooms}" class="room-card">
@@ -74,21 +74,21 @@
                                 <img th:src="${room.imagePath}" th:alt="${room.number}">
                             </div>
                             <div th:unless="${room.imagePath != null}" class="image-placeholder">
-                                <span th:text="${room.number}">Room</span>
+                                <span th:text="${room.number}">1125</span>
                             </div>
                             <button class="favorite-btn" th:classappend="${room.isFavorite} ? 'active' : ''"
                                     th:data-room-id="${room.id}" onclick="toggleFavorite(this)">
-                                <span th:if="${room.isFavorite}">&#9733;</span>
-                                <span th:unless="${room.isFavorite}">&#9734;</span>
+                                <span th:if="${room.isFavorite}">&#9829;</span>
+                                <span th:unless="${room.isFavorite}">&#9825;</span>
                             </button>
                         </div>
                         <div class="room-info">
-                            <h3 class="room-number" th:text="'Room ' + ${room.number}">Room 1234</h3>
-                            <p class="room-type" th:text="${room.roomType.displayName}">Lecture Hall</p>
+                            <h3 class="room-number" th:text="${room.number}">1125</h3>
+                            <p class="room-type" th:text="${room.roomType.displayName}">Лекционная аудитория</p>
                             <div class="room-meta">
-                                <span class="meta-item" th:text="'Building ' + ${room.building}">Building A</span>
-                                <span class="meta-item" th:text="'Floor ' + ${room.floor}">Floor 1</span>
-                                <span class="meta-item" th:text="${room.capacity} + ' seats'">30 seats</span>
+                                <span class="meta-item" th:text="'Корпус ' + ${room.building}">Корпус ГУК-1</span>
+                                <span class="meta-item" th:text="'Этаж ' + ${room.floor}">Этаж 1</span>
+                                <span class="meta-item" th:text="${room.capacity} + ' мест'">30 мест</span>
                             </div>
                             <div class="room-rating">
                                 <span class="stars">
@@ -96,16 +96,16 @@
                                           th:classappend="${i <= room.averageRating} ? 'filled' : ''">&#9733;</span>
                                 </span>
                                 <span class="rating-value" th:text="${#numbers.formatDecimal(room.averageRating, 1, 1)}">4.5</span>
-                                <span class="review-count" th:text="'(' + ${room.reviewCount} + ' reviews)'"> (10 reviews)</span>
+                                <span class="review-count" th:text="'(' + ${room.reviewCount} + ' отзывов)'"> (10 отзывов)</span>
                             </div>
                             <div class="room-features">
-                                <span th:if="${room.hasComputers}" class="feature-badge">Computers</span>
-                                <span th:if="${room.hasProjector}" class="feature-badge">Projector</span>
-                                <span th:if="${room.hasWhiteboard}" class="feature-badge">Whiteboard</span>
+                                <span th:if="${room.hasComputers}" class="feature-badge">Компьютеры</span>
+                                <span th:if="${room.hasProjector}" class="feature-badge">Проектор</span>
+                                <span th:if="${room.hasWhiteboard}" class="feature-badge">Доска</span>
                             </div>
                             <div class="room-actions">
-                                <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">Details</a>
-                                <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary">Book</a>
+                                <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">Подробнее</a>
+                                <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary">Забронировать</a>
                             </div>
                         </div>
                     </div>

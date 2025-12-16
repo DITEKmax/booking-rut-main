@@ -1,60 +1,95 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Edit Review - RUT Booking</title>
+    <title>Редактировать отзыв - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
 
     <main class="main-content">
-        <div class="container">
-            <div class="review-form-page">
-                <div class="back-link">
-                    <a th:href="@{/my-reviews}" class="btn btn-outline">&larr; Back</a>
-                </div>
+        <div class="review-modal-overlay">
+            <div class="review-modal">
+                <a th:href="@{/my-reviews}" class="review-modal-close">&times;</a>
 
-                <h1>Edit Review for Room <span th:text="${room.number}">1234</span></h1>
+                <h2>Редактировать отзыв об аудитории <span th:text="${room.number}">1125</span></h2>
 
                 <form th:action="@{/reviews/update/{id}(id=${review.id})}" method="post"
                       th:object="${reviewRequest}" enctype="multipart/form-data" class="review-form">
                     <input type="hidden" th:field="*{roomId}">
 
+                    <!-- Star Rating -->
                     <div class="form-group">
-                        <label>Your Rating</label>
-                        <div class="star-rating-input">
-                            <span th:each="i : ${#numbers.sequence(5, 1, -1)}">
-                                <input type="radio" th:id="${'star' + i}" name="rating" th:value="${i}"
-                                       th:checked="${review.rating == i}" required>
-                                <label th:for="${'star' + i}">&#9733;</label>
-                            </span>
+                        <div class="star-rating-large">
+                            <input type="radio" id="star5" name="rating" value="5" th:checked="${review.rating == 5}" required>
+                            <label for="star5">&#9733;</label>
+                            <input type="radio" id="star4" name="rating" value="4" th:checked="${review.rating == 4}">
+                            <label for="star4">&#9733;</label>
+                            <input type="radio" id="star3" name="rating" value="3" th:checked="${review.rating == 3}">
+                            <label for="star3">&#9733;</label>
+                            <input type="radio" id="star2" name="rating" value="2" th:checked="${review.rating == 2}">
+                            <label for="star2">&#9733;</label>
+                            <input type="radio" id="star1" name="rating" value="1" th:checked="${review.rating == 1}">
+                            <label for="star1">&#9733;</label>
                         </div>
                         <span th:if="${#fields.hasErrors('rating')}" class="error-message"
-                              th:errors="*{rating}">Rating error</span>
+                              th:errors="*{rating}">Ошибка рейтинга</span>
                     </div>
 
-                    <div th:if="${review.imagePath != null}" class="current-image">
-                        <label>Current Photo</label>
-                        <img th:src="${review.imagePath}" alt="Current review photo">
+                    <!-- Recommendation Checkbox -->
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="recommended" value="true">
+                            Я рекомендую эту аудиторию
+                        </label>
                     </div>
 
+                    <!-- Issue Selection -->
                     <div class="form-group">
-                        <label for="image">Change Photo (optional)</label>
-                        <input type="file" id="image" name="image" accept="image/*" class="form-control">
+                        <label>Что из следующего верно?</label>
+                        <div class="issue-chips">
+                            <button type="button" class="issue-chip" data-issue="projector">Не работает проектор</button>
+                            <button type="button" class="issue-chip" data-issue="markers">Нет маркеров</button>
+                            <button type="button" class="issue-chip" data-issue="furniture">Сломана парта/стул</button>
+                            <button type="button" class="issue-chip" data-issue="computer">Не работает компьютер</button>
+                            <button type="button" class="issue-chip" data-issue="window">Сломано окно</button>
+                            <button type="button" class="issue-chip" data-issue="dirty">Грязно</button>
+                        </div>
+                        <input type="hidden" name="issues" id="selectedIssues" value="">
+                    </div>
+
+                    <!-- Current Photo -->
+                    <div th:if="${review.imagePath != null}" class="current-image">
+                        <label>Текущее фото</label>
+                        <img th:src="${review.imagePath}" alt="Текущее фото отзыва">
+                    </div>
+
+                    <!-- Photo Upload -->
+                    <div class="form-group">
+                        <div class="photo-upload">
+                            <label class="photo-upload-slot" for="image">
+                                <span>&#8593;</span>
+                                <span>Загрузить фото</span>
+                            </label>
+                            <input type="file" id="image" name="image" accept="image/*" style="display: none;">
+                            <div id="photoSlot1" class="photo-upload-slot filled" style="display: none;"></div>
+                        </div>
                         <div id="imagePreview" class="image-preview"></div>
                     </div>
 
+                    <!-- Comment -->
                     <div class="form-group">
-                        <label for="comment">Tell us more details (optional)</label>
+                        <label for="comment">Расскажите подробнее</label>
                         <textarea id="comment" th:field="*{comment}" class="form-control" rows="5"
-                                  placeholder="Share your experience with this room..."
+                                  placeholder="Отзыв...."
                                   maxlength="2000"></textarea>
                         <span th:if="${#fields.hasErrors('comment')}" class="error-message"
-                              th:errors="*{comment}">Comment error</span>
+                              th:errors="*{comment}">Ошибка комментария</span>
                     </div>
 
+                    <!-- Submit Button -->
                     <div class="form-actions">
-                        <a th:href="@{/my-reviews}" class="btn btn-outline">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Update Review</button>
+                        <a th:href="@{/my-reviews}" class="btn btn-outline">Отмена</a>
+                        <button type="submit" class="btn btn-secondary">Сохранить изменения</button>
                     </div>
                 </form>
             </div>
@@ -65,8 +100,10 @@
 
     <script th:src="@{/js/main.js}"></script>
     <script>
+        // Image preview
         document.getElementById('image').addEventListener('change', function(e) {
             const preview = document.getElementById('imagePreview');
+            const slot1 = document.getElementById('photoSlot1');
             preview.innerHTML = '';
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
@@ -74,10 +111,28 @@
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     preview.appendChild(img);
+                    slot1.innerHTML = '<img src="' + e.target.result + '" alt="Фото">';
+                    slot1.style.display = 'flex';
                 }
                 reader.readAsDataURL(this.files[0]);
             }
         });
+
+        // Issue chips toggle
+        document.querySelectorAll('.issue-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateSelectedIssues();
+            });
+        });
+
+        function updateSelectedIssues() {
+            const selected = [];
+            document.querySelectorAll('.issue-chip.selected').forEach(chip => {
+                selected.push(chip.dataset.issue);
+            });
+            document.getElementById('selectedIssues').value = selected.join(',');
+        }
     </script>
 </body>
 </html>

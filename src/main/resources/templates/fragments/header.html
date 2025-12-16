@@ -1,47 +1,99 @@
 <!DOCTYPE html>
+
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:fragment="head">
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle != null} ? ${pageTitle} + ' - RUT Booking' : 'RUT Booking'">RUT Booking</title>
+
+    <title th:text="${pageTitle != null} ? ${pageTitle} + ' - РУТ Навигатор' : 'РУТ Навигатор'">РУТ Навигатор</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+
 </head>
 
+
 <header th:fragment="header" class="main-header">
+
     <div class="header-container">
+
         <a th:href="@{/}" class="logo">
-            <span class="logo-text">RUT Booking</span>
+
+            <span class="logo-icon">&#128218;</span>
+
+            <span class="logo-text">Книжный Навигатор</span>
+
         </a>
 
+
         <nav class="main-nav">
-            <a th:href="@{/}" class="nav-link">Home</a>
-            <a th:href="@{/rooms}" class="nav-link" sec:authorize="isAuthenticated()">Booking</a>
-            <a th:href="@{/login}" class="nav-link" sec:authorize="!isAuthenticated()">Booking</a>
-            <a th:href="@{/contacts}" class="nav-link">Contacts</a>
+
+            <a th:href="@{/#about}" class="nav-link">О нас</a>
+
+            <a th:href="@{/rooms}" class="nav-link" sec:authorize="isAuthenticated()">План кампуса</a>
+
+            <a th:href="@{/login}" class="nav-link" sec:authorize="!isAuthenticated()">План кампуса</a>
+
+            <a th:href="@{/contacts}" class="nav-link">Контакты</a>
+
         </nav>
 
+
         <div class="header-auth">
+
             <div sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}" class="btn btn-primary">Login</a>
+
+                <a th:href="@{/login}" class="btn-login">Войти</a>
+
             </div>
+
             <div sec:authorize="isAuthenticated()" class="user-menu">
+
                 <button class="user-btn" onclick="toggleUserDropdown()">
-                    <span th:text="${user != null} ? ${user.fullName} : 'User'">User Name</span>
-                    <span class="user-role" th:text="${user != null} ? ${user.roleDisplayName} : ''">Role</span>
+
+                    <span th:text="${user != null} ? ${user.fullName} : 'Пользователь'">Имя пользователя</span>
+
+                    <span class="user-role" th:text="${user != null} ? ${user.roleDisplayName} : ''">Роль</span>
+
                 </button>
+
                 <div class="user-dropdown" id="userDropdown">
-                    <a th:href="@{/my-bookings}" class="dropdown-item">My Bookings</a>
-                    <a th:href="@{/my-reviews}" class="dropdown-item">My Reviews</a>
-                    <a th:href="@{/favorites}" class="dropdown-item">Favorites</a>
+
+                    <a th:href="@{/my-bookings}" class="dropdown-item">Мои бронирования</a>
+
+                    <a th:href="@{/my-reviews}" class="dropdown-item">Мои отзывы</a>
+
+                    <a th:href="@{/favorites}" class="dropdown-item">Избранное</a>
+
                     <div sec:authorize="hasAnyRole('ADMIN', 'DISPATCHER')" class="dropdown-divider"></div>
-                    <a th:href="@{/admin}" class="dropdown-item" sec:authorize="hasAnyRole('ADMIN', 'DISPATCHER')">Admin Panel</a>
+
+                    <a th:href="@{/admin}" class="dropdown-item" sec:authorize="hasAnyRole('ADMIN', 'DISPATCHER')">Панель
+                        администратора</a>
+
                     <div class="dropdown-divider"></div>
+
                     <form th:action="@{/logout}" method="post" class="logout-form">
-                        <button type="submit" class="dropdown-item logout-btn">Logout</button>
+
+                        <button type="submit" class="dropdown-item logout-btn">Выйти</button>
+
                     </form>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </header>
+
 </html>

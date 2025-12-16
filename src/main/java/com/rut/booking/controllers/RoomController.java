@@ -39,14 +39,16 @@ public class RoomController {
                             @RequestParam(required = false) String search,
                             @RequestParam(required = false) String building,
                             @RequestParam(required = false) Integer floor,
+                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                            @RequestParam(required = false) ClassPeriod period,
                             Model model) {
         Long userId = userDetails != null ? userDetails.getUserId() : null;
 
         List<RoomDto> rooms;
         if (search != null && !search.isEmpty()) {
             rooms = roomService.searchRooms(search);
-        } else if (building != null || floor != null) {
-            rooms = roomService.filterRooms(building, floor, userId);
+        } else if (date != null || period != null || building != null || floor != null) {
+            rooms = roomService.filterRoomsWithAvailability(building, floor, date, period, userId);
         } else {
             rooms = roomService.getAllActiveRooms(userId);
         }
@@ -54,9 +56,12 @@ public class RoomController {
         model.addAttribute("rooms", rooms);
         model.addAttribute("buildings", roomService.getAllBuildings());
         model.addAttribute("floors", roomService.getAllFloors());
+        model.addAttribute("periods", ClassPeriod.values());
         model.addAttribute("search", search);
         model.addAttribute("selectedBuilding", building);
         model.addAttribute("selectedFloor", floor);
+        model.addAttribute("selectedDate", date);
+        model.addAttribute("selectedPeriod", period);
         model.addAttribute("user", userDetails);
 
         return "pages/rooms/list";

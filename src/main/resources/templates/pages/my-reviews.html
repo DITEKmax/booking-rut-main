@@ -1,197 +1,99 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head th:replace="~{fragments/header :: head}">
-
     <title>Мои отзывы - РУТ Навигатор</title>
-
 </head>
-
 <body>
-
-<header th:replace="~{fragments/header :: header}"></header>
-
-
-
-<main class="main-content">
-
-    <div class="my-reviews-page">
-
-        <!-- Breadcrumb -->
-
-        <div class="breadcrumb">
-
-            <a th:href="@{/rooms}">План</a> / Мои отзывы
-
-        </div>
-
-
-
-        <div class="page-header">
-
-            <h1>Мои отзывы</h1>
-
-        </div>
-
-
-
-        <!-- Search -->
-
-        <div class="search-filters" style="margin-bottom: 24px;">
-
-            <form th:action="@{/my-reviews}" method="get" class="search-form">
-
-                <div class="search-bar">
-
-                    <input type="text" name="search" th:value="${search}"
-
-                           placeholder="Поиск" class="search-input">
-
-                    <button type="submit" class="btn btn-primary">&#128269;</button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-
-
-        <!-- Filter Chips -->
-
-        <div class="filter-chips">
-
-            <button class="filter-chip">Оценка: <span class="close">&times;</span></button>
-
-            <button class="filter-chip">Новизна: <span class="close">&times;</span></button>
-
-            <button class="filter-chip">С фото: <span class="close">&times;</span></button>
-
-            <button class="filter-chip">Очистить фильтры</button>
-
-        </div>
-
-
-
-        <div th:if="${success}" class="alert alert-success" style="margin-top: 24px;">
-
-            <span th:text="${success}">Успешно</span>
-
-        </div>
-
-
-
-        <div th:if="${error}" class="alert alert-error" style="margin-top: 24px;">
-
-            <span th:text="${error}">Ошибка</span>
-
-        </div>
-
-
-
-        <!-- Empty State -->
-
-        <div th:if="${#lists.isEmpty(reviews)}" class="empty-state" style="margin-top: 24px;">
-
-            <p>Вы ещё не оставляли отзывов.</p>
-
-            <a th:href="@{/rooms}" class="btn btn-primary">Перейти к аудиториям</a>
-
-        </div>
-
-
-
-        <!-- Reviews List -->
-
-        <div th:unless="${#lists.isEmpty(reviews)}" class="reviews-list" style="margin-top: 24px;">
-
-            <div th:each="review : ${reviews}" class="my-review-card">
-
-                <div class="my-review-content">
-
-                    <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="my-review-title"
-
-                       th:text="${review.comment != null} ? ${review.comment} : 'Мой отзыв'">Мой очень полезный отзыв</a>
-
-                    <div class="my-review-date">
-
-                        <span th:text="${#temporals.format(review.createdAt, 'dd.MM')}">22.03</span>
-
-                        <span th:if="${review.updatedAt != null}"
-
-                              th:text="' / изменён ' + ${#temporals.format(review.updatedAt, 'dd.MM')}"
-
-                              style="color: var(--text-secondary);"></span>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="my-review-rating">
-
-                        <span class="stars">
-
-                            <span th:each="i : ${#numbers.sequence(1, 5)}"
-
-                                  th:classappend="${i <= review.rating} ? 'filled' : ''">&#9733;</span>
-
-                        </span>
-
-                    <a th:href="@{/reviews/edit/{id}(id=${review.id})}" class="edit-btn" title="Редактировать">
-
-                        &#9998;
-
-                    </a>
-
-                </div>
-
-
-
-                <div class="review-images">
-
-                    <div th:if="${review.imagePath != null}">
-
-                        <img th:src="${review.imagePath}" alt="Фото отзыва" class="my-review-image">
-
-                    </div>
-
-                    <div th:unless="${review.imagePath != null}" class="review-image-placeholder"></div>
-
-                </div>
-
-
-
-                <div class="review-actions" style="margin-left: 16px;">
-
-                    <form th:action="@{/reviews/delete/{id}(id=${review.id})}" method="post"
-
-                          class="inline-form" onsubmit="return confirm('Вы уверены, что хотите удалить этот отзыв?')">
-
-                        <button type="submit" class="btn btn-outline btn-sm btn-danger">Удалить</button>
-
-                    </form>
-
-                </div>
-
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="my-reviews-page">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a th:href="@{/rooms}">План</a> / Мои отзывы
             </div>
 
+            <div class="page-header">
+                <h1>Мои отзывы</h1>
+            </div>
+
+            <!-- Search -->
+            <div class="search-filters">
+                <form th:action="@{/my-reviews}" method="get" class="search-form">
+                    <div class="search-bar">
+                        <input type="text" name="search" th:value="${search}"
+                               placeholder="Поиск" class="search-input">
+                        <button type="submit" class="btn btn-primary">&#128269;</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filter Chips -->
+            <div class="filter-chips">
+                <button class="filter-chip">Оценка: <span class="close">&times;</span></button>
+                <button class="filter-chip">Новизна: <span class="close">&times;</span></button>
+                <button class="filter-chip">С фото: <span class="close">&times;</span></button>
+                <button class="filter-chip">Очистить фильтры</button>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" style="margin-top: 24px;">
+                <span th:text="${success}">Успешно</span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error" style="margin-top: 24px;">
+                <span th:text="${error}">Ошибка</span>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(reviews)}" class="empty-state" style="margin-top: 24px;">
+                <p>Вы ещё не оставляли отзывов.</p>
+                <a th:href="@{/rooms}" class="btn btn-primary">Перейти к аудиториям</a>
+            </div>
+
+            <!-- Reviews List -->
+            <div th:unless="${#lists.isEmpty(reviews)}" class="reviews-list" style="margin-top: 24px;">
+                <div th:each="review : ${reviews}" class="my-review-card">
+                    <div class="my-review-content">
+                        <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="my-review-title"
+                           th:text="${review.comment != null} ? ${review.comment} : 'Мой отзыв'">Мой очень полезный отзыв</a>
+                        <div class="my-review-date">
+                            <span th:text="${#temporals.format(review.createdAt, 'dd.MM')}">22.03</span>
+                            <span th:if="${review.updatedAt != null}"
+                                  th:text="' / изменён ' + ${#temporals.format(review.updatedAt, 'dd.MM')}"
+                                  style="color: var(--text-secondary);"></span>
+                        </div>
+                    </div>
+
+                    <div class="my-review-rating">
+                        <span class="stars">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                  th:classappend="${i <= review.rating} ? 'filled' : ''">&#9733;</span>
+                        </span>
+                        <a th:href="@{/reviews/edit/{id}(id=${review.id})}" class="edit-btn" title="Редактировать">
+                            &#9998;
+                        </a>
+                    </div>
+
+                    <div class="review-images">
+                        <div th:if="${review.imagePath != null}">
+                            <img th:src="${review.imagePath}" alt="Фото отзыва" class="my-review-image">
+                        </div>
+                        <div th:unless="${review.imagePath != null}" class="review-image-placeholder"></div>
+                    </div>
+
+                    <div class="review-actions" style="margin-left: 16px;">
+                        <form th:action="@{/reviews/delete/{id}(id=${review.id})}" method="post"
+                              class="inline-form" onsubmit="return confirm('Вы уверены, что хотите удалить этот отзыв?')">
+                            <button type="submit" class="btn btn-outline btn-sm btn-danger">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+    </main>
 
-    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-</main>
-
-
-
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-
-
-
-<script th:src="@{/js/main.js}"></script>
-
+    <script th:src="@{/js/main.js}"></script>
 </body>
-
 </html>

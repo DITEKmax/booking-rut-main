@@ -1,29 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>My Bookings - RUT Booking</title>
+    <title>Мои бронирования - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
 
     <main class="main-content">
         <div class="container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a th:href="@{/rooms}">План</a> / Мои бронирования
+            </div>
+
             <div class="page-header">
-                <h1>My Bookings</h1>
-                <a th:href="@{/rooms}" class="btn btn-primary">New Booking</a>
+                <h1>Мои бронирования</h1>
+                <a th:href="@{/rooms}" class="btn btn-primary">Новое бронирование</a>
             </div>
 
             <div th:if="${success}" class="alert alert-success">
-                <span th:text="${success}">Success message</span>
+                <span th:text="${success}">Успешно</span>
             </div>
 
             <div th:if="${error}" class="alert alert-error">
-                <span th:text="${error}">Error message</span>
+                <span th:text="${error}">Ошибка</span>
             </div>
 
             <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
-                <p>You don't have any bookings yet.</p>
-                <a th:href="@{/rooms}" class="btn btn-primary">Book a Room</a>
+                <p>У вас пока нет бронирований.</p>
+                <a th:href="@{/rooms}" class="btn btn-primary">Забронировать аудиторию</a>
             </div>
 
             <div th:unless="${#lists.isEmpty(bookings)}" class="bookings-list">
@@ -31,39 +36,39 @@
                     <div class="booking-header">
                         <span class="booking-id" th:text="'#' + ${booking.id}">#123</span>
                         <span class="status-badge" th:classappend="${booking.status.name()}"
-                              th:text="${booking.status.displayName}">Status</span>
+                              th:text="${booking.status.displayName}">Статус</span>
                     </div>
 
                     <div class="booking-details">
                         <div class="detail-row">
-                            <span class="detail-label">Room:</span>
-                            <span class="detail-value" th:text="${booking.roomDisplayName}">Room 1234</span>
+                            <span class="detail-label">Аудитория:</span>
+                            <span class="detail-value" th:text="${booking.roomDisplayName}">1125 ГУК-1</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Date:</span>
+                            <span class="detail-label">Дата:</span>
                             <span class="detail-value" th:text="${#temporals.format(booking.bookingDate, 'dd.MM.yyyy')}">01.01.2025</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Time:</span>
+                            <span class="detail-label">Время:</span>
                             <span class="detail-value" th:text="${booking.timeRange}">8:30 – 9:50</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Purpose:</span>
-                            <span class="detail-value" th:text="${booking.purpose}">Lecture</span>
+                            <span class="detail-label">Цель:</span>
+                            <span class="detail-value" th:text="${booking.purpose}">Лекция</span>
                         </div>
                         <div th:if="${booking.rejectionReason != null}" class="detail-row">
-                            <span class="detail-label">Rejection Reason:</span>
-                            <span class="detail-value error-text" th:text="${booking.rejectionReason}">Reason</span>
+                            <span class="detail-label">Причина отказа:</span>
+                            <span class="detail-value error-text" th:text="${booking.rejectionReason}">Причина</span>
                         </div>
                     </div>
 
                     <div class="booking-actions">
                         <a th:if="${booking.approved}" th:href="@{/booking/pdf/{id}(id=${booking.id})}"
-                           class="btn btn-primary btn-sm" download>Download PDF</a>
+                           class="btn btn-primary btn-sm" download>Скачать PDF</a>
                         <form th:if="${booking.canBeCancelled()}" th:action="@{/booking/cancel/{id}(id=${booking.id})}"
                               method="post" class="inline-form"
-                              onsubmit="return confirm('Are you sure you want to cancel this booking?')">
-                            <button type="submit" class="btn btn-outline btn-sm">Cancel</button>
+                              onsubmit="return confirm('Вы уверены, что хотите отменить это бронирование?')">
+                            <button type="submit" class="btn btn-outline btn-sm">Отменить</button>
                         </form>
                     </div>
                 </div>

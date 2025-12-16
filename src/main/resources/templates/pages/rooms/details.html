@@ -1,391 +1,193 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head th:replace="~{fragments/header :: head}">
-
     <title th:text="'Аудитория ' + ${room.number} + ' - РУТ Навигатор'">Информация об аудитории - РУТ Навигатор</title>
-
 </head>
-
 <body>
-
 <header th:replace="~{fragments/header :: header}"></header>
-
-
-
 <main class="main-content">
-
     <div class="room-details-page">
-
         <!-- Breadcrumb -->
-
         <div class="breadcrumb">
-
             <a th:href="@{/rooms}">План</a> / <span th:text="${room.number}">1125</span>
-
         </div>
-
-
 
         <!-- Room Detail Card -->
-
         <div class="room-detail-card">
-
             <div class="room-detail-image">
-
                 <div th:if="${room.imagePath != null}" class="image-container">
-
                     <img th:src="${room.imagePath}" th:alt="${room.number}">
-
                 </div>
-
                 <div th:unless="${room.imagePath != null}" class="image-placeholder large">
-
                     <span th:text="${room.number}">Аудитория</span>
-
                 </div>
-
             </div>
-
-
 
             <div class="room-detail-info">
-
                 <div class="room-detail-header">
-
                     <div>
-
                         <h1 th:text="${room.number} + ' ' + ${room.building}">1125 ГУК-1</h1>
-
                     </div>
-
                     <div class="room-detail-actions">
-
                         <button class="icon-btn" title="Поделиться">&#128279;</button>
-
                         <button class="icon-btn favorite-btn-icon" th:classappend="${room.isFavorite} ? 'active' : ''"
-
                                 th:data-room-id="${room.id}" onclick="toggleFavorite(this)" title="В избранное">
-
                             <span th:if="${room.isFavorite}">&#9733;</span>
-
                             <span th:unless="${room.isFavorite}">&#9734;</span>
-
                         </button>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="room-rating-large">
-
                         <span class="stars">
-
                             <span th:each="i : ${#numbers.sequence(1, 5)}"
-
                                   th:classappend="${i <= averageRating} ? 'filled' : ''">&#9733;</span>
-
                         </span>
-
                     <span class="rating-value" th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">4.5</span>
-
                     <span class="review-count" th:text="'(' + ${#lists.size(reviews)} + ' отзывов)'"> (10 отзывов)</span>
-
                 </div>
-
-
 
                 <div class="room-description">
-
                     <h4>Описание</h4>
-
                     <p th:if="${room.description != null}" th:text="${room.description}">Описание аудитории</p>
-
                     <p th:unless="${room.description != null}"
-
                        th:text="${room.roomType.displayName} + ', рассчитанная на ' + ${room.capacity} + ' человек'">
-
                         Потоковая лекционная аудитория, рассчитанная на 230 человек
-
                     </p>
-
                 </div>
-
-
 
                 <div class="room-specs">
-
                     <div class="spec-item">
-
                         <span class="spec-label">Корпус:</span>
-
                         <span class="spec-value" th:text="${room.building}">А</span>
-
                     </div>
-
                     <div class="spec-item">
-
                         <span class="spec-label">Этаж:</span>
-
                         <span class="spec-value" th:text="${room.floor}">1</span>
-
                     </div>
-
                     <div class="spec-item">
-
                         <span class="spec-label">Вместимость:</span>
-
                         <span class="spec-value" th:text="${room.capacity} + ' мест'">30 мест</span>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="room-equipment">
-
                     <h4>Оборудование</h4>
-
                     <div class="equipment-list">
-
                         <span th:if="${room.hasComputers}" class="equipment-badge">&#128187; Компьютеры</span>
-
                         <span th:if="${room.hasProjector}" class="equipment-badge">&#128253; Проектор</span>
-
                         <span th:if="${room.hasWhiteboard}" class="equipment-badge">&#128221; Доска</span>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="room-main-actions">
-
                     <a th:unless="${hasReviewed}" th:href="@{/reviews/room/{id}/new(id=${room.id})}"
-
                        class="btn btn-light">Оценить</a>
-
                     <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary">Забронировать</a>
-
                 </div>
-
             </div>
-
         </div>
 
-
-
         <!-- Reviews Section -->
-
         <div class="reviews-section">
-
             <!-- Search -->
-
             <div class="search-filters" style="margin-bottom: 24px;">
-
                 <form th:action="@{/rooms/{id}(id=${room.id})}" method="get" class="search-form">
-
                     <div class="search-bar">
-
                         <input type="text" name="searchReview" placeholder="Поиск" class="search-input">
-
                         <button type="submit" class="btn btn-primary">&#128269;</button>
-
                     </div>
-
                 </form>
-
             </div>
-
-
 
             <!-- Filter Chips -->
-
             <div class="filter-chips">
-
                 <button class="filter-chip">Автор: <span class="close">&times;</span></button>
-
                 <button class="filter-chip">Оценка: <span class="close">&times;</span></button>
-
                 <button class="filter-chip">Новизна: <span class="close">&times;</span></button>
-
                 <button class="filter-chip">С фото: <span class="close">&times;</span></button>
-
                 <button class="filter-chip">Очистить фильтры</button>
-
             </div>
 
-
-
             <!-- Reviews List -->
-
             <div class="reviews-list" style="margin-top: 24px;">
-
                 <div th:if="${#lists.isEmpty(reviews)}" class="no-reviews">
-
                     <p>Отзывов пока нет. Будьте первым, кто оставит отзыв об этой аудитории!</p>
-
                 </div>
 
-
-
                 <div th:each="review : ${reviews}" class="review-card">
-
                     <div class="review-quote">//</div>
-
                     <div class="review-body">
-
                         <div class="review-content">
-
                             <p th:if="${review.comment != null}" th:text="${review.comment}">Тут очень полезный отзыв</p>
-
                             <p th:unless="${review.comment != null}">Отзыв без комментария</p>
-
                         </div>
 
                         <div class="review-author-section">
-
                             <div class="review-avatar" th:text="${#strings.substring(review.userName, 0, 1)}">И</div>
-
                             <div class="review-author-info">
-
                                 <div class="review-author" th:text="${review.userName}">Игорь</div>
-
                                 <div class="review-role">Пользователь</div>
-
                             </div>
-
                             <div class="review-rating">
-
                                     <span class="stars">
-
                                         <span th:each="i : ${#numbers.sequence(1, 5)}"
-
                                               th:classappend="${i <= review.rating} ? 'filled' : ''">&#9733;</span>
-
                                     </span>
-
                             </div>
-
                         </div>
-
                     </div>
-
                     <div class="review-images">
-
                         <div th:if="${review.imagePath != null}">
-
                             <img th:src="${review.imagePath}" alt="Фото отзыва">
-
                         </div>
-
                         <div th:unless="${review.imagePath != null}" class="review-image-placeholder"></div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
-
 
         <!-- Similar Rooms Section -->
-
         <div th:if="${!#lists.isEmpty(similarRooms)}" class="similar-rooms-section">
-
             <h2>Может подойти</h2>
 
-
-
             <!-- Search for similar -->
-
             <div class="search-filters" style="margin-bottom: 24px;">
-
                 <div class="search-bar">
-
                     <input type="text" placeholder="Поиск" class="search-input">
-
                     <button class="btn btn-primary">&#128269;</button>
-
                 </div>
-
             </div>
-
-
 
             <div class="similar-rooms-grid">
-
                 <div th:each="similarRoom : ${similarRooms}" class="room-card">
-
                     <div class="room-image">
-
                         <div th:if="${similarRoom.imagePath != null}" class="image-container">
-
                             <img th:src="${similarRoom.imagePath}" th:alt="${similarRoom.number}">
-
                         </div>
-
                         <div th:unless="${similarRoom.imagePath != null}" class="image-placeholder">
-
                             <span th:text="${similarRoom.number}">Аудитория</span>
-
                         </div>
-
                     </div>
-
                     <div class="room-info">
-
                         <h3 class="room-number" th:text="${similarRoom.number}">1124</h3>
-
                         <div class="room-rating">
-
                                 <span class="rating-badge"
-
                                       th:classappend="${similarRoom.averageRating >= 4} ? 'good' : 'average'"
-
                                       th:text="${#numbers.formatDecimal(similarRoom.averageRating, 1, 1)}">4.0</span>
-
                         </div>
-
                         <p class="room-type" th:text="${similarRoom.roomType.displayName}">Компьютерная аудитория</p>
-
                         <p class="room-meta" th:text="${similarRoom.capacity} + ' мест'">100 мест</p>
-
                         <p th:if="${similarRoom.hasProjector}" class="feature-badge">Есть проектор</p>
-
                         <a th:href="@{/rooms/{id}(id=${similarRoom.id})}" class="btn btn-outline btn-sm">Подробнее</a>
-
                     </div>
-
                 </div>
-
             </div>
-
-
-
             <button class="show-more-btn">Показать ещё</button>
-
         </div>
-
     </div>
-
 </main>
-
-
-
 <footer th:replace="~{fragments/footer :: footer}"></footer>
-
-
-
 <script th:src="@{/js/main.js}"></script>
-
 </body>
-
 </html>

@@ -1,435 +1,218 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head th:replace="~{fragments/header :: head}">
-
     <title>Главная - РУТ Навигатор</title>
-
 </head>
-
 <body>
-
 <header th:replace="~{fragments/header :: header}"></header>
 
-
-
 <nav class="sub-nav">
-
     <div class="sub-nav-container">
-
         <a href="#about" class="sub-nav-link">О нас</a>
-
         <a href="#features" class="sub-nav-link">Преимущества</a>
-
         <a href="#faq" class="sub-nav-link">Вопросы</a>
-
         <a th:href="@{/contacts}" class="sub-nav-link">Контакты</a>
-
     </div>
-
 </nav>
 
-
-
 <main class="main-content" style="padding: 0; background: white;">
-
     <!-- Hero Section -->
-
     <section class="hero">
-
         <div class="hero-container">
-
             <div class="hero-content">
-
                 <h1>РУТ навигатор</h1>
-
                 <p class="hero-subtitle">Удобная система навигации и бронирования аудиторий Российского университета транспорта</p>
-
                 <a th:href="@{/rooms}" class="btn btn-primary btn-lg" sec:authorize="isAuthenticated()">Перейти к плану</a>
-
                 <a th:href="@{/login}" class="btn btn-primary btn-lg" sec:authorize="!isAuthenticated()">Войти</a>
-
             </div>
-
             <div class="hero-stats">
-
                 <div class="stat-item">
-
                     <div class="stat-icon">&#128101;</div>
-
                     <div class="stat-info">
-
                         <h4>1000+</h4>
-
                         <p>Всего пользователей</p>
-
                     </div>
-
                 </div>
-
                 <div class="stat-item">
-
                     <div class="stat-icon">&#127979;</div>
-
                     <div class="stat-info">
-
                         <h4>500+</h4>
-
                         <p>Аудиторий</p>
-
                     </div>
-
                 </div>
-
                 <div class="stat-item">
-
                     <div class="stat-icon">&#128205;</div>
-
                     <div class="stat-info">
-
                         <h4>15</h4>
-
                         <p>Корпусов</p>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- Problem Section -->
-
     <section class="problem-section">
-
         <div class="problem-container">
-
             <h2 class="problem-title">Существующие сейчас варианты поиска аудиторий неудобны и непонятны</h2>
-
             <div class="problem-list">
-
                 <div class="problem-item">
-
                     <div class="problem-number">01</div>
-
                     <p class="problem-text">Пожарные планы недостаточно информативны для навигации по университету. На них сложно найти нужную аудиторию и понять маршрут.</p>
-
                 </div>
-
                 <div class="problem-item">
-
                     <div class="problem-number">02</div>
-
                     <p class="problem-text">Указатели расположены в неподходящих местах и не всегда актуальны. Студенты и преподаватели тратят много времени на поиск нужных помещений.</p>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- Features Section -->
-
     <section id="features" class="features-section">
-
         <div class="features-container">
-
             <div class="features-grid">
-
                 <div class="feature-card">
-
                     <div class="feature-image">&#128506;</div>
-
                     <h3 class="feature-title">Мы разработали удобный и понятный план</h3>
-
                 </div>
-
                 <div class="feature-card">
-
                     <div class="feature-image">&#128196;</div>
-
                     <h3 class="feature-title">Добавили полезную информацию об аудиториях</h3>
-
                 </div>
-
                 <div class="feature-card">
-
                     <div class="feature-image">&#128204;</div>
-
                     <h3 class="feature-title">Отметили важные места и объекты</h3>
-
                 </div>
-
                 <div class="feature-card">
-
                     <div class="feature-image">&#128241;</div>
-
                     <h3 class="feature-title">Теперь план всегда будет под рукой</h3>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- About Section -->
-
     <section id="about" class="section about-section">
-
         <div class="container">
-
             <h2 class="section-title">О проекте</h2>
-
             <div class="about-content">
-
                 <div class="about-text">
-
                     <p>Система бронирования аудиторий Российского университета транспорта (МИИТ) — это современная платформа, разработанная для упрощения процесса поиска и резервирования учебных помещений.</p>
-
                     <p>Наша система предоставляет удобный способ найти и забронировать доступные аудитории с учётом ваших требований: вместимости, оборудования и временных слотов.</p>
-
                     <p>Благодаря автоматическому одобрению для свободных помещений и мгновенной генерации PDF-подтверждений, бронирование аудитории стало проще, чем когда-либо.</p>
-
                     <div class="about-cta" sec:authorize="!isAuthenticated()">
-
                         <a th:href="@{/login}" class="btn btn-primary">Войти в систему</a>
-
                     </div>
-
                     <div class="about-cta" sec:authorize="isAuthenticated()">
-
                         <span class="already-registered">Вы уже авторизованы в системе</span>
-
                     </div>
-
                 </div>
-
                 <div class="about-image">
-
                     <div class="image-placeholder">
-
                         <span>Здание РУТ (МИИТ)</span>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- Advantages Section -->
-
     <section id="advantages" class="section advantages-section">
-
         <div class="container">
-
             <h2 class="section-title">Преимущества</h2>
-
             <div class="advantages-grid">
-
                 <div class="advantage-card">
-
                     <div class="advantage-icon">&#128197;</div>
-
                     <h3>Удобное расписание</h3>
-
                     <p>Просматривайте доступные временные слоты и бронируйте аудитории в несколько кликов</p>
-
                 </div>
 
                 <div class="advantage-card">
-
                     <div class="advantage-icon">&#9889;</div>
-
                     <h3>Мгновенное одобрение</h3>
-
                     <p>Автоматическое подтверждение для свободных аудиторий — никакого ожидания</p>
-
                 </div>
 
                 <div class="advantage-card">
-
                     <div class="advantage-icon">&#128196;</div>
-
                     <h3>PDF-подтверждение</h3>
-
                     <p>Скачивайте официальные документы подтверждения бронирования мгновенно</p>
-
                 </div>
-
                 <div class="advantage-card">
-
                     <div class="advantage-icon">&#128269;</div>
-
                     <h3>Умный поиск</h3>
-
                     <p>Находите аудитории по корпусу, этажу, вместимости и оборудованию</p>
-
                 </div>
-
                 <div class="advantage-card">
-
                     <div class="advantage-icon">&#11088;</div>
-
                     <h3>Отзывы и рейтинги</h3>
-
                     <p>Читайте отзывы других пользователей для более осознанного выбора</p>
-
                 </div>
-
                 <div class="advantage-card">
-
                     <div class="advantage-icon">&#128279;</div>
-
                     <h3>Избранное</h3>
-
                     <p>Сохраняйте любимые аудитории для быстрого доступа</p>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- FAQ Section -->
-
     <section id="faq" class="section faq-section">
-
         <div class="container">
-
             <h2 class="section-title">Часто задаваемые вопросы</h2>
-
             <div class="faq-list">
-
                 <div class="faq-item">
-
                     <button class="faq-question" onclick="toggleFaq(this)">
-
                         <span>Как забронировать аудиторию?</span>
-
                         <span class="faq-icon">+</span>
-
                     </button>
-
                     <div class="faq-answer">
-
                         <p>Для бронирования аудитории войдите в свой аккаунт, выберите подходящую аудиторию из списка, укажите желаемую дату и временной слот, затем отправьте заявку на бронирование. Одобренные заявки автоматически генерируют PDF-подтверждение.</p>
-
                     </div>
-
                 </div>
-
                 <div class="faq-item">
-
                     <button class="faq-question" onclick="toggleFaq(this)">
-
                         <span>Можно ли отменить бронирование?</span>
-
                         <span class="faq-icon">+</span>
-
                     </button>
-
                     <div class="faq-answer">
-
                         <p>Да, вы можете отменить бронирование до назначенного времени. Перейдите в раздел "Мои бронирования" и нажмите кнопку отмены рядом с нужной записью.</p>
-
                     </div>
-
                 </div>
-
                 <div class="faq-item">
-
                     <button class="faq-question" onclick="toggleFaq(this)">
-
                         <span>Как найти аудиторию с определённым оборудованием?</span>
-
                         <span class="faq-icon">+</span>
-
                     </button>
-
                     <div class="faq-answer">
-
                         <p>Используйте фильтры на странице аудиторий для поиска по корпусу, этажу и типу оборудования (компьютеры, проектор, доска). Также можно воспользоваться строкой поиска для поиска по номеру аудитории.</p>
-
                     </div>
-
                 </div>
-
                 <div class="faq-item">
-
                     <button class="faq-question" onclick="toggleFaq(this)">
-
                         <span>Какие временные слоты доступны для бронирования?</span>
-
                         <span class="faq-icon">+</span>
-
                     </button>
-
                     <div class="faq-answer">
-
                         <p>Бронирование соответствует расписанию университета с 8 парами: 8:30-9:50, 10:05-11:25, 11:40-13:00, 13:45-15:05, 15:20-16:40, 16:55-18:15, 18:30-19:50 и 20:00-21:20.</p>
-
                     </div>
-
                 </div>
-
                 <div class="faq-item">
-
                     <button class="faq-question" onclick="toggleFaq(this)">
-
                         <span>Как скачать подтверждение бронирования?</span>
-
                         <span class="faq-icon">+</span>
-
                     </button>
-
                     <div class="faq-answer">
-
                         <p>После одобрения бронирования вы можете скачать PDF-подтверждение на странице подтверждения или в разделе "Мои бронирования", нажав кнопку загрузки.</p>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
 </main>
-
-
-
 <footer th:replace="~{fragments/footer :: footer}"></footer>
-
-
-
 <script th:src="@{/js/main.js}"></script>
-
 </body>
-
 </html>

@@ -1,187 +1,91 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{fragments/header :: head}">
-
     <title>Вход - РУТ Навигатор</title>
-
 </head>
-
 <body class="login-page">
-
 <!-- Login Header -->
-
 <div class="login-header">
-
     <div class="login-header-icon">&#128100;</div>
-
     <a th:href="@{/login}">Войти</a>
-
 </div>
-
-
 
 <!-- Main Title -->
-
 <h1 class="login-title-main">Российский университет транспорта</h1>
 
-
-
 <div class="login-content">
-
     <!-- Left Column - Form -->
-
     <div class="login-form-section">
-
         <div class="login-card">
-
             <div th:if="${error}" class="alert alert-error">
-
                 <span th:text="${error}">Неверные учетные данные</span>
-
             </div>
-
-
 
             <div th:if="${message}" class="alert alert-success">
-
                 <span th:text="${message}">Успешно</span>
-
             </div>
-
-
 
             <form th:action="@{/login}" method="post" class="login-form">
-
                 <div class="form-group">
-
                     <label for="email">Почта</label>
-
                     <input type="email" id="email" name="email" class="form-control"
-
                            placeholder="Введите email" required>
-
                 </div>
-
-
 
                 <div class="form-group">
-
                     <label for="password">Пароль</label>
-
                     <div class="password-input-wrapper">
-
                         <input type="password" id="password" name="password" class="form-control"
-
                                placeholder="Введите пароль" required>
-
                         <button type="button" class="password-toggle" onclick="togglePassword()">
-
                             <span id="eyeIcon">&#128065;</span>
-
                         </button>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="form-group checkbox-group">
-
                     <label class="checkbox-label">
-
                         <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-
                         <span>Я согласен с условиями <a th:href="@{/policies}" target="_blank">политики конфиденциальности</a></span>
-
                     </label>
-
                 </div>
-
-
-
                 <button type="submit" class="btn btn-secondary btn-block">Войти</button>
-
             </form>
-
-
-
             <div class="login-divider">
-
                 <span>Или зайти через</span>
-
             </div>
-
-
-
             <button type="button" class="gosuslugi-btn" onclick="alert('Вход через Госуслуги временно недоступен')">
-
                 <span class="gosuslugi-logo">гос<span>услуги</span></span>
-
             </button>
-
         </div>
-
     </div>
-
-
 
     <!-- Right Column - Image -->
-
     <div class="login-image-section">
-
         <div class="login-image-placeholder">
-
             <span>Здание РУТ (МИИТ)</span>
-
         </div>
-
     </div>
-
 </div>
-
-
 
 <!-- Footer -->
-
 <div class="login-footer">
-
     <p>&copy; 2024 "Российский университет транспорта (МИИТ)"</p>
-
 </div>
-
-
-
 <script th:src="@{/js/main.js}"></script>
-
 <script>
-
     function togglePassword() {
-
         const passwordInput = document.getElementById('password');
-
         const eyeIcon = document.getElementById('eyeIcon');
 
         if (passwordInput.type === 'password') {
-
             passwordInput.type = 'text';
-
             eyeIcon.innerHTML = '&#128064;';
-
         } else {
-
             passwordInput.type = 'password';
-
             eyeIcon.innerHTML = '&#128065;';
-
         }
-
     }
-
 </script>
-
 </body>
-
 </html>

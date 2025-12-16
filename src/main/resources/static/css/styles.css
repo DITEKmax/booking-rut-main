@@ -3099,19 +3099,14 @@ textarea.form-control {
 
 @media print {
     .main-header,
-
     .main-footer,
-
     .sidebar,
-
     .btn {
         display: none !important;
     }
-
     body {
         background: white;
     }
-
     .main-content {
         padding: 0;
     }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Reviews - RUT Booking</title>
+    <title>Dispatcher Issues - RUT Booking</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
@@ -14,17 +14,14 @@
                     <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
                     <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
                     <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
-                    <a th:href="@{/admin/reviews}" class="admin-nav-link active">Reviews</a>
-                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Reported Issues</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link active">Reported Issues</a>
                 </nav>
             </aside>
 
             <!-- Admin Content -->
             <div class="admin-content">
-                <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h1>All Reviews</h1>
-                    <a th:href="@{/admin/deleted-reviews}" class="btn btn-outline">View Deleted Reviews</a>
-                </div>
+                <h1>Reported Issues from Reviews</h1>
 
                 <div th:if="${success}" class="alert alert-success">
                     <span th:text="${success}">Success message</span>
@@ -34,71 +31,72 @@
                     <span th:text="${error}">Error message</span>
                 </div>
 
-                <!-- Filters -->
-                <form th:action="@{/admin/reviews}" method="get" class="filter-form admin-filters">
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label for="roomId">Room</label>
-                            <select name="roomId" id="roomId" class="filter-select">
-                                <option value="">All Rooms</option>
-                                <option th:each="r : ${rooms}" th:value="${r.id}"
-                                        th:text="'Room ' + ${r.number}" th:selected="${selectedRoomId == r.id}">Room</option>
-                            </select>
-                        </div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    This page shows all reviews where users have reported problems with classrooms.
+                    Issues include: broken equipment, missing markers, cleanliness problems, etc.
+                </p>
 
-                        <div class="filter-actions">
-                            <button type="submit" class="btn btn-primary">Apply</button>
-                            <a th:href="@{/admin/reviews}" class="btn btn-outline">Clear</a>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- Reviews Table -->
+                <!-- Issues Table -->
                 <div class="bookings-table-container">
                     <table class="admin-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>User</th>
-                                <th>Room</th>
-                                <th>Rating</th>
-                                <th>Comment</th>
                                 <th>Date</th>
+                                <th>Room</th>
+                                <th>User</th>
+                                <th>Rating</th>
+                                <th>Issues Reported</th>
+                                <th>Comment</th>
                                 <th>Image</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${#lists.isEmpty(reviews)}">
-                                <td colspan="8" class="no-data">No reviews found</td>
+                                <td colspan="9" class="no-data">No issues reported</td>
                             </tr>
                             <tr th:each="review : ${reviews}">
                                 <td th:text="${review.id}">#123</td>
-                                <td th:text="${review.userName}">User Name</td>
+                                <td th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025 10:00</td>
                                 <td th:text="'Room ' + ${review.roomNumber}">Room 1234</td>
+                                <td th:text="${review.userName}">User Name</td>
                                 <td>
                                     <span class="rating-stars">
                                         <span th:each="i : ${#numbers.sequence(1, review.rating)}">⭐</span>
                                     </span>
                                     <span th:text="${review.rating}">(5)</span>
                                 </td>
+                                <td>
+                                    <div class="issues-list">
+                                        <span th:each="issue, iterStat : ${#strings.arraySplit(review.issues, ',')}"
+                                              class="issue-badge"
+                                              th:text="${issue}">Issue</span>
+                                    </div>
+                                </td>
                                 <td class="purpose-cell" th:text="${review.comment}">Great room!</td>
-                                <td th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025 10:00</td>
                                 <td>
                                     <a th:if="${review.imagePath}" th:href="${review.imagePath}" target="_blank" class="btn btn-outline btn-sm">View</a>
                                     <span th:unless="${review.imagePath}">-</span>
                                 </td>
                                 <td class="actions-cell">
                                     <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="btn btn-outline btn-sm">View Room</a>
-                                    <form th:if="${user.admin}" th:action="@{/reviews/delete/{id}(id=${review.id}, redirectUrl='/admin/reviews')}" method="post"
-                                          style="display: inline-block; margin-left: 8px;"
-                                          onsubmit="return confirm('Are you sure you want to delete this review?')">
-                                        <button type="submit" class="btn btn-outline btn-sm btn-danger">Delete</button>
-                                    </form>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(reviews)}" style="margin-top: 20px; padding: 15px; background: var(--light-bg); border-radius: var(--radius-md);">
+                    <h3 style="margin-bottom: 10px;">Issue Types:</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>🔧 <strong>Не работает проектор</strong> - Projector doesn't work</li>
+                        <li>✏️ <strong>Нет маркеров</strong> - No markers</li>
+                        <li>🪑 <strong>Сломана парта/стул</strong> - Broken furniture</li>
+                        <li>💻 <strong>Не работает компьютер</strong> - Computer doesn't work</li>
+                        <li>🪟 <strong>Сломано окно</strong> - Broken window</li>
+                        <li>🧹 <strong>Грязно</strong> - Dirty</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -107,5 +105,24 @@
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <script th:src="@{/js/main.js}"></script>
+
+    <style>
+        .issues-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .issue-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #856404;
+            white-space: nowrap;
+        }
+    </style>
 </body>
 </html>

@@ -7,10 +7,22 @@
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="main-content" style="background: white; padding: 0;">
-        <div style="max-width: 100%; background: white; padding: 40px;">
-            <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); padding: 40px;">
-                <h1 style="margin-bottom: 30px;">Classroom Occupancy Calendar</h1>
+    <main class="main-content">
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link active">Calendar</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Reported Issues</a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <h1>Classroom Occupancy Calendar</h1>
 
                 <!-- Room Filter -->
                 <div class="calendar-filters">
@@ -26,42 +38,43 @@
                     </form>
                 </div>
 
-                <!-- Calendar -->
-                <div class="calendar-container">
-                    <div class="calendar-header">
-                        <button class="btn btn-outline" onclick="navigateWeek(-1)">&larr; Previous Week</button>
-                        <div class="calendar-month-display">
-                            <h2 id="currentMonthYear">January 2025</h2>
-                            <p id="currentWeekRange" style="font-size: 0.9rem; color: #666; margin: 0;">Week</p>
+                    <!-- Calendar -->
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button class="btn btn-outline" onclick="navigateWeek(-1)">&larr; Previous Week</button>
+                            <div class="calendar-month-display">
+                                <h2 id="currentMonthYear">January 2025</h2>
+                                <p id="currentWeekRange" style="font-size: 0.9rem; color: #666; margin: 0;">Week</p>
+                            </div>
+                            <button class="btn btn-outline" onclick="navigateWeek(1)">Next Week &rarr;</button>
                         </div>
-                        <button class="btn btn-outline" onclick="navigateWeek(1)">Next Week &rarr;</button>
-                    </div>
 
-                    <div class="calendar-legend">
-                        <span class="legend-item"><span class="legend-color approved"></span> Approved</span>
-                        <span class="legend-item"><span class="legend-color pending"></span> Pending</span>
-                        <span class="legend-item"><span class="legend-color rejected"></span> Rejected</span>
-                    </div>
+                        <div class="calendar-legend">
+                            <span class="legend-item"><span class="legend-color approved"></span> Approved</span>
+                            <span class="legend-item"><span class="legend-color pending"></span> Pending</span>
+                            <span class="legend-item"><span class="legend-color rejected"></span> Rejected</span>
+                        </div>
 
-                    <!-- Time-Tree Calendar -->
-                    <div class="timetable-container">
-                        <table class="timetable">
-                            <thead>
-                                <tr>
-                                    <th class="time-column">Time</th>
-                                    <th class="day-column" id="day-0">Mon</th>
-                                    <th class="day-column" id="day-1">Tue</th>
-                                    <th class="day-column" id="day-2">Wed</th>
-                                    <th class="day-column" id="day-3">Thu</th>
-                                    <th class="day-column" id="day-4">Fri</th>
-                                    <th class="day-column" id="day-5">Sat</th>
-                                    <th class="day-column" id="day-6">Sun</th>
-                                </tr>
-                            </thead>
-                            <tbody id="timetableBody">
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
+                        <!-- Time-Tree Calendar -->
+                        <div class="timetable-container">
+                            <table class="timetable">
+                                <thead>
+                                    <tr>
+                                        <th class="time-column">Time</th>
+                                        <th class="day-column" id="day-0">Mon</th>
+                                        <th class="day-column" id="day-1">Tue</th>
+                                        <th class="day-column" id="day-2">Wed</th>
+                                        <th class="day-column" id="day-3">Thu</th>
+                                        <th class="day-column" id="day-4">Fri</th>
+                                        <th class="day-column" id="day-5">Sat</th>
+                                        <th class="day-column" id="day-6">Sun</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timetableBody">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -12,32 +12,43 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    List<Review> findByUserId(Long userId);
+    @Query("SELECT r FROM Review r WHERE r.user.id = :userId AND (r.isDeleted = false OR r.isDeleted IS NULL)")
+    List<Review> findByUserId(@Param("userId") Long userId);
 
-    List<Review> findByUserIdOrderByCreatedAtDesc(Long userId);
+    @Query("SELECT r FROM Review r WHERE r.user.id = :userId AND (r.isDeleted = false OR r.isDeleted IS NULL) ORDER BY r.createdAt DESC")
+    List<Review> findByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId);
 
-    List<Review> findByRoomId(Long roomId);
+    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId AND (r.isDeleted = false OR r.isDeleted IS NULL)")
+    List<Review> findByRoomId(@Param("roomId") Long roomId);
 
-    List<Review> findByRoomIdOrderByCreatedAtDesc(Long roomId);
+    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId AND (r.isDeleted = false OR r.isDeleted IS NULL) ORDER BY r.createdAt DESC")
+    List<Review> findByRoomIdOrderByCreatedAtDesc(@Param("roomId") Long roomId);
 
-    Optional<Review> findByUserIdAndRoomId(Long userId, Long roomId);
+    @Query("SELECT r FROM Review r WHERE r.user.id = :userId AND r.room.id = :roomId AND (r.isDeleted = false OR r.isDeleted IS NULL)")
+    Optional<Review> findByUserIdAndRoomId(@Param("userId") Long userId, @Param("roomId") Long roomId);
 
-    boolean existsByUserIdAndRoomId(Long userId, Long roomId);
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Review r WHERE r.user.id = :userId AND r.room.id = :roomId AND (r.isDeleted = false OR r.isDeleted IS NULL)")
+    boolean existsByUserIdAndRoomId(@Param("userId") Long userId, @Param("roomId") Long roomId);
 
-    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.room.id = :roomId")
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.room.id = :roomId AND (r.isDeleted = false OR r.isDeleted IS NULL)")
     Double getAverageRatingForRoom(@Param("roomId") Long roomId);
 
-    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId ORDER BY " +
+    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId AND (r.isDeleted = false OR r.isDeleted IS NULL) ORDER BY " +
             "CASE WHEN :sortBy = 'rating' THEN r.rating END DESC, " +
             "CASE WHEN :sortBy = 'date' THEN r.createdAt END DESC")
     List<Review> findByRoomIdWithSort(@Param("roomId") Long roomId, @Param("sortBy") String sortBy);
 
-    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId AND r.imagePath IS NOT NULL ORDER BY r.createdAt DESC")
+    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId AND r.imagePath IS NOT NULL AND (r.isDeleted = false OR r.isDeleted IS NULL) ORDER BY r.createdAt DESC")
     List<Review> findByRoomIdWithPhotos(@Param("roomId") Long roomId);
 
-    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId AND r.rating = :rating ORDER BY r.createdAt DESC")
+    @Query("SELECT r FROM Review r WHERE r.room.id = :roomId AND r.rating = :rating AND (r.isDeleted = false OR r.isDeleted IS NULL) ORDER BY r.createdAt DESC")
     List<Review> findByRoomIdAndRating(@Param("roomId") Long roomId, @Param("rating") Integer rating);
 
-    @Query("SELECT r FROM Review r ORDER BY r.createdAt DESC")
+    @Query("SELECT r FROM Review r WHERE (r.isDeleted = false OR r.isDeleted IS NULL) ORDER BY r.createdAt DESC")
     List<Review> findAllOrderByCreatedAtDesc();
+
+    @Query("SELECT r FROM Review r WHERE r.issues IS NOT NULL AND r.issues != '' AND (r.isDeleted = false OR r.isDeleted IS NULL) ORDER BY r.createdAt DESC")
+    List<Review> findReviewsWithIssues();
+
+    List<Review> findByIsDeletedTrue();
 }

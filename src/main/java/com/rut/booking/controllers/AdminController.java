@@ -159,6 +159,30 @@ public class AdminController {
     // @PostMapping("/reviews/{id}/delete")
     // public String deleteReview(...) { ... }
 
+    @GetMapping("/dispatcher-issues")
+    public String dispatcherIssues(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        List<ReviewDto> reviewsWithIssues = reviewService.getReviewsWithIssues();
+        List<RoomDto> rooms = roomService.getAllActiveRooms();
+
+        model.addAttribute("reviews", reviewsWithIssues);
+        model.addAttribute("rooms", rooms);
+        model.addAttribute("user", userDetails);
+
+        return "admin/dispatcher-issues";
+    }
+
+    @GetMapping("/deleted-reviews")
+    public String deletedReviews(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        List<ReviewDto> deletedReviews = reviewService.getDeletedReviews();
+        List<RoomDto> rooms = roomService.getAllActiveRooms();
+
+        model.addAttribute("reviews", deletedReviews);
+        model.addAttribute("rooms", rooms);
+        model.addAttribute("user", userDetails);
+
+        return "admin/deleted-reviews";
+    }
+
     @GetMapping("/api/reviews")
     @ResponseBody
     public ResponseEntity<List<ReviewDto>> getAllReviews(@RequestParam(required = false) Long roomId) {

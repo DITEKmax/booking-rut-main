@@ -1282,6 +1282,10 @@ textarea.form-control {
     transition: var(--transition);
 }
 
+.room-card.clickable-card {
+    cursor: pointer;
+}
+
 .room-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
@@ -1353,6 +1357,28 @@ textarea.form-control {
 
 .room-info {
     padding: var(--space-lg);
+    position: relative;
+}
+
+.availability-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.availability-badge.available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.availability-badge.unavailable {
+    background: #f8d7da;
+    color: #721c24;
 }
 
 .room-number {
@@ -1776,9 +1802,62 @@ textarea.form-control {
 
 .similar-rooms-grid {
     display: flex;
-    gap: var(--space-lg);
+    gap: var(--space-md);
     overflow-x: auto;
     padding-bottom: var(--space-md);
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.similar-rooms-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.similar-rooms-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.similar-rooms-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.similar-rooms-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Make room cards in similar rooms grid smaller */
+.similar-rooms-grid .room-card {
+    min-width: 240px;
+    max-width: 240px;
+    flex-shrink: 0;
+}
+
+.similar-rooms-grid .room-card .room-image {
+    height: 140px;
+}
+
+.similar-rooms-grid .room-card .room-info {
+    padding: var(--space-sm);
+}
+
+.similar-rooms-grid .room-card .room-number {
+    font-size: 0.95rem;
+}
+
+.similar-rooms-grid .room-card .room-type {
+    font-size: 0.75rem;
+}
+
+.similar-rooms-grid .room-card .room-meta {
+    font-size: 0.75rem;
+}
+
+.similar-rooms-grid .room-card .feature-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
 }
 
 .similar-room-card {
@@ -2699,9 +2778,25 @@ textarea.form-control {
     color: var(--text-secondary);
 }
 
+.filter-group select,
+.filter-group input[type="date"] {
+    min-height: 38px;
+    height: 38px;
+}
+
 .filter-actions {
     display: flex;
     gap: var(--space-sm);
+    align-items: center;
+}
+
+.filter-actions .btn {
+    height: 38px;
+    min-height: 38px;
+    padding: 0 var(--space-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ===== Admin Table ===== */
@@ -3110,4 +3205,12 @@ textarea.form-control {
     .main-content {
         padding: 0;
     }
+}.filter-tag {
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: inline-block;
 }

@@ -7,20 +7,10 @@
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="main-content">
-        <div class="admin-container">
-            <!-- Admin Sidebar -->
-            <aside class="admin-sidebar">
-                <nav class="admin-nav">
-                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
-                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
-                    <a th:href="@{/admin/calendar}" class="admin-nav-link active">Calendar</a>
-                </nav>
-            </aside>
-
-            <!-- Admin Content -->
-            <div class="admin-content">
-                <h1>Classroom Occupancy Calendar</h1>
+    <main class="main-content" style="background: white; padding: 0;">
+        <div style="max-width: 100%; background: white; padding: 40px;">
+            <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); padding: 40px;">
+                <h1 style="margin-bottom: 30px;">Classroom Occupancy Calendar</h1>
 
                 <!-- Room Filter -->
                 <div class="calendar-filters">
@@ -39,9 +29,12 @@
                 <!-- Calendar -->
                 <div class="calendar-container">
                     <div class="calendar-header">
-                        <button class="btn btn-outline" onclick="navigateMonth(-1)">&larr; Previous</button>
-                        <h2 id="currentMonth">January 2025</h2>
-                        <button class="btn btn-outline" onclick="navigateMonth(1)">Next &rarr;</button>
+                        <button class="btn btn-outline" onclick="navigateWeek(-1)">&larr; Previous Week</button>
+                        <div class="calendar-month-display">
+                            <h2 id="currentMonthYear">January 2025</h2>
+                            <p id="currentWeekRange" style="font-size: 0.9rem; color: #666; margin: 0;">Week</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="navigateWeek(1)">Next Week &rarr;</button>
                     </div>
 
                     <div class="calendar-legend">
@@ -50,22 +43,26 @@
                         <span class="legend-item"><span class="legend-color rejected"></span> Rejected</span>
                     </div>
 
-                    <div class="calendar-grid">
-                        <div class="calendar-day-header">Mon</div>
-                        <div class="calendar-day-header">Tue</div>
-                        <div class="calendar-day-header">Wed</div>
-                        <div class="calendar-day-header">Thu</div>
-                        <div class="calendar-day-header">Fri</div>
-                        <div class="calendar-day-header">Sat</div>
-                        <div class="calendar-day-header">Sun</div>
-                        <div id="calendarDays" class="calendar-days"></div>
+                    <!-- Time-Tree Calendar -->
+                    <div class="timetable-container">
+                        <table class="timetable">
+                            <thead>
+                                <tr>
+                                    <th class="time-column">Time</th>
+                                    <th class="day-column" id="day-0">Mon</th>
+                                    <th class="day-column" id="day-1">Tue</th>
+                                    <th class="day-column" id="day-2">Wed</th>
+                                    <th class="day-column" id="day-3">Thu</th>
+                                    <th class="day-column" id="day-4">Fri</th>
+                                    <th class="day-column" id="day-5">Sat</th>
+                                    <th class="day-column" id="day-6">Sun</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timetableBody">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-
-                <!-- Event Details -->
-                <div id="eventDetails" class="event-details" style="display: none;">
-                    <h3>Bookings for <span id="selectedDate"></span></h3>
-                    <div id="eventsList" class="events-list"></div>
                 </div>
             </div>
         </div>
@@ -76,68 +73,124 @@
     <script th:src="@{/js/main.js}"></script>
     <script th:inline="javascript">
         const selectedRoomId = [[${selectedRoomId}]];
-        let currentDate = new Date();
+        let currentWeekStart = getMonday(new Date());
         let events = [];
 
-        function navigateMonth(delta) {
-            currentDate.setMonth(currentDate.getMonth() + delta);
+        // Time periods matching ClassPeriod enum
+        const timePeriods = [
+            { number: 1, start: '08:30', end: '09:50', name: '1st Period' },
+            { number: 2, start: '10:05', end: '11:25', name: '2nd Period' },
+            { number: 3, start: '11:40', end: '13:00', name: '3rd Period' },
+            { number: 4, start: '13:45', end: '15:05', name: '4th Period' },
+            { number: 5, start: '15:20', end: '16:40', name: '5th Period' },
+            { number: 6, start: '16:55', end: '18:15', name: '6th Period' },
+            { number: 7, start: '18:30', end: '19:50', name: '7th Period' },
+            { number: 8, start: '20:00', end: '21:20', name: '8th Period' }
+        ];
+
+        function getMonday(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function navigateWeek(delta) {
+            currentWeekStart.setDate(currentWeekStart.getDate() + (delta * 7));
             renderCalendar();
             loadEvents();
         }
 
         function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+            // Update month/year display
+            const monthYear = currentWeekStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            document.getElementById('currentMonthYear').textContent = monthYear;
 
-            document.getElementById('currentMonth').textContent =
-                new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            // Update week range
+            const weekEnd = new Date(currentWeekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            const weekRange = `${currentWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            document.getElementById('currentWeekRange').textContent = weekRange;
 
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-
-            let startDay = firstDay.getDay() - 1;
-            if (startDay < 0) startDay = 6;
-
-            const calendarDays = document.getElementById('calendarDays');
-            calendarDays.innerHTML = '';
-
-            // Empty cells for days before the first day
-            for (let i = 0; i < startDay; i++) {
-                calendarDays.innerHTML += '<div class="calendar-day empty"></div>';
-            }
-
-            // Days of the month
-            for (let day = 1; day <= lastDay.getDate(); day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const dayEvents = events.filter(e => e.date === dateStr);
-
-                let dayClass = 'calendar-day';
-                if (dayEvents.length > 0) {
-                    dayClass += ' has-events';
-                }
-
-                let eventsHtml = '';
-                dayEvents.slice(0, 3).forEach(e => {
-                    eventsHtml += `<div class="day-event ${e.status.toLowerCase()}">${e.roomNumber} - ${e.startTime}</div>`;
-                });
-                if (dayEvents.length > 3) {
-                    eventsHtml += `<div class="more-events">+${dayEvents.length - 3} more</div>`;
-                }
-
-                calendarDays.innerHTML += `
-                    <div class="${dayClass}" onclick="showDayEvents('${dateStr}')">
-                        <span class="day-number">${day}</span>
-                        <div class="day-events">${eventsHtml}</div>
-                    </div>
+            // Update day headers
+            const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(currentWeekStart);
+                date.setDate(date.getDate() + i);
+                const dayHeader = document.getElementById(`day-${i}`);
+                dayHeader.innerHTML = `
+                    <div>${dayNames[i]}</div>
+                    <div style="font-size: 0.8rem; font-weight: normal;">${date.getDate()}</div>
                 `;
             }
+
+            // Render timetable body
+            const tbody = document.getElementById('timetableBody');
+            tbody.innerHTML = '';
+
+            timePeriods.forEach(period => {
+                const row = document.createElement('tr');
+
+                // Time column
+                const timeCell = document.createElement('td');
+                timeCell.className = 'time-cell';
+                timeCell.innerHTML = `
+                    <div class="time-label">
+                        <strong>${period.name}</strong><br>
+                        <span style="font-size: 0.85rem;">${period.start} - ${period.end}</span>
+                    </div>
+                `;
+                row.appendChild(timeCell);
+
+                // Day columns
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(currentWeekStart);
+                    date.setDate(date.getDate() + i);
+                    const dateStr = formatDate(date);
+
+                    const dayCell = document.createElement('td');
+                    dayCell.className = 'booking-cell';
+
+                    // Find bookings for this date and period
+                    const cellBookings = events.filter(e =>
+                        e.date === dateStr && e.period === period.number
+                    );
+
+                    if (cellBookings.length > 0) {
+                        cellBookings.forEach(booking => {
+                            const bookingDiv = document.createElement('div');
+                            bookingDiv.className = `booking-item ${booking.status.toLowerCase()}`;
+                            bookingDiv.innerHTML = `
+                                <div class="booking-room">Room ${booking.roomNumber}</div>
+                                <div class="booking-teacher">${booking.teacherName}</div>
+                                <div class="booking-purpose">${booking.purpose || ''}</div>
+                            `;
+                            bookingDiv.onclick = () => showBookingDetails(booking);
+                            dayCell.appendChild(bookingDiv);
+                        });
+                    } else {
+                        dayCell.innerHTML = '<span class="empty-slot">—</span>';
+                    }
+
+                    row.appendChild(dayCell);
+                }
+
+                tbody.appendChild(row);
+            });
         }
 
         function loadEvents() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            const start = new Date(year, month, 1).toISOString().split('T')[0];
-            const end = new Date(year, month + 1, 0).toISOString().split('T')[0];
+            const start = formatDate(currentWeekStart);
+            const weekEnd = new Date(currentWeekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            const end = formatDate(weekEnd);
 
             let url = `/admin/api/calendar-events?start=${start}&end=${end}`;
             if (selectedRoomId) {
@@ -152,29 +205,8 @@
                 });
         }
 
-        function showDayEvents(dateStr) {
-            const dayEvents = events.filter(e => e.date === dateStr);
-            const eventDetails = document.getElementById('eventDetails');
-            const eventsList = document.getElementById('eventsList');
-
-            document.getElementById('selectedDate').textContent =
-                new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
-            if (dayEvents.length === 0) {
-                eventsList.innerHTML = '<p>No bookings for this day.</p>';
-            } else {
-                eventsList.innerHTML = dayEvents.map(e => `
-                    <div class="event-card ${e.status.toLowerCase()}">
-                        <div class="event-time">${e.startTime} - ${e.endTime}</div>
-                        <div class="event-room">Room ${e.roomNumber}</div>
-                        <div class="event-teacher">${e.teacherName}</div>
-                        <div class="event-purpose">${e.purpose}</div>
-                        <span class="event-status">${e.status}</span>
-                    </div>
-                `).join('');
-            }
-
-            eventDetails.style.display = 'block';
+        function showBookingDetails(booking) {
+            window.location.href = `/admin/bookings/${booking.bookingId}`;
         }
 
         // Initial load

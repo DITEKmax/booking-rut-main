@@ -173,9 +173,13 @@ public class ReviewService {
     public void deleteReview(Long reviewId, Long userId) {
         Review review = findById(reviewId);
         Long roomId = review.getRoom().getId();
+        User currentUser = userService.findById(userId);
 
-        // Check ownership
-        if (!review.getUser().getId().equals(userId)) {
+        // Check if user is the author or an admin
+        boolean isAuthor = review.getUser().getId().equals(userId);
+        boolean isAdmin = currentUser.getRole().getCode() == com.rut.booking.models.enums.RoleType.ADMIN;
+
+        if (!isAuthor && !isAdmin) {
             throw new IllegalStateException("You can only delete your own reviews");
         }
 

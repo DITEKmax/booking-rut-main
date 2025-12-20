@@ -105,9 +105,10 @@
                            th:text="${review.comment != null} ? ${review.comment} : 'Мой отзыв'">Мой очень полезный отзыв</a>
                         <div class="my-review-date">
                             <span th:text="${#temporals.format(review.createdAt, 'dd.MM')}">22.03</span>
-                            <span th:if="${review.updatedAt != null}"
-                                  th:text="' / изменён ' + ${#temporals.format(review.updatedAt, 'dd.MM')}"
-                                  style="color: var(--text-secondary);"></span>
+                            <th:block th:if="${review.updatedAt != null}">
+                                <span th:text="' / изменён ' + ${#temporals.format(review.updatedAt, 'dd.MM')}"
+                                      style="color: var(--text-secondary);"></span>
+                            </th:block>
                         </div>
                     </div>
 

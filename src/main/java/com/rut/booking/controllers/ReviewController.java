@@ -39,8 +39,12 @@ public class ReviewController {
         }
 
         RoomDto room = roomService.getRoomById(roomId);
+
+        ReviewCreateRequest reviewRequest = new ReviewCreateRequest();
+        reviewRequest.setRoomId(roomId);
+
         model.addAttribute("room", room);
-        model.addAttribute("reviewRequest", new ReviewCreateRequest());
+        model.addAttribute("reviewRequest", reviewRequest);
         model.addAttribute("user", userDetails);
 
         return "pages/reviews/form";

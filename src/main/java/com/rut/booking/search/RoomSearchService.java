@@ -60,6 +60,18 @@ public class RoomSearchService {
             Double avgRating = reviewRepository.getAverageRatingForRoom(room.getId());
             Integer reviewCount = reviews.size();
 
+            // Build equipment text for searchability
+            StringBuilder equipmentText = new StringBuilder();
+            if (Boolean.TRUE.equals(room.getHasProjector())) {
+                equipmentText.append("проектор projector ");
+            }
+            if (Boolean.TRUE.equals(room.getHasComputers())) {
+                equipmentText.append("компьютеры computers ");
+            }
+            if (Boolean.TRUE.equals(room.getHasWhiteboard())) {
+                equipmentText.append("доска whiteboard маркеры markers ");
+            }
+
             RoomDocument document = RoomDocument.builder()
                     .id(room.getId().toString())
                     .number(room.getNumber())
@@ -75,6 +87,7 @@ public class RoomSearchService {
                     .averageRating(avgRating != null ? avgRating : 0.0)
                     .reviewCount(reviewCount)
                     .reviews(reviewTexts)
+                    .equipmentText(equipmentText.toString())
                     .isActive(room.getIsActive())
                     .build();
 
@@ -91,7 +104,7 @@ public class RoomSearchService {
         try {
             Query multiMatchQuery = MultiMatchQuery.of(m -> m
                     .query(keyword)
-                    .fields("number^3", "building^2", "description", "reviews", "roomTypeDisplayName")
+                    .fields("number^3", "building^2", "equipmentText^2", "description", "reviews", "roomTypeDisplayName")
                     .fuzziness("AUTO")
             )._toQuery();
 

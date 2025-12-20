@@ -47,12 +47,16 @@ public class BookingController {
         LocalDate selectedDate = date != null ? date : LocalDate.now();
         List<ClassPeriod> availablePeriods = roomService.getAvailablePeriods(roomId, selectedDate);
 
+        BookingCreateRequest bookingRequest = new BookingCreateRequest();
+        bookingRequest.setRoomId(roomId);
+        bookingRequest.setBookingDate(selectedDate);
+
         model.addAttribute("room", room);
         model.addAttribute("similarRooms", similarRooms);
         model.addAttribute("selectedDate", selectedDate);
         model.addAttribute("availablePeriods", availablePeriods);
         model.addAttribute("allPeriods", ClassPeriod.values());
-        model.addAttribute("bookingRequest", new BookingCreateRequest());
+        model.addAttribute("bookingRequest", bookingRequest);
         model.addAttribute("user", userDetails);
 
         return "pages/booking/form";

@@ -59,6 +59,9 @@ public class RoomDocument {
     @Field(type = FieldType.Text, analyzer = "russian")
     private String reviews;
 
+    @Field(type = FieldType.Text, analyzer = "russian")
+    private String equipmentText;
+
     @Field(type = FieldType.Boolean)
     private Boolean isActive;
 }

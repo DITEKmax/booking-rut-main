@@ -17,23 +17,70 @@
                 <h1>Мои отзывы</h1>
             </div>
 
-            <!-- Search -->
+            <!-- Search and Filters -->
             <div class="search-filters">
-                <form th:action="@{/my-reviews}" method="get" class="search-form">
+                <form th:action="@{/my-reviews}" method="get" class="search-form" id="filterForm">
                     <div class="search-bar">
                         <input type="text" name="search" th:value="${search}"
-                               placeholder="Поиск" class="search-input">
+                               placeholder="Поиск по тексту отзыва" class="search-input">
                         <button type="submit" class="btn btn-primary">&#128269;</button>
                     </div>
+
+                    <input type="hidden" name="rating" th:value="${rating}" id="ratingInput">
+                    <input type="hidden" name="sort" th:value="${sort}" id="sortInput">
+                    <input type="hidden" name="withPhotos" th:value="${withPhotos}" id="withPhotosInput">
                 </form>
+
+                <!-- Filter Controls -->
+                <div class="filter-controls" style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <div class="filter-dropdown">
+                        <label style="font-size: 14px; color: var(--text-secondary); margin-right: 8px;">Оценка:</label>
+                        <select id="ratingFilter" onchange="applyFilter()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <option value="">Все</option>
+                            <option value="5" th:selected="${rating == 5}">5 звезд</option>
+                            <option value="4" th:selected="${rating == 4}">4 звезды</option>
+                            <option value="3" th:selected="${rating == 3}">3 звезды</option>
+                            <option value="2" th:selected="${rating == 2}">2 звезды</option>
+                            <option value="1" th:selected="${rating == 1}">1 звезда</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-dropdown">
+                        <label style="font-size: 14px; color: var(--text-secondary); margin-right: 8px;">Сортировка:</label>
+                        <select id="sortFilter" onchange="applyFilter()" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <option value="newest" th:selected="${sort == null or sort == 'newest'}">Сначала новые</option>
+                            <option value="oldest" th:selected="${sort == 'oldest'}">Сначала старые</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-checkbox" style="display: flex; align-items: center;">
+                        <label style="font-size: 14px; display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="withPhotosFilter" onchange="applyFilter()"
+                                   th:checked="${withPhotos}" style="margin-right: 8px;">
+                            Только с фото
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <!-- Filter Chips -->
-            <div class="filter-chips">
-                <button class="filter-chip">Оценка: <span class="close">&times;</span></button>
-                <button class="filter-chip">Новизна: <span class="close">&times;</span></button>
-                <button class="filter-chip">С фото: <span class="close">&times;</span></button>
-                <button class="filter-chip">Очистить фильтры</button>
+            <!-- Active Filter Chips -->
+            <div class="filter-chips" th:if="${rating != null or withPhotos or (search != null and !search.isEmpty())}">
+                <span th:if="${search != null and !search.isEmpty()}" class="filter-chip">
+                    Поиск: "<span th:text="${search}"></span>"
+                    <a th:href="@{/my-reviews(rating=${rating}, sort=${sort}, withPhotos=${withPhotos})}" class="close">&times;</a>
+                </span>
+
+                <span th:if="${rating != null}" class="filter-chip">
+                    Оценка: <span th:text="${rating}"></span> звезд
+                    <a th:href="@{/my-reviews(search=${search}, sort=${sort}, withPhotos=${withPhotos})}" class="close">&times;</a>
+                </span>
+
+                <span th:if="${withPhotos}" class="filter-chip">
+                    С фото
+                    <a th:href="@{/my-reviews(search=${search}, rating=${rating}, sort=${sort})}" class="close">&times;</a>
+                </span>
+
+                <a th:href="@{/my-reviews}" class="filter-chip clear-all">Очистить фильтры</a>
             </div>
 
             <div th:if="${success}" class="alert alert-success" style="margin-top: 24px;">
@@ -95,5 +142,19 @@
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <script th:src="@{/js/main.js}"></script>
+    <script>
+        function applyFilter() {
+            const form = document.getElementById('filterForm');
+            const ratingFilter = document.getElementById('ratingFilter');
+            const sortFilter = document.getElementById('sortFilter');
+            const withPhotosFilter = document.getElementById('withPhotosFilter');
+
+            document.getElementById('ratingInput').value = ratingFilter.value;
+            document.getElementById('sortInput').value = sortFilter.value;
+            document.getElementById('withPhotosInput').value = withPhotosFilter.checked;
+
+            form.submit();
+        }
+    </script>
 </body>
 </html>

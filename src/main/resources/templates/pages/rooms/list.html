@@ -173,8 +173,15 @@
 
         .filter-btn {
             min-width: 120px;
+            max-width: 120px;
             padding: var(--space-sm) var(--space-md) !important;
             text-align: center;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-sizing: border-box;
         }
 
         .apply-btn {
@@ -203,7 +210,14 @@
         }
 
         .filters {
+            display: flex;
             flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filters > .filter-btn {
+            margin-left: 0;
         }
     </style>
 </body>

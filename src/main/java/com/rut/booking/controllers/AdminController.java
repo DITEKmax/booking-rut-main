@@ -154,19 +154,10 @@ public class AdminController {
         return "admin/reviews";
     }
 
-    @PostMapping("/reviews/{id}/delete")
-    public String deleteReview(@AuthenticationPrincipal CustomUserDetails userDetails,
-                               @PathVariable Long id,
-                               RedirectAttributes redirectAttributes) {
-        try {
-            ReviewDto review = reviewService.getReviewById(id);
-            reviewService.deleteReview(id, review.getUserId());
-            redirectAttributes.addFlashAttribute("success", "Review deleted successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        }
-        return "redirect:/admin/reviews";
-    }
+    // Delete review functionality removed - control room should not delete reviews
+    // Reviews can only be deleted by the user who created them
+    // @PostMapping("/reviews/{id}/delete")
+    // public String deleteReview(...) { ... }
 
     @GetMapping("/api/reviews")
     @ResponseBody

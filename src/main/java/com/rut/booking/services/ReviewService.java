@@ -112,6 +112,7 @@ public class ReviewService {
         review.setRoom(room);
         review.setRating(request.getRating());
         review.setComment(request.getComment());
+        review.setIssues(request.getIssues());
 
         // Handle image upload
         if (image != null && !image.isEmpty()) {
@@ -120,6 +121,11 @@ public class ReviewService {
         }
 
         ReviewDto saved = dtoMapper.toReviewDto(reviewRepository.save(review));
+
+        // Send notification to dispatcher if issues are reported
+        if (request.getIssues() != null && !request.getIssues().trim().isEmpty()) {
+            notifyDispatcherAboutIssues(review, room);
+        }
 
         // Reindex room in Elasticsearch
         roomSearchService.reindexRoomAfterReview(request.getRoomId());
@@ -138,6 +144,7 @@ public class ReviewService {
 
         review.setRating(request.getRating());
         review.setComment(request.getComment());
+        review.setIssues(request.getIssues());
 
         // Handle image upload
         if (image != null && !image.isEmpty()) {
@@ -150,6 +157,11 @@ public class ReviewService {
         }
 
         ReviewDto saved = dtoMapper.toReviewDto(reviewRepository.save(review));
+
+        // Send notification to dispatcher if issues are reported
+        if (request.getIssues() != null && !request.getIssues().trim().isEmpty()) {
+            notifyDispatcherAboutIssues(review, review.getRoom());
+        }
 
         // Reindex room in Elasticsearch
         roomSearchService.reindexRoomAfterReview(review.getRoom().getId());
@@ -207,5 +219,22 @@ public class ReviewService {
         } catch (IOException e) {
             System.err.println("Failed to delete image: " + e.getMessage());
         }
+    }
+
+    private void notifyDispatcherAboutIssues(Review review, Room room) {
+        // Log the issue for dispatcher notification
+        String issuesList = review.getIssues();
+        String userName = review.getUser().getFullName();
+        String roomNumber = room.getNumber();
+
+        System.out.println("=== DISPATCHER NOTIFICATION ===");
+        System.out.println("Issues reported in room " + roomNumber + " by " + userName);
+        System.out.println("Issues: " + issuesList);
+        System.out.println("Review ID: " + review.getId());
+        System.out.println("Please check the admin panel for details.");
+        System.out.println("===============================");
+
+        // TODO: In production, this should send an email or push notification to dispatcher
+        // For now, we're just logging it to the console
     }
 }

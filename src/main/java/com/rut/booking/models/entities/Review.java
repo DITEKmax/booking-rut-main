@@ -26,6 +26,9 @@ public class Review extends BaseEntity {
     @Column(name = "image_path", length = 500)
     private String imagePath;
 
+    @Column(name = "issues", length = 1000)
+    private String issues;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -81,6 +84,14 @@ public class Review extends BaseEntity {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getIssues() {
+        return issues;
+    }
+
+    public void setIssues(String issues) {
+        this.issues = issues;
     }
 
     public LocalDateTime getUpdatedAt() {

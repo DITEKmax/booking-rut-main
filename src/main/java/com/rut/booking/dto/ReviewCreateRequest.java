@@ -18,6 +18,9 @@ public class ReviewCreateRequest {
     @Size(max = 2000, message = "Comment cannot exceed 2000 characters")
     private String comment;
 
+    @Size(max = 1000, message = "Issues cannot exceed 1000 characters")
+    private String issues;
+
     public ReviewCreateRequest() {
     }
 
@@ -43,5 +46,13 @@ public class ReviewCreateRequest {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getIssues() {
+        return issues;
+    }
+
+    public void setIssues(String issues) {
+        this.issues = issues;
     }
 }

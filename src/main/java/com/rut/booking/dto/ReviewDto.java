@@ -12,7 +12,10 @@ public class ReviewDto {
     private String comment;
     private String imagePath;
     private String issues;
+    private Boolean issuesMarkedRelevant;
+    private LocalDateTime issuesMarkedAt;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public ReviewDto() {
     }
@@ -89,11 +92,35 @@ public class ReviewDto {
         this.issues = issues;
     }
 
+    public Boolean getIssuesMarkedRelevant() {
+        return issuesMarkedRelevant;
+    }
+
+    public void setIssuesMarkedRelevant(Boolean issuesMarkedRelevant) {
+        this.issuesMarkedRelevant = issuesMarkedRelevant;
+    }
+
+    public LocalDateTime getIssuesMarkedAt() {
+        return issuesMarkedAt;
+    }
+
+    public void setIssuesMarkedAt(LocalDateTime issuesMarkedAt) {
+        this.issuesMarkedAt = issuesMarkedAt;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

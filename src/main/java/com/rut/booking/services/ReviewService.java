@@ -205,6 +205,14 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void markIssuesAsRelevant(Long reviewId) {
+        Review review = findById(reviewId);
+        review.setIssuesMarkedRelevant(true);
+        review.setIssuesMarkedAt(java.time.LocalDateTime.now());
+        reviewRepository.save(review);
+    }
+
     private String saveImage(MultipartFile file) {
         try {
             Path uploadPath = Paths.get(uploadDir);

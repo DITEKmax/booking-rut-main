@@ -81,6 +81,12 @@
                                 </td>
                                 <td class="actions-cell">
                                     <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="btn btn-outline btn-sm">View Room</a>
+                                    <form th:if="${!review.issuesMarkedRelevant}" th:action="@{/admin/dispatcher-issues/{id}/mark-relevant(id=${review.id})}" method="post" style="display: inline; margin-left: 8px;">
+                                        <button type="submit" class="btn btn-primary btn-sm">Mark Relevant</button>
+                                    </form>
+                                    <span th:if="${review.issuesMarkedRelevant}" class="badge" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+                                        ✓ Marked Relevant
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>

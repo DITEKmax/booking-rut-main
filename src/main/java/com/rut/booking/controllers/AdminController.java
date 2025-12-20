@@ -171,6 +171,17 @@ public class AdminController {
         return "admin/dispatcher-issues";
     }
 
+    @PostMapping("/dispatcher-issues/{reviewId}/mark-relevant")
+    public String markIssueAsRelevant(@PathVariable Long reviewId, RedirectAttributes redirectAttributes) {
+        try {
+            reviewService.markIssuesAsRelevant(reviewId);
+            redirectAttributes.addFlashAttribute("success", "Issues marked as relevant successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to mark issues as relevant: " + e.getMessage());
+        }
+        return "redirect:/admin/dispatcher-issues";
+    }
+
     @GetMapping("/deleted-reviews")
     public String deletedReviews(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         List<ReviewDto> deletedReviews = reviewService.getDeletedReviews();

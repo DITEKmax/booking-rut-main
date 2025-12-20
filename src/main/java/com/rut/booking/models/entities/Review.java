@@ -29,6 +29,12 @@ public class Review extends BaseEntity {
     @Column(name = "issues", length = 1000)
     private String issues;
 
+    @Column(name = "issues_marked_relevant", nullable = false)
+    private Boolean issuesMarkedRelevant = false;
+
+    @Column(name = "issues_marked_at")
+    private LocalDateTime issuesMarkedAt;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -92,6 +98,22 @@ public class Review extends BaseEntity {
 
     public void setIssues(String issues) {
         this.issues = issues;
+    }
+
+    public Boolean getIssuesMarkedRelevant() {
+        return issuesMarkedRelevant;
+    }
+
+    public void setIssuesMarkedRelevant(Boolean issuesMarkedRelevant) {
+        this.issuesMarkedRelevant = issuesMarkedRelevant;
+    }
+
+    public LocalDateTime getIssuesMarkedAt() {
+        return issuesMarkedAt;
+    }
+
+    public void setIssuesMarkedAt(LocalDateTime issuesMarkedAt) {
+        this.issuesMarkedAt = issuesMarkedAt;
     }
 
     public LocalDateTime getUpdatedAt() {

@@ -160,7 +160,8 @@
                     </div>
                     <div class="review-images">
                         <div th:if="${review.imagePath != null}">
-                            <img th:src="${review.imagePath}" alt="Фото отзыва">
+                            <img th:src="${review.imagePath}" alt="Фото отзыва" class="clickable-image"
+                                 onclick="openImageModal(this.src)" style="cursor: pointer;">
                         </div>
                         <div th:unless="${review.imagePath != null}" class="review-image-placeholder"></div>
                     </div>
@@ -183,6 +184,13 @@
         </div>
     </div>
 </main>
+
+<!-- Image Zoom Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="image-modal-close">&times;</span>
+    <img class="image-modal-content" id="modalImage">
+</div>
+
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script th:src="@{/js/main.js}"></script>
 <script th:inline="javascript">
@@ -277,6 +285,25 @@
 
     // Initial load
     loadSimilarRooms();
+
+    // Image modal functions
+    function openImageModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modal.style.display = 'flex';
+        modalImg.src = imageSrc;
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeImageModal();
+        }
+    });
 </script>
 </body>
 </html>

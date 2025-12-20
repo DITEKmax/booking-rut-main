@@ -17,6 +17,7 @@ public class RoomDto {
     private Double averageRating;
     private Integer reviewCount;
     private Boolean isFavorite;
+    private Boolean isAvailable;
 
     public RoomDto() {
     }
@@ -131,6 +132,14 @@ public class RoomDto {
 
     public void setIsFavorite(Boolean isFavorite) {
         this.isFavorite = isFavorite;
+    }
+
+    public Boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 
     public String getDisplayName() {

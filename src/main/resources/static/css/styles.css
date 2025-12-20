@@ -1282,6 +1282,10 @@ textarea.form-control {
     transition: var(--transition);
 }
 
+.room-card.clickable-card {
+    cursor: pointer;
+}
+
 .room-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
@@ -1353,6 +1357,28 @@ textarea.form-control {
 
 .room-info {
     padding: var(--space-lg);
+    position: relative;
+}
+
+.availability-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.availability-badge.available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.availability-badge.unavailable {
+    background: #f8d7da;
+    color: #721c24;
 }
 
 .room-number {
@@ -3126,4 +3152,12 @@ textarea.form-control {
     .main-content {
         padding: 0;
     }
+}.filter-tag {
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: inline-block;
 }

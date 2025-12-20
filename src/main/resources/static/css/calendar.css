@@ -222,6 +222,136 @@
     color: #721c24;
 }
 
+/* ===== Timetable View Styles ===== */
+.calendar-month-display {
+    text-align: center;
+}
+
+.calendar-month-display h2 {
+    margin: 0 0 5px 0;
+}
+
+.timetable-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.timetable {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 0.9rem;
+}
+
+.timetable th {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.timetable th.time-column {
+    min-width: 120px;
+}
+
+.timetable th.day-column {
+    min-width: 140px;
+}
+
+.timetable td {
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    vertical-align: top;
+}
+
+.time-cell {
+    background: var(--light-color);
+    font-weight: 500;
+    text-align: center;
+}
+
+.time-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.booking-cell {
+    min-height: 80px;
+    position: relative;
+    background: white;
+}
+
+.booking-cell:hover {
+    background: #f8f9fa;
+}
+
+.empty-slot {
+    color: var(--gray-color);
+    display: block;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.2rem;
+}
+
+.booking-item {
+    background: white;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    border-left: 4px solid;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.booking-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.booking-item.approved {
+    border-left-color: var(--success-color);
+    background: #f0f9f4;
+}
+
+.booking-item.pending,
+.booking-item.created {
+    border-left-color: var(--warning-color);
+    background: #fffbf0;
+}
+
+.booking-item.rejected {
+    border-left-color: var(--danger-color);
+    background: #fef5f5;
+}
+
+.booking-room {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    margin-bottom: 3px;
+}
+
+.booking-teacher {
+    font-size: 0.85rem;
+    color: var(--dark-color);
+    margin-bottom: 2px;
+}
+
+.booking-purpose {
+    font-size: 0.75rem;
+    color: var(--gray-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* ===== Responsive Calendar ===== */
 @media (max-width: 768px) {
     .calendar-day {
@@ -245,5 +375,22 @@
         background: var(--primary-color);
         border-radius: 50%;
         margin-top: 5px;
+    }
+
+    .timetable {
+        font-size: 0.75rem;
+    }
+
+    .timetable th.time-column {
+        min-width: 90px;
+    }
+
+    .timetable th.day-column {
+        min-width: 100px;
+    }
+
+    .booking-item {
+        padding: 6px;
+        font-size: 0.7rem;
     }
 }

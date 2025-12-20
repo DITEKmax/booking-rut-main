@@ -90,23 +90,44 @@
 
         <!-- Reviews Section -->
         <div class="reviews-section">
-            <!-- Search -->
-            <div class="search-filters" style="margin-bottom: 24px;">
-                <form th:action="@{/rooms/{id}(id=${room.id})}" method="get" class="search-form">
-                    <div class="search-bar">
-                        <input type="text" name="searchReview" placeholder="Поиск" class="search-input">
-                        <button type="submit" class="btn btn-primary">&#128269;</button>
+            <h2>Отзывы</h2>
+
+            <!-- Filter Controls -->
+            <div class="review-filters" style="margin-bottom: 24px;">
+                <form th:action="@{/rooms/{id}(id=${room.id})}" method="get" id="reviewFilterForm">
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                        <select name="sortBy" id="sortBySelect" class="filter-select" onchange="document.getElementById('reviewFilterForm').submit()">
+                            <option value="">Сортировка</option>
+                            <option value="rating" th:selected="${sortBy == 'rating'}">По рейтингу</option>
+                            <option value="date" th:selected="${sortBy == 'date'}">По новизне</option>
+                        </select>
+
+                        <select name="rating" id="ratingSelect" class="filter-select" onchange="document.getElementById('reviewFilterForm').submit()">
+                            <option value="">Все оценки</option>
+                            <option value="5" th:selected="${ratingFilter == 5}">5 звезд</option>
+                            <option value="4" th:selected="${ratingFilter == 4}">4 звезды</option>
+                            <option value="3" th:selected="${ratingFilter == 3}">3 звезды</option>
+                            <option value="2" th:selected="${ratingFilter == 2}">2 звезды</option>
+                            <option value="1" th:selected="${ratingFilter == 1}">1 звезда</option>
+                        </select>
+
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px 12px; background: white; border-radius: 8px; border: 1px solid #dee2e6;">
+                            <input type="checkbox" name="withPhotos" value="true" th:checked="${withPhotos}"
+                                   onchange="document.getElementById('reviewFilterForm').submit()">
+                            <span>Только с фото</span>
+                        </label>
+
+                        <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline" style="margin-left: auto;">Сбросить фильтры</a>
                     </div>
                 </form>
             </div>
 
-            <!-- Filter Chips -->
-            <div class="filter-chips">
-                <button class="filter-chip">Автор: <span class="close">&times;</span></button>
-                <button class="filter-chip">Оценка: <span class="close">&times;</span></button>
-                <button class="filter-chip">Новизна: <span class="close">&times;</span></button>
-                <button class="filter-chip">С фото: <span class="close">&times;</span></button>
-                <button class="filter-chip">Очистить фильтры</button>
+            <!-- Active Filters Display -->
+            <div th:if="${sortBy != null || ratingFilter != null || withPhotos != null}" class="active-filters" style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+                <span th:if="${sortBy == 'rating'}" class="filter-tag">Сортировка: По рейтингу</span>
+                <span th:if="${sortBy == 'date'}" class="filter-tag">Сортировка: По новизне</span>
+                <span th:if="${ratingFilter != null}" class="filter-tag" th:text="'Оценка: ' + ${ratingFilter} + ' звезд'">Оценка: 5 звезд</span>
+                <span th:if="${withPhotos}" class="filter-tag">С фотографиями</span>
             </div>
 
             <!-- Reviews List -->
@@ -148,46 +169,114 @@
         </div>
 
         <!-- Similar Rooms Section -->
-        <div th:if="${!#lists.isEmpty(similarRooms)}" class="similar-rooms-section">
+        <div class="similar-rooms-section">
             <h2>Может подойти</h2>
-
-            <!-- Search for similar -->
-            <div class="search-filters" style="margin-bottom: 24px;">
-                <div class="search-bar">
-                    <input type="text" placeholder="Поиск" class="search-input">
-                    <button class="btn btn-primary">&#128269;</button>
-                </div>
+            <div id="similarRoomsGrid" class="similar-rooms-grid">
+                <!-- Will be populated by JavaScript -->
             </div>
-
-            <div class="similar-rooms-grid">
-                <div th:each="similarRoom : ${similarRooms}" class="room-card">
-                    <div class="room-image">
-                        <div th:if="${similarRoom.imagePath != null}" class="image-container">
-                            <img th:src="${similarRoom.imagePath}" th:alt="${similarRoom.number}">
-                        </div>
-                        <div th:unless="${similarRoom.imagePath != null}" class="image-placeholder">
-                            <span th:text="${similarRoom.number}">Аудитория</span>
-                        </div>
-                    </div>
-                    <div class="room-info">
-                        <h3 class="room-number" th:text="${similarRoom.number}">1124</h3>
-                        <div class="room-rating">
-                                <span class="rating-badge"
-                                      th:classappend="${similarRoom.averageRating >= 4} ? 'good' : 'average'"
-                                      th:text="${#numbers.formatDecimal(similarRoom.averageRating, 1, 1)}">4.0</span>
-                        </div>
-                        <p class="room-type" th:text="${similarRoom.roomType.displayName}">Компьютерная аудитория</p>
-                        <p class="room-meta" th:text="${similarRoom.capacity} + ' мест'">100 мест</p>
-                        <p th:if="${similarRoom.hasProjector}" class="feature-badge">Есть проектор</p>
-                        <a th:href="@{/rooms/{id}(id=${similarRoom.id})}" class="btn btn-outline btn-sm">Подробнее</a>
-                    </div>
-                </div>
+            <div id="loadingIndicator" style="text-align: center; padding: 20px; display: none;">
+                <p>Загрузка...</p>
             </div>
-            <button class="show-more-btn">Показать ещё</button>
+            <div id="noMoreRooms" style="text-align: center; padding: 20px; color: #666; display: none;">
+                <p>Больше нет подходящих аудиторий</p>
+            </div>
         </div>
     </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script th:src="@{/js/main.js}"></script>
+<script th:inline="javascript">
+    let offset = 0;
+    const limit = 10;
+    let loading = false;
+    let hasMore = true;
+    const roomId = [[${room.id}]];
+
+    function createRoomCard(room) {
+        const availabilityBadge = room.isAvailable === true ?
+            '<span class="availability-badge available">Доступно</span>' :
+            (room.isAvailable === false ? '<span class="availability-badge unavailable">Занято</span>' : '');
+
+        return `
+            <div class="room-card">
+                <div class="room-image">
+                    ${room.imagePath ?
+                        `<div class="image-container"><img src="${room.imagePath}" alt="${room.number}"></div>` :
+                        `<div class="image-placeholder"><span>${room.number}</span></div>`
+                    }
+                </div>
+                <div class="room-info">
+                    ${availabilityBadge}
+                    <h3 class="room-number">${room.number}</h3>
+                    <div class="room-rating">
+                        <span class="rating-badge ${room.averageRating >= 4 ? 'good' : 'average'}">
+                            ${room.averageRating ? room.averageRating.toFixed(1) : 'N/A'}
+                        </span>
+                    </div>
+                    <p class="room-type">${room.roomType.displayName}</p>
+                    <p class="room-meta">${room.capacity} мест</p>
+                    ${room.hasProjector ? '<p class="feature-badge">Есть проектор</p>' : ''}
+                    ${room.hasComputers ? '<p class="feature-badge">Есть компьютеры</p>' : ''}
+                    <a href="/rooms/${room.id}" class="btn btn-outline btn-sm">Подробнее</a>
+                </div>
+            </div>
+        `;
+    }
+
+    function loadSimilarRooms() {
+        if (loading || !hasMore) return;
+
+        loading = true;
+        document.getElementById('loadingIndicator').style.display = 'block';
+
+        fetch(`/rooms/api/similar-rooms/${roomId}?offset=${offset}&limit=${limit}`)
+            .then(response => response.json())
+            .then(rooms => {
+                loading = false;
+                document.getElementById('loadingIndicator').style.display = 'none';
+
+                if (rooms.length === 0) {
+                    hasMore = false;
+                    if (offset === 0) {
+                        document.getElementById('similarRoomsGrid').innerHTML =
+                            '<p style="text-align: center; color: #666;">Нет похожих аудиторий</p>';
+                    } else {
+                        document.getElementById('noMoreRooms').style.display = 'block';
+                    }
+                    return;
+                }
+
+                const grid = document.getElementById('similarRoomsGrid');
+                rooms.forEach(room => {
+                    grid.innerHTML += createRoomCard(room);
+                });
+
+                offset += rooms.length;
+
+                if (rooms.length < limit) {
+                    hasMore = false;
+                    document.getElementById('noMoreRooms').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                loading = false;
+                document.getElementById('loadingIndicator').style.display = 'none';
+                console.error('Error loading similar rooms:', error);
+            });
+    }
+
+    // Infinite scroll implementation
+    window.addEventListener('scroll', () => {
+        const scrollPosition = window.innerHeight + window.scrollY;
+        const documentHeight = document.documentElement.scrollHeight;
+
+        if (scrollPosition >= documentHeight - 500) {
+            loadSimilarRooms();
+        }
+    });
+
+    // Initial load
+    loadSimilarRooms();
+</script>
 </body>
 </html>

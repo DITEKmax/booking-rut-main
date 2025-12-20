@@ -10,6 +10,7 @@ public class CalendarEventDto {
     private String roomNumber;
     private String teacherName;
     private LocalDate date;
+    private Integer period;
     private LocalTime startTime;
     private LocalTime endTime;
     private String purpose;
@@ -49,6 +50,14 @@ public class CalendarEventDto {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public Integer getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Integer period) {
+        this.period = period;
     }
 
     public LocalTime getStartTime() {

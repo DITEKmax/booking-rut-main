@@ -81,7 +81,9 @@
                         <p>Аудитории не найдены по вашему запросу.</p>
                     </div>
 
-                    <div th:each="room : ${rooms}" class="room-card">
+                    <div th:each="room : ${rooms}" class="room-card clickable-card"
+                         th:data-room-id="${room.id}"
+                         onclick="navigateToRoom(this.getAttribute('data-room-id'), event)">
                         <div class="room-image">
                             <div th:if="${room.imagePath != null}" class="image-container">
                                 <img th:src="${room.imagePath}" th:alt="${room.number}">
@@ -90,7 +92,7 @@
                                 <span th:text="${room.number}">1125</span>
                             </div>
                             <button class="favorite-btn" th:classappend="${room.isFavorite} ? 'active' : ''"
-                                    th:data-room-id="${room.id}" onclick="toggleFavorite(this)">
+                                    th:data-room-id="${room.id}" onclick="event.stopPropagation(); toggleFavorite(this)">
                                 <span th:if="${room.isFavorite}">&#9829;</span>
                                 <span th:unless="${room.isFavorite}">&#9825;</span>
                             </button>
@@ -117,8 +119,8 @@
                                 <span th:if="${room.hasWhiteboard}" class="feature-badge">Доска</span>
                             </div>
                             <div class="room-actions">
-                                <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline">Подробнее</a>
-                                <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary">Забронировать</a>
+                                <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-outline" onclick="event.stopPropagation()">Подробнее</a>
+                                <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary" onclick="event.stopPropagation()">Забронировать</a>
                             </div>
                         </div>
                     </div>
@@ -133,6 +135,15 @@
     <script th:inline="javascript">
         const buildings = [[${buildings}]];
         const floorsByBuilding = {};
+
+        function navigateToRoom(roomId, event) {
+            // Check if click target is a button or link
+            if (event.target.tagName === 'A' || event.target.tagName === 'BUTTON' ||
+                event.target.closest('a') || event.target.closest('button')) {
+                return; // Let the button/link handle its own click
+            }
+            window.location.href = `/rooms/${roomId}`;
+        }
 
         function updateApplyButton() {
             const buildingSelect = document.getElementById('buildingSelect');

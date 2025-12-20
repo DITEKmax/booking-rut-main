@@ -4,15 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="725f03ee-36af-4b2f-9221-d20a28ccdf4c" name="Changes" comment="Fix versions 2">
+    <list default="true" id="725f03ee-36af-4b2f-9221-d20a28ccdf4c" name="Changes" comment="Fix versions 3">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/fragments/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/pages/booking/form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/pages/booking/form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/pages/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/pages/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/pages/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/pages/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/pages/rooms/details.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/pages/rooms/details.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/fragments/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/fragments/footer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/fragments/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/fragments/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/booking/confirmation.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/booking/confirmation.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/booking/form.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/booking/form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/contacts.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/contacts.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/favorites.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/favorites.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/my-bookings.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/my-bookings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/my-reviews.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/my-reviews.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/reviews/edit.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/reviews/edit.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/reviews/form.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/reviews/form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/rooms/details.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/rooms/details.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/rooms/list.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/rooms/list.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +103,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765920795484</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fix versions 3">
+      <option name="closed" value="true" />
+      <created>1765922236897</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1765922236897</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -109,6 +128,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix versions" />
     <MESSAGE value="Fix versions 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix versions 2" />
+    <MESSAGE value="Fix versions 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix versions 3" />
   </component>
 </project>

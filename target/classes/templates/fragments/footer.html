@@ -4,53 +4,46 @@
     <div class="footer-container">
         <div class="footer-left">
             <div class="footer-logo">
-                <span class="logo-text">RUT Booking</span>
+                <span>&#128218;</span>
+                <span class="logo-text">РУТ Навигатор</span>
             </div>
             <div class="footer-contacts">
-                <p><strong>Hotline:</strong> +7 (499) 978-33-33</p>
+                <p>г. Москва, ул. Образцова, д. 9, стр. 9</p>
+                <p>127994, ГСП-4</p>
+                <p><strong>Телефон:</strong> +7 (499) 978-33-33</p>
                 <p><strong>Email:</strong> info@rut-miit.ru</p>
-                <p><strong>Address:</strong> 9 Obraztsova St., Bldg. 9, Moscow, 127994</p>
             </div>
         </div>
 
         <div class="footer-columns">
             <div class="footer-column">
-                <h4>Home</h4>
+                <h4>Вопросы</h4>
                 <ul>
-                    <li><a th:href="@{/}">Home</a></li>
-                    <li><a th:href="@{/#about}">About Us</a></li>
-                    <li><a th:href="@{/#advantages}">Advantages</a></li>
-                    <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Login</a></li>
-                    <li sec:authorize="isAuthenticated()"><a href="#" onclick="alert('You are already registered'); return false;">Login</a></li>
+                    <li><a th:href="@{/#faq}">Часто задаваемые вопросы</a></li>
+                    <li><a th:href="@{/contacts}">Контакты</a></li>
+                    <li><a th:href="@{/policies}">Политика конфиденциальности</a></li>
                 </ul>
             </div>
-
             <div class="footer-column">
-                <h4>Social Networks</h4>
+                <h4>Мы в социальных сетях</h4>
                 <ul>
-                    <li><a href="https://vk.com/rut_miit" target="_blank">VKontakte</a></li>
-                    <li><a href="https://rutube.ru/channel/23901047/" target="_blank">RuTube</a></li>
-                    <li><a href="https://t.me/rut_miit" target="_blank">Telegram</a></li>
-                    <li><a href="https://dzen.ru/rut_miit" target="_blank">Zen</a></li>
-                    <li><a href="https://ok.ru/rut.miit" target="_blank">OK</a></li>
+                    <li><a href="https://vk.com/rutmiitvk" target="_blank">ВКонтакте</a></li>
+                    <li><a href="https://t.me/rut_live" target="_blank">Телеграм</a></li>
                 </ul>
             </div>
-
             <div class="footer-column">
-                <h4>Information</h4>
+                <h4>Информация для прессы</h4>
                 <ul>
-                    <li><a th:href="@{/#faq}">FAQ</a></li>
-                    <li><a th:href="@{/contacts}">Contacts</a></li>
-                    <li><a th:href="@{/licenses}">Licenses</a></li>
-                    <li><a th:href="@{/policies}">Policies</a></li>
+                    <li><a th:href="@{/licenses}">Лицензии</a></li>
+                    <li><a th:href="@{/#about}">О проекте</a></li>
+                    <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Войти</a></li>
+                    <li sec:authorize="isAuthenticated()"><a th:href="@{/rooms}">Перейти к аудиториям</a></li>
                 </ul>
             </div>
         </div>
     </div>
-
     <div class="footer-bottom">
-        <p>&copy; 2025 "Russian University of Transport"</p>
-        <p>Founder: Ministry of Transport of the Russian Federation</p>
+        <p>&copy; 2024 "Российский университет транспорта"</p>
     </div>
 </footer>
 </html>

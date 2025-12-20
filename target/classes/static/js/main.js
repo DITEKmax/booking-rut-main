@@ -43,32 +43,54 @@ function toggleSidebar() {
     }
 }
 
+// ===== CSRF Token Helper =====
+function getCsrfToken() {
+    const token = document.querySelector('meta[name="_csrf"]');
+    const header = document.querySelector('meta[name="_csrf_header"]');
+    return {
+        token: token ? token.getAttribute('content') : null,
+        header: header ? header.getAttribute('content') : 'X-CSRF-TOKEN'
+    };
+}
+
 // ===== Favorite Toggle =====
 function toggleFavorite(button) {
     const roomId = button.getAttribute('data-room-id');
+    const csrf = getCsrfToken();
+
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    if (csrf.token) {
+        headers[csrf.header] = csrf.token;
+    }
 
     fetch('/favorites/toggle/' + roomId, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        headers: headers
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.isFavorite) {
             button.classList.add('active');
-            button.innerHTML = '<span>&#9733;</span>';
+            button.innerHTML = '<span>&#9829;</span>';
         } else {
             button.classList.remove('active');
-            button.innerHTML = '<span>&#9734;</span>';
+            button.innerHTML = '<span>&#9825;</span>';
         }
 
         // Show notification
-        showNotification(data.message);
+        showNotification(data.isFavorite ? 'Добавлено в избранное' : 'Удалено из избранного');
     })
     .catch(error => {
         console.error('Error:', error);
-        showNotification('Error updating favorites', 'error');
+        showNotification('Ошибка при обновлении избранного', 'error');
     });
 }
 
@@ -90,11 +112,11 @@ function updateFloors() {
         .then(response => response.json())
         .then(floors => {
             const currentValue = floorSelect.value;
-            floorSelect.innerHTML = '<option value="">All Floors</option>';
+            floorSelect.innerHTML = '<option value="">Все этажи</option>';
             floors.forEach(floor => {
                 const option = document.createElement('option');
                 option.value = floor;
-                option.textContent = 'Floor ' + floor;
+                option.textContent = 'Этаж ' + floor;
                 if (floor == currentValue) {
                     option.selected = true;
                 }

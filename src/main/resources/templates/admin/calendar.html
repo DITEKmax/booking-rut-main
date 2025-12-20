@@ -7,21 +7,10 @@
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="main-content">
-        <div class="admin-container">
-            <!-- Admin Sidebar -->
-            <aside class="admin-sidebar">
-                <nav class="admin-nav">
-                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
-                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
-                    <a th:href="@{/admin/calendar}" class="admin-nav-link active">Calendar</a>
-                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
-                </nav>
-            </aside>
-
-            <!-- Admin Content -->
-            <div class="admin-content">
-                <h1>Classroom Occupancy Calendar</h1>
+    <main class="main-content" style="background: white; padding: 0;">
+        <div style="max-width: 100%; background: white; padding: 40px;">
+            <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); padding: 40px;">
+                <h1 style="margin-bottom: 30px;">Classroom Occupancy Calendar</h1>
 
                 <!-- Room Filter -->
                 <div class="calendar-filters">

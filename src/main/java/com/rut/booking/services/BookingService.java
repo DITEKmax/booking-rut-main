@@ -128,15 +128,7 @@ public class BookingService {
 
     @Transactional
     public BookingDto autoApproveBooking(Booking booking) {
-        // Check again if the room is still available (double-check)
-        if (!isRoomAvailable(booking.getRoom().getId(), booking.getBookingDate(), booking.getClassPeriod())) {
-            booking.setStatus(BookingStatus.REJECTED);
-            booking.setRejectionReason("Room became unavailable");
-            booking.setProcessedAt(LocalDateTime.now());
-            return dtoMapper.toBookingDto(bookingRepository.save(booking));
-        }
-
-        // Approve the booking
+        // Approve the booking (availability was already checked during creation)
         booking.setStatus(BookingStatus.APPROVED);
         booking.setProcessedAt(LocalDateTime.now());
         booking = bookingRepository.save(booking);

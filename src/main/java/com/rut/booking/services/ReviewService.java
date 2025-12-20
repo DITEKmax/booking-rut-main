@@ -64,6 +64,12 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+    public List<ReviewDto> getAllReviews() {
+        return reviewRepository.findAllOrderByCreatedAtDesc().stream()
+                .map(dtoMapper::toReviewDto)
+                .collect(Collectors.toList());
+    }
+
     public List<ReviewDto> getReviewsByRoomWithFilter(Long roomId, String sortBy, Integer rating, Boolean withPhotos) {
         List<Review> reviews;
 

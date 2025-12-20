@@ -15,6 +15,7 @@
                     <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
                     <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
                     <a th:href="@{/admin/calendar}" class="admin-nav-link active">Calendar</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
                 </nav>
             </aside>
 
@@ -118,7 +119,11 @@
 
                 let eventsHtml = '';
                 dayEvents.slice(0, 3).forEach(e => {
-                    eventsHtml += `<div class="day-event ${e.status.toLowerCase()}">${e.roomNumber} - ${e.startTime}</div>`;
+                    const teacherShort = e.teacherName.split(' ').map(n => n[0]).join('.');
+                    eventsHtml += `<div class="day-event ${e.status.toLowerCase()}" title="${e.teacherName} - Room ${e.roomNumber} - ${e.startTime}">
+                        <strong>Room ${e.roomNumber}</strong><br>
+                        ${teacherShort} ${e.startTime}
+                    </div>`;
                 });
                 if (dayEvents.length > 3) {
                     eventsHtml += `<div class="more-events">+${dayEvents.length - 3} more</div>`;
@@ -165,11 +170,19 @@
             } else {
                 eventsList.innerHTML = dayEvents.map(e => `
                     <div class="event-card ${e.status.toLowerCase()}">
-                        <div class="event-time">${e.startTime} - ${e.endTime}</div>
-                        <div class="event-room">Room ${e.roomNumber}</div>
-                        <div class="event-teacher">${e.teacherName}</div>
-                        <div class="event-purpose">${e.purpose}</div>
-                        <span class="event-status">${e.status}</span>
+                        <div class="event-header">
+                            <div class="event-time"><strong>${e.startTime} - ${e.endTime}</strong></div>
+                            <span class="event-status">${e.status}</span>
+                        </div>
+                        <div class="event-details">
+                            <div class="event-info"><strong>Room:</strong> ${e.roomNumber}</div>
+                            <div class="event-info"><strong>Teacher:</strong> ${e.teacherName}</div>
+                            <div class="event-info"><strong>Purpose:</strong> ${e.purpose}</div>
+                            <div class="event-info"><strong>Booking ID:</strong> #${e.bookingId}</div>
+                        </div>
+                        <div class="event-actions">
+                            <a href="/admin/bookings/${e.bookingId}" class="btn btn-sm btn-outline">View Details</a>
+                        </div>
                     </div>
                 `).join('');
             }

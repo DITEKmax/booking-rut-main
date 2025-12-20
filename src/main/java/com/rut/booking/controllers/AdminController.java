@@ -2,10 +2,12 @@ package com.rut.booking.controllers;
 
 import com.rut.booking.dto.BookingDto;
 import com.rut.booking.dto.CalendarEventDto;
+import com.rut.booking.dto.ReviewDto;
 import com.rut.booking.dto.RoomDto;
 import com.rut.booking.models.enums.BookingStatus;
 import com.rut.booking.security.CustomUserDetails;
 import com.rut.booking.services.BookingService;
+import com.rut.booking.services.ReviewService;
 import com.rut.booking.services.RoomService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,12 @@ public class AdminController {
 
     private final BookingService bookingService;
     private final RoomService roomService;
+    private final ReviewService reviewService;
 
-    public AdminController(BookingService bookingService, RoomService roomService) {
+    public AdminController(BookingService bookingService, RoomService roomService, ReviewService reviewService) {
         this.bookingService = bookingService;
         this.roomService = roomService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
@@ -127,5 +131,52 @@ public class AdminController {
             events = bookingService.getCalendarEvents(start, end);
         }
         return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/reviews")
+    public String listReviews(@AuthenticationPrincipal CustomUserDetails userDetails,
+                              @RequestParam(required = false) Long roomId,
+                              Model model) {
+        List<ReviewDto> reviews;
+        if (roomId != null) {
+            reviews = reviewService.getReviewsByRoom(roomId);
+        } else {
+            reviews = reviewService.getAllReviews();
+        }
+
+        List<RoomDto> rooms = roomService.getAllActiveRooms();
+
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("rooms", rooms);
+        model.addAttribute("selectedRoomId", roomId);
+        model.addAttribute("user", userDetails);
+
+        return "admin/reviews";
+    }
+
+    @PostMapping("/reviews/{id}/delete")
+    public String deleteReview(@AuthenticationPrincipal CustomUserDetails userDetails,
+                               @PathVariable Long id,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            ReviewDto review = reviewService.getReviewById(id);
+            reviewService.deleteReview(id, review.getUserId());
+            redirectAttributes.addFlashAttribute("success", "Review deleted successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/reviews";
+    }
+
+    @GetMapping("/api/reviews")
+    @ResponseBody
+    public ResponseEntity<List<ReviewDto>> getAllReviews(@RequestParam(required = false) Long roomId) {
+        List<ReviewDto> reviews;
+        if (roomId != null) {
+            reviews = reviewService.getReviewsByRoom(roomId);
+        } else {
+            reviews = reviewService.getAllReviews();
+        }
+        return ResponseEntity.ok(reviews);
     }
 }

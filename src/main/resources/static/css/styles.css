@@ -2699,9 +2699,25 @@ textarea.form-control {
     color: var(--text-secondary);
 }
 
+.filter-group select,
+.filter-group input[type="date"] {
+    min-height: 38px;
+    height: 38px;
+}
+
 .filter-actions {
     display: flex;
     gap: var(--space-sm);
+    align-items: center;
+}
+
+.filter-actions .btn {
+    height: 38px;
+    min-height: 38px;
+    padding: 0 var(--space-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ===== Admin Table ===== */

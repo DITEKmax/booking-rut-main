@@ -192,6 +192,102 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 
+    public List<RoomDto> getSimilarRoomsWithAvailability(Long roomId, LocalDate date, ClassPeriod period,
+                                                          int offset, int limit, Long userId) {
+        Room targetRoom = findById(roomId);
+        List<Room> allRooms = roomRepository.findByIsActiveTrue();
+
+        // Calculate suitability score for each room
+        List<RoomWithScore> scoredRooms = new ArrayList<>();
+        for (Room room : allRooms) {
+            if (room.getId().equals(roomId)) continue; // Skip the target room itself
+
+            int score = calculateSuitabilityScore(targetRoom, room, date, period);
+            scoredRooms.add(new RoomWithScore(room, score));
+        }
+
+        // Sort by score (descending) and convert to DTOs
+        return scoredRooms.stream()
+                .sorted((a, b) -> Integer.compare(b.score, a.score))
+                .skip(offset)
+                .limit(limit)
+                .map(rws -> {
+                    boolean isFavorite = userId != null &&
+                            favoriteRepository.existsByUserIdAndRoomId(userId, rws.room.getId());
+                    RoomDto dto = dtoMapper.toRoomDto(rws.room, isFavorite);
+                    // Add availability info
+                    if (date != null && period != null) {
+                        boolean isAvailable = !bookingRepository.isRoomBookedForPeriod(rws.room.getId(), date, period);
+                        dto.setIsAvailable(isAvailable);
+                    }
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private int calculateSuitabilityScore(Room targetRoom, Room candidateRoom, LocalDate date, ClassPeriod period) {
+        int score = 0;
+
+        // Same room type: +100 points
+        if (candidateRoom.getRoomType() == targetRoom.getRoomType()) {
+            score += 100;
+        }
+
+        // Capacity similarity (within 20%): +50 points, (within 50%): +25 points
+        int targetCapacity = targetRoom.getCapacity();
+        int candidateCapacity = candidateRoom.getCapacity();
+        double capacityDiff = Math.abs((double)(candidateCapacity - targetCapacity) / targetCapacity);
+        if (capacityDiff <= 0.2) {
+            score += 50;
+        } else if (capacityDiff <= 0.5) {
+            score += 25;
+        }
+
+        // Equipment matching
+        if (targetRoom.getHasProjector() && candidateRoom.getHasProjector()) score += 20;
+        if (targetRoom.getHasComputers() && candidateRoom.getHasComputers()) score += 20;
+        if (targetRoom.getHasWhiteboard() && candidateRoom.getHasWhiteboard()) score += 10;
+
+        // Same building: +30 points
+        if (candidateRoom.getBuilding().equals(targetRoom.getBuilding())) {
+            score += 30;
+        }
+
+        // Same floor: +15 points
+        if (candidateRoom.getFloor().equals(targetRoom.getFloor())) {
+            score += 15;
+        }
+
+        // Available for requested date/period: +200 points (highest priority if date/period specified)
+        if (date != null && period != null) {
+            boolean isAvailable = !bookingRepository.isRoomBookedForPeriod(candidateRoom.getId(), date, period);
+            if (isAvailable) {
+                score += 200;
+            } else {
+                score -= 50; // Penalize unavailable rooms
+            }
+        }
+
+        // Higher rating: up to +30 points
+        Double avgRating = candidateRoom.getAverageRating();
+        if (avgRating != null && avgRating > 0) {
+            score += (int)(avgRating * 6); // 5.0 rating = 30 points
+        }
+
+        return score;
+    }
+
+    // Helper class for scoring
+    private static class RoomWithScore {
+        Room room;
+        int score;
+
+        RoomWithScore(Room room, int score) {
+            this.room = room;
+            this.score = score;
+        }
+    }
+
     public List<String> getAllBuildings() {
         return roomRepository.findAllBuildings();
     }

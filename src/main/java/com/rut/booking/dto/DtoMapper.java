@@ -94,6 +94,7 @@ public class DtoMapper {
         dto.setRoomNumber(booking.getRoom() != null ? booking.getRoom().getNumber() : null);
         dto.setTeacherName(booking.getTeacher() != null ? booking.getTeacher().getShortName() : null);
         dto.setDate(booking.getBookingDate());
+        dto.setPeriod(booking.getClassPeriod() != null ? booking.getClassPeriod().getNumber() : null);
         dto.setStartTime(booking.getStartTime());
         dto.setEndTime(booking.getEndTime());
         dto.setPurpose(booking.getPurpose());

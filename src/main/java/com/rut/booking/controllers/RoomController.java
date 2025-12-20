@@ -135,4 +135,19 @@ public class RoomController {
         }).toList();
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/api/similar-rooms/{roomId}")
+    @ResponseBody
+    public ResponseEntity<List<RoomDto>> getSimilarRooms(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long roomId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) ClassPeriod period,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit) {
+        Long userId = userDetails != null ? userDetails.getUserId() : null;
+        List<RoomDto> similarRooms = roomService.getSimilarRoomsWithAvailability(
+                roomId, date, period, offset, limit, userId);
+        return ResponseEntity.ok(similarRooms);
+    }
 }

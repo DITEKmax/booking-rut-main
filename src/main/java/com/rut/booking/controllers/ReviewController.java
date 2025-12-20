@@ -130,6 +130,7 @@ public class ReviewController {
     @PostMapping("/delete/{id}")
     public String deleteReview(@AuthenticationPrincipal CustomUserDetails userDetails,
                                @PathVariable Long id,
+                               @RequestParam(required = false, defaultValue = "/my-reviews") String redirectUrl,
                                RedirectAttributes redirectAttributes) {
         try {
             reviewService.deleteReview(id, userDetails.getUserId());
@@ -138,6 +139,6 @@ public class ReviewController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
-        return "redirect:/my-reviews";
+        return "redirect:" + redirectUrl;
     }
 }

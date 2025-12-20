@@ -70,6 +70,12 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+    public List<ReviewDto> getReviewsWithIssues() {
+        return reviewRepository.findReviewsWithIssues().stream()
+                .map(dtoMapper::toReviewDto)
+                .collect(Collectors.toList());
+    }
+
     public List<ReviewDto> getReviewsByRoomWithFilter(Long roomId, String sortBy, Integer rating, Boolean withPhotos) {
         List<Review> reviews;
 
@@ -183,15 +189,20 @@ public class ReviewService {
             throw new IllegalStateException("You can only delete your own reviews");
         }
 
-        // Delete associated image
-        if (review.getImagePath() != null) {
-            deleteImage(review.getImagePath());
-        }
-
-        reviewRepository.delete(review);
+        // Soft delete: mark as deleted instead of removing from database
+        review.setIsDeleted(true);
+        review.setDeletedAt(java.time.LocalDateTime.now());
+        review.setDeletedBy(currentUser);
+        reviewRepository.save(review);
 
         // Reindex room in Elasticsearch
         roomSearchService.reindexRoomAfterReview(roomId);
+    }
+
+    public List<ReviewDto> getDeletedReviews() {
+        return reviewRepository.findByIsDeletedTrue().stream()
+                .map(dtoMapper::toReviewDto)
+                .collect(Collectors.toList());
     }
 
     private String saveImage(MultipartFile file) {

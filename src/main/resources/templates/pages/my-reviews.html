@@ -105,10 +105,9 @@
                            th:text="${review.comment != null} ? ${review.comment} : 'Мой отзыв'">Мой очень полезный отзыв</a>
                         <div class="my-review-date">
                             <span th:text="${#temporals.format(review.createdAt, 'dd.MM')}">22.03</span>
-                            <th:block th:if="${review.updatedAt != null}">
-                                <span th:text="' / изменён ' + ${#temporals.format(review.updatedAt, 'dd.MM')}"
-                                      style="color: var(--text-secondary);"></span>
-                            </th:block>
+                            <span th:if="${review.updatedAt != null}"
+                                  th:text="' / изменён ' + ${#temporals.format(review.updatedAt, 'dd.MM')}"
+                                  style="color: var(--text-secondary);"></span>
                         </div>
                     </div>
 
@@ -124,7 +123,8 @@
 
                     <div class="review-images">
                         <div th:if="${review.imagePath != null}">
-                            <img th:src="${review.imagePath}" alt="Фото отзыва" class="my-review-image">
+                            <img th:src="${review.imagePath}" alt="Фото отзыва" class="my-review-image clickable-image"
+                                 onclick="openImageModal(this.src)">
                         </div>
                         <div th:unless="${review.imagePath != null}" class="review-image-placeholder"></div>
                     </div>
@@ -139,6 +139,12 @@
             </div>
         </div>
     </main>
+
+    <!-- Image Zoom Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close">&times;</span>
+        <img class="image-modal-content" id="modalImage">
+    </div>
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
@@ -156,6 +162,24 @@
 
             form.submit();
         }
+
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImg.src = imageSrc;
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeImageModal();
+            }
+        });
     </script>
 </body>
 </html>

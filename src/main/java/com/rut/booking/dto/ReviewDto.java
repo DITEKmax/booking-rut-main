@@ -11,6 +11,7 @@ public class ReviewDto {
     private Integer rating;
     private String comment;
     private String imagePath;
+    private String issues;
     private LocalDateTime createdAt;
 
     public ReviewDto() {
@@ -78,6 +79,14 @@ public class ReviewDto {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getIssues() {
+        return issues;
+    }
+
+    public void setIssues(String issues) {
+        this.issues = issues;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -83,6 +83,7 @@ public class DtoMapper {
         dto.setRating(review.getRating());
         dto.setComment(review.getComment());
         dto.setImagePath(review.getImagePath());
+        dto.setIssues(review.getIssues());
         dto.setCreatedAt(review.getCreatedAt());
         return dto;
     }

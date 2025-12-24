@@ -55,23 +55,27 @@ public class PdfGenerationService {
 
             document.setMargins(50, 50, 50, 50);
 
+            // Load Russian font
+            PdfFont font = PdfFontFactory.createFont("fonts/DejaVuSans.ttf", "Identity-H");
+            document.setFont(font);
+
             // Header
             DeviceRgb headerColor = new DeviceRgb(0, 51, 102);
-            Paragraph header = new Paragraph("RUSSIAN UNIVERSITY OF TRANSPORT")
+            Paragraph header = new Paragraph("РОССИЙСКИЙ УНИВЕРСИТЕТ ТРАНСПОРТА")
                     .setFontSize(18)
                     .setBold()
                     .setFontColor(headerColor)
                     .setTextAlignment(TextAlignment.CENTER);
             document.add(header);
 
-            Paragraph subHeader = new Paragraph("Auditorium Booking Confirmation")
+            Paragraph subHeader = new Paragraph("Подтверждение бронирования аудитории")
                     .setFontSize(14)
                     .setTextAlignment(TextAlignment.CENTER)
                     .setMarginBottom(30);
             document.add(subHeader);
 
             // Booking ID
-            Paragraph bookingId = new Paragraph("Booking #" + booking.getId())
+            Paragraph bookingId = new Paragraph("Бронирование №" + booking.getId())
                     .setFontSize(12)
                     .setBold()
                     .setTextAlignment(TextAlignment.RIGHT);
@@ -79,7 +83,7 @@ public class PdfGenerationService {
 
             // Status
             DeviceRgb statusColor = new DeviceRgb(40, 167, 69);
-            Paragraph status = new Paragraph("STATUS: APPROVED")
+            Paragraph status = new Paragraph("СТАТУС: ОДОБРЕНО")
                     .setFontSize(11)
                     .setFontColor(statusColor)
                     .setBold()
@@ -91,19 +95,19 @@ public class PdfGenerationService {
             Table mainTable = new Table(UnitValue.createPercentArray(new float[]{35, 65}));
             mainTable.setWidth(UnitValue.createPercentValue(100));
 
-            addTableRow(mainTable, "Teacher:", booking.getTeacher().getFullName());
+            addTableRow(mainTable, "Преподаватель:", booking.getTeacher().getFullName());
             addTableRow(mainTable, "Email:", booking.getTeacher().getEmail());
-            addTableRow(mainTable, "Auditorium:", booking.getRoom().getNumber() + " (" + booking.getRoom().getRoomType().getDisplayName() + ")");
-            addTableRow(mainTable, "Building:", booking.getRoom().getBuilding());
-            addTableRow(mainTable, "Floor:", booking.getRoom().getFloor().toString());
-            addTableRow(mainTable, "Capacity:", booking.getRoom().getCapacity() + " seats");
-            addTableRow(mainTable, "Date:", booking.getBookingDate().format(DATE_FORMATTER));
-            addTableRow(mainTable, "Time:", booking.getStartTime().format(TIME_FORMATTER) + " - " + booking.getEndTime().format(TIME_FORMATTER));
-            addTableRow(mainTable, "Class Period:", booking.getClassPeriod().getDisplayName());
-            addTableRow(mainTable, "Purpose:", booking.getPurpose());
+            addTableRow(mainTable, "Аудитория:", booking.getRoom().getNumber() + " (" + booking.getRoom().getRoomType().getDisplayName() + ")");
+            addTableRow(mainTable, "Корпус:", booking.getRoom().getBuilding());
+            addTableRow(mainTable, "Этаж:", booking.getRoom().getFloor().toString());
+            addTableRow(mainTable, "Вместимость:", booking.getRoom().getCapacity() + " мест");
+            addTableRow(mainTable, "Дата:", booking.getBookingDate().format(DATE_FORMATTER));
+            addTableRow(mainTable, "Время:", booking.getStartTime().format(TIME_FORMATTER) + " - " + booking.getEndTime().format(TIME_FORMATTER));
+            addTableRow(mainTable, "Пара:", booking.getClassPeriod().getDisplayName());
+            addTableRow(mainTable, "Цель:", booking.getPurpose());
 
             if (booking.getNotes() != null && !booking.getNotes().isEmpty()) {
-                addTableRow(mainTable, "Notes:", booking.getNotes());
+                addTableRow(mainTable, "Примечания:", booking.getNotes());
             }
 
             document.add(mainTable);
@@ -117,7 +121,7 @@ public class PdfGenerationService {
 
             Cell leftCell = new Cell()
                     .setBorder(Border.NO_BORDER)
-                    .add(new Paragraph("Document generated:")
+                    .add(new Paragraph("Документ сгенерирован:")
                             .setFontSize(9)
                             .setFontColor(ColorConstants.GRAY))
                     .add(new Paragraph(LocalDateTime.now().format(DATETIME_FORMATTER))
@@ -127,7 +131,7 @@ public class PdfGenerationService {
             Cell rightCell = new Cell()
                     .setBorder(Border.NO_BORDER)
                     .setTextAlignment(TextAlignment.RIGHT)
-                    .add(new Paragraph("Application submitted:")
+                    .add(new Paragraph("Заявка подана:")
                             .setFontSize(9)
                             .setFontColor(ColorConstants.GRAY))
                     .add(new Paragraph(booking.getCreatedAt().format(DATETIME_FORMATTER))
@@ -137,14 +141,14 @@ public class PdfGenerationService {
             document.add(footerTable);
 
             // Disclaimer
-            document.add(new Paragraph("This document serves as official confirmation of the auditorium booking. " +
-                    "Please present this document upon request.")
+            document.add(new Paragraph("Данный документ служит официальным подтверждением бронирования аудитории. " +
+                    "Пожалуйста, предъявите этот документ по требованию.")
                     .setFontSize(8)
                     .setFontColor(ColorConstants.GRAY)
                     .setTextAlignment(TextAlignment.CENTER)
                     .setMarginTop(40));
 
-            document.add(new Paragraph("© 2025 Russian University of Transport")
+            document.add(new Paragraph("© 2025 Российский университет транспорта")
                     .setFontSize(8)
                     .setFontColor(ColorConstants.GRAY)
                     .setTextAlignment(TextAlignment.CENTER));

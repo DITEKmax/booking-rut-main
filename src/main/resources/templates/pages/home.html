@@ -22,7 +22,10 @@
             <div class="hero-content">
                 <h1>РУТ навигатор</h1>
                 <p class="hero-subtitle">Удобная система навигации и бронирования аудиторий Российского университета транспорта</p>
-                <a th:href="@{/rooms}" class="btn btn-primary btn-lg" sec:authorize="isAuthenticated()">Перейти к плану</a>
+                <div sec:authorize="isAuthenticated()" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a th:href="@{/campus-plan}" class="btn btn-primary btn-lg">Перейти к плану</a>
+                    <a th:href="@{/rooms}" class="btn btn-outline btn-lg">Перейти к бронированию</a>
+                </div>
                 <a th:href="@{/login}" class="btn btn-primary btn-lg" sec:authorize="!isAuthenticated()">Войти</a>
             </div>
             <div class="hero-stats">

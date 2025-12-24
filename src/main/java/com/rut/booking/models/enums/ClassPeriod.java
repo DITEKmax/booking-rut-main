@@ -3,14 +3,14 @@ package com.rut.booking.models.enums;
 import java.time.LocalTime;
 
 public enum ClassPeriod {
-    PERIOD_1(1, LocalTime.of(8, 30), LocalTime.of(9, 50), "1st Period"),
-    PERIOD_2(2, LocalTime.of(10, 5), LocalTime.of(11, 25), "2nd Period"),
-    PERIOD_3(3, LocalTime.of(11, 40), LocalTime.of(13, 0), "3rd Period"),
-    PERIOD_4(4, LocalTime.of(13, 45), LocalTime.of(15, 5), "4th Period"),
-    PERIOD_5(5, LocalTime.of(15, 20), LocalTime.of(16, 40), "5th Period"),
-    PERIOD_6(6, LocalTime.of(16, 55), LocalTime.of(18, 15), "6th Period"),
-    PERIOD_7(7, LocalTime.of(18, 30), LocalTime.of(19, 50), "7th Period"),
-    PERIOD_8(8, LocalTime.of(20, 0), LocalTime.of(21, 20), "8th Period");
+    PERIOD_1(1, LocalTime.of(8, 30), LocalTime.of(9, 50), "1 Пара"),
+    PERIOD_2(2, LocalTime.of(10, 5), LocalTime.of(11, 25), "2 Пара"),
+    PERIOD_3(3, LocalTime.of(11, 40), LocalTime.of(13, 0), "3 Пара"),
+    PERIOD_4(4, LocalTime.of(13, 45), LocalTime.of(15, 5), "4 Пара"),
+    PERIOD_5(5, LocalTime.of(15, 20), LocalTime.of(16, 40), "5 Пара"),
+    PERIOD_6(6, LocalTime.of(16, 55), LocalTime.of(18, 15), "6 Пара"),
+    PERIOD_7(7, LocalTime.of(18, 30), LocalTime.of(19, 50), "7 Пара"),
+    PERIOD_8(8, LocalTime.of(20, 0), LocalTime.of(21, 20), "8 Пара");
 
     private final int number;
     private final LocalTime startTime;

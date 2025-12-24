@@ -178,6 +178,12 @@ public class BookingDto {
     }
 
     public boolean canBeCancelled() {
-        return status == BookingStatus.CREATED || status == BookingStatus.PENDING;
+        if (status == BookingStatus.CANCELLED || status == BookingStatus.REJECTED) {
+            return false;
+        }
+        // Allow cancellation for CREATED, PENDING, and APPROVED bookings
+        // but only if the booking date hasn't passed yet
+        java.time.LocalDate today = java.time.LocalDate.now();
+        return bookingDate.isAfter(today) || bookingDate.isEqual(today);
     }
 }

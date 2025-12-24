@@ -229,7 +229,7 @@ public class AdminController {
 
     @GetMapping("/rooms")
     public String manageRooms(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        List<RoomDto> rooms = roomService.getAllActiveRooms();
+        List<RoomDto> rooms = roomService.getAllRooms();
         model.addAttribute("rooms", rooms);
         model.addAttribute("user", userDetails);
         return "admin/rooms";

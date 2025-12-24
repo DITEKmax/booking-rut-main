@@ -55,8 +55,8 @@ public class PdfGenerationService {
 
             document.setMargins(50, 50, 50, 50);
 
-            // Load Russian font
-            PdfFont font = PdfFontFactory.createFont("fonts/DejaVuSans.ttf", "Identity-H");
+            // Load Russian font - using FreeSans which supports Cyrillic
+            PdfFont font = PdfFontFactory.createFont("FreeSans", "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
             document.setFont(font);
 
             // Header

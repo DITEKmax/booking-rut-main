@@ -62,10 +62,7 @@
                                 <td th:text="'Ауд. ' + ${review.roomNumber}">Ауд. 1234</td>
                                 <td th:text="${review.userName}">Имя пользователя</td>
                                 <td>
-                                    <span class="rating-stars">
-                                        <span th:each="i : ${#numbers.sequence(1, review.rating)}">⭐</span>
-                                    </span>
-                                    <span th:text="${review.rating}">(5)</span>
+                                    <span th:text="${review.rating}">5</span>
                                 </td>
                                 <td>
                                     <div class="issues-list">
@@ -81,28 +78,19 @@
                                 </td>
                                 <td class="actions-cell">
                                     <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="btn btn-outline btn-sm">Просмотр аудитории</a>
-                                    <form th:if="${!review.issuesMarkedRelevant}" th:action="@{/admin/dispatcher-issues/{id}/mark-relevant(id=${review.id})}" method="post" style="display: inline; margin-left: 8px;">
-                                        <button type="submit" class="btn btn-primary btn-sm">Неисправность устранена</button>
+                                    <form th:if="${!review.issuesMarkedRelevant}" th:action="@{/admin/dispatcher-issues/{id}/mark-relevant(id=${review.id})}" method="post" style="display: inline-block; margin-left: 8px;">
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <span style="margin-right: 4px;">✓</span>
+                                            Устранена
+                                        </button>
                                     </form>
-                                    <span th:if="${review.issuesMarkedRelevant}" class="badge" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+                                    <span th:if="${review.issuesMarkedRelevant}" class="badge badge-success">
                                         ✓ Устранено
                                     </span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-
-                <div th:if="${!#lists.isEmpty(reviews)}" style="margin-top: 20px; padding: 15px; background: var(--light-bg); border-radius: var(--radius-md);">
-                    <h3 style="margin-bottom: 10px;">Типы проблем:</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li>🔧 <strong>Не работает проектор</strong></li>
-                        <li>✏️ <strong>Нет маркеров</strong></li>
-                        <li>🪑 <strong>Сломана парта/стул</strong></li>
-                        <li>💻 <strong>Не работает компьютер</strong></li>
-                        <li>🪟 <strong>Сломано окно</strong></li>
-                        <li>🧹 <strong>Грязно</strong></li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -117,7 +105,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            max-width: 200px;
+            max-width: 220px;
         }
 
         .issue-badge {
@@ -137,23 +125,25 @@
         }
 
         .admin-table {
-            min-width: 1200px;
+            min-width: 1400px;
             table-layout: fixed;
         }
 
         .admin-table th:nth-child(1) { width: 50px; }   /* ID */
-        .admin-table th:nth-child(2) { width: 120px; }  /* Дата */
+        .admin-table th:nth-child(2) { width: 130px; }  /* Дата */
         .admin-table th:nth-child(3) { width: 100px; }  /* Аудитория */
         .admin-table th:nth-child(4) { width: 150px; }  /* Пользователь */
-        .admin-table th:nth-child(5) { width: 80px; }   /* Рейтинг */
-        .admin-table th:nth-child(6) { width: 200px; }  /* Сообщенные проблемы */
-        .admin-table th:nth-child(7) { width: 200px; }  /* Комментарий */
+        .admin-table th:nth-child(5) { width: 70px; }   /* Рейтинг */
+        .admin-table th:nth-child(6) { width: 220px; }  /* Сообщенные проблемы */
+        .admin-table th:nth-child(7) { width: 250px; }  /* Комментарий */
         .admin-table th:nth-child(8) { width: 100px; }  /* Изображение */
-        .admin-table th:nth-child(9) { width: 200px; }  /* Действия */
+        .admin-table th:nth-child(9) { width: 330px; }  /* Действия */
 
         .admin-table td {
             word-wrap: break-word;
             overflow-wrap: break-word;
+            vertical-align: middle;
+            padding: 12px 8px;
         }
 
         .actions-cell {
@@ -162,20 +152,44 @@
 
         .actions-cell .btn {
             display: inline-block;
-            margin: 2px;
+            margin: 2px 4px;
             font-size: 12px;
-            padding: 6px 10px;
+            padding: 6px 12px;
+            vertical-align: middle;
         }
 
         .actions-cell form {
             display: inline-block;
-            margin: 2px;
+            margin: 2px 0;
+            vertical-align: middle;
         }
 
-        .actions-cell .badge {
+        .badge-success {
             display: inline-block;
-            margin: 2px;
-            font-size: 11px;
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .purpose-cell {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </body>

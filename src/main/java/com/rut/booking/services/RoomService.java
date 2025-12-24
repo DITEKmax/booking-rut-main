@@ -77,6 +77,12 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 
+    public List<RoomDto> getAllRooms() {
+        return roomRepository.findAll().stream()
+                .map(dtoMapper::toRoomDto)
+                .collect(Collectors.toList());
+    }
+
     public List<RoomDto> searchRooms(String search) {
         // Try Elasticsearch first
         List<Long> elasticResults = roomSearchService.searchRooms(search);

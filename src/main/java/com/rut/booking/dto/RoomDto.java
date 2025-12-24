@@ -18,6 +18,7 @@ public class RoomDto {
     private Integer reviewCount;
     private Boolean isFavorite;
     private Boolean isAvailable;
+    private Boolean isActive;
 
     public RoomDto() {
     }
@@ -140,6 +141,14 @@ public class RoomDto {
 
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
     public String getDisplayName() {

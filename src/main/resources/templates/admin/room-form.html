@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Создать аудиторию - РУТ Навигатор</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <a th:href="@{/admin}" class="admin-nav-link">Панель управления</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">Все бронирования</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Календарь</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Сообщенные проблемы</a>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/rooms}" class="admin-nav-link active">Управление аудиториями</a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <div class="breadcrumb" style="margin-bottom: 20px;">
+                    <a th:href="@{/admin/rooms}">Управление аудиториями</a> / <span>Создать аудиторию</span>
+                </div>
+
+                <h1>Создать аудиторию</h1>
+
+                <div th:if="${error}" class="alert alert-error">
+                    <span th:text="${error}">Ошибка</span>
+                </div>
+
+                <!-- Room Form -->
+                <form th:action="@{/admin/rooms/create}" method="post" enctype="multipart/form-data" class="admin-form" style="max-width: 800px;">
+                    <div class="form-section">
+                        <h3>Основная информация</h3>
+
+                        <div class="form-group">
+                            <label for="number">Номер аудитории *</label>
+                            <input type="text" id="number" name="number" class="form-control"
+                                   placeholder="Например: 1234" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="roomType">Тип аудитории *</label>
+                            <select id="roomType" name="roomType" class="form-control" required>
+                                <option value="">Выберите тип...</option>
+                                <option th:each="type : ${roomTypes}"
+                                        th:value="${type}"
+                                        th:text="${type.displayName}">Тип</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="capacity">Вместимость *</label>
+                            <input type="number" id="capacity" name="capacity" class="form-control"
+                                   placeholder="Количество мест" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Описание</label>
+                            <textarea id="description" name="description" class="form-control" rows="3"
+                                      placeholder="Дополнительная информация об аудитории..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Оборудование</h3>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="hasComputers" name="hasComputers" value="true">
+                                <span>💻 Есть компьютеры</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="hasProjector" name="hasProjector" value="true">
+                                <span>📽 Есть проектор</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="hasWhiteboard" name="hasWhiteboard" value="true">
+                                <span>📝 Есть доска</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Изображение</h3>
+
+                        <div class="form-group">
+                            <label for="image">Фото аудитории</label>
+                            <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                            <small style="color: var(--text-secondary); margin-top: 5px; display: block;">
+                                Поддерживаемые форматы: JPG, PNG, GIF (макс. 5 МБ)
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 30px;">
+                        <a th:href="@{/admin/rooms}" class="btn btn-outline">Отмена</a>
+                        <button type="submit" class="btn btn-primary">Создать аудиторию</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

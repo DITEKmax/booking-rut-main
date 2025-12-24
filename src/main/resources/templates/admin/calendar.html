@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Calendar - RUT Booking</title>
+    <title>Календарь - РУТ Навигатор</title>
     <link rel="stylesheet" th:href="@{/css/calendar.css}">
 </head>
 <body>
@@ -12,27 +12,27 @@
             <!-- Admin Sidebar -->
             <aside class="admin-sidebar">
                 <nav class="admin-nav">
-                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
-                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
-                    <a th:href="@{/admin/calendar}" class="admin-nav-link active">Calendar</a>
-                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
-                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Reported Issues</a>
+                    <a th:href="@{/admin}" class="admin-nav-link">Панель управления</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">Все бронирования</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link active">Календарь</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Сообщенные проблемы</a>
                 </nav>
             </aside>
 
             <!-- Admin Content -->
             <div class="admin-content">
-                <h1>Classroom Occupancy Calendar</h1>
+                <h1>Календарь занятости аудиторий</h1>
 
                 <!-- Room Filter -->
                 <div class="calendar-filters">
                     <form th:action="@{/admin/calendar}" method="get" class="filter-form">
                         <div class="filter-group">
-                            <label for="roomId">Room</label>
+                            <label for="roomId">Аудитория</label>
                             <select name="roomId" id="roomId" class="filter-select" onchange="this.form.submit()">
-                                <option value="">All Rooms</option>
+                                <option value="">Все аудитории</option>
                                 <option th:each="r : ${rooms}" th:value="${r.id}"
-                                        th:text="'Room ' + ${r.number}" th:selected="${selectedRoomId == r.id}">Room</option>
+                                        th:text="'Аудитория ' + ${r.number}" th:selected="${selectedRoomId == r.id}">Аудитория</option>
                             </select>
                         </div>
                     </form>
@@ -41,18 +41,18 @@
                     <!-- Calendar -->
                     <div class="calendar-container">
                         <div class="calendar-header">
-                            <button class="btn btn-outline" onclick="navigateWeek(-1)">&larr; Previous Week</button>
+                            <button class="btn btn-outline" onclick="navigateWeek(-1)">&larr; Предыдущая неделя</button>
                             <div class="calendar-month-display">
-                                <h2 id="currentMonthYear">January 2025</h2>
-                                <p id="currentWeekRange" style="font-size: 0.9rem; color: #666; margin: 0;">Week</p>
+                                <h2 id="currentMonthYear">Январь 2025</h2>
+                                <p id="currentWeekRange" style="font-size: 0.9rem; color: #666; margin: 0;">Неделя</p>
                             </div>
-                            <button class="btn btn-outline" onclick="navigateWeek(1)">Next Week &rarr;</button>
+                            <button class="btn btn-outline" onclick="navigateWeek(1)">Следующая неделя &rarr;</button>
                         </div>
 
                         <div class="calendar-legend">
-                            <span class="legend-item"><span class="legend-color approved"></span> Approved</span>
-                            <span class="legend-item"><span class="legend-color pending"></span> Pending</span>
-                            <span class="legend-item"><span class="legend-color rejected"></span> Rejected</span>
+                            <span class="legend-item"><span class="legend-color approved"></span> Одобрено</span>
+                            <span class="legend-item"><span class="legend-color pending"></span> Ожидает</span>
+                            <span class="legend-item"><span class="legend-color rejected"></span> Отклонено</span>
                         </div>
 
                         <!-- Time-Tree Calendar -->
@@ -60,14 +60,14 @@
                             <table class="timetable">
                                 <thead>
                                     <tr>
-                                        <th class="time-column">Time</th>
-                                        <th class="day-column" id="day-0">Mon</th>
-                                        <th class="day-column" id="day-1">Tue</th>
-                                        <th class="day-column" id="day-2">Wed</th>
-                                        <th class="day-column" id="day-3">Thu</th>
-                                        <th class="day-column" id="day-4">Fri</th>
-                                        <th class="day-column" id="day-5">Sat</th>
-                                        <th class="day-column" id="day-6">Sun</th>
+                                        <th class="time-column">Время</th>
+                                        <th class="day-column" id="day-0">Пн</th>
+                                        <th class="day-column" id="day-1">Вт</th>
+                                        <th class="day-column" id="day-2">Ср</th>
+                                        <th class="day-column" id="day-3">Чт</th>
+                                        <th class="day-column" id="day-4">Пт</th>
+                                        <th class="day-column" id="day-5">Сб</th>
+                                        <th class="day-column" id="day-6">Вс</th>
                                     </tr>
                                 </thead>
                                 <tbody id="timetableBody">
@@ -91,14 +91,14 @@
 
         // Time periods matching ClassPeriod enum
         const timePeriods = [
-            { number: 1, start: '08:30', end: '09:50', name: '1st Period' },
-            { number: 2, start: '10:05', end: '11:25', name: '2nd Period' },
-            { number: 3, start: '11:40', end: '13:00', name: '3rd Period' },
-            { number: 4, start: '13:45', end: '15:05', name: '4th Period' },
-            { number: 5, start: '15:20', end: '16:40', name: '5th Period' },
-            { number: 6, start: '16:55', end: '18:15', name: '6th Period' },
-            { number: 7, start: '18:30', end: '19:50', name: '7th Period' },
-            { number: 8, start: '20:00', end: '21:20', name: '8th Period' }
+            { number: 1, start: '08:30', end: '09:50', name: '1-я пара' },
+            { number: 2, start: '10:05', end: '11:25', name: '2-я пара' },
+            { number: 3, start: '11:40', end: '13:00', name: '3-я пара' },
+            { number: 4, start: '13:45', end: '15:05', name: '4-я пара' },
+            { number: 5, start: '15:20', end: '16:40', name: '5-я пара' },
+            { number: 6, start: '16:55', end: '18:15', name: '6-я пара' },
+            { number: 7, start: '18:30', end: '19:50', name: '7-я пара' },
+            { number: 8, start: '20:00', end: '21:20', name: '8-я пара' }
         ];
 
         function getMonday(date) {
@@ -123,17 +123,17 @@
 
         function renderCalendar() {
             // Update month/year display
-            const monthYear = currentWeekStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-            document.getElementById('currentMonthYear').textContent = monthYear;
+            const monthYear = currentWeekStart.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+            document.getElementById('currentMonthYear').textContent = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
 
             // Update week range
             const weekEnd = new Date(currentWeekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
-            const weekRange = `${currentWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            const weekRange = `${currentWeekStart.toLocaleDateString('ru-RU', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('ru-RU', { month: 'short', day: 'numeric', year: 'numeric' })}`;
             document.getElementById('currentWeekRange').textContent = weekRange;
 
             // Update day headers
-            const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
             for (let i = 0; i < 7; i++) {
                 const date = new Date(currentWeekStart);
                 date.setDate(date.getDate() + i);
@@ -181,7 +181,7 @@
                             const bookingDiv = document.createElement('div');
                             bookingDiv.className = `booking-item ${booking.status.toLowerCase()}`;
                             bookingDiv.innerHTML = `
-                                <div class="booking-room">Room ${booking.roomNumber}</div>
+                                <div class="booking-room">Ауд. ${booking.roomNumber}</div>
                                 <div class="booking-teacher">${booking.teacherName}</div>
                                 <div class="booking-purpose">${booking.purpose || ''}</div>
                             `;

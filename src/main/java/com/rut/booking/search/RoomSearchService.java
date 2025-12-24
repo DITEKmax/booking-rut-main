@@ -52,13 +52,17 @@ public class RoomSearchService {
         try {
             // Get all reviews for this room
             List<Review> reviews = reviewRepository.findByRoomId(room.getId());
-            String reviewTexts = reviews.stream()
+            // Filter out deleted reviews
+            List<Review> activeReviews = reviews.stream()
+                    .filter(review -> !review.getIsDeleted())
+                    .collect(Collectors.toList());
+            String reviewTexts = activeReviews.stream()
                     .map(Review::getComment)
                     .filter(comment -> comment != null && !comment.isEmpty())
                     .collect(Collectors.joining(" "));
 
             Double avgRating = reviewRepository.getAverageRatingForRoom(room.getId());
-            Integer reviewCount = reviews.size();
+            Integer reviewCount = activeReviews.size();
 
             // Build equipment text for searchability
             StringBuilder equipmentText = new StringBuilder();

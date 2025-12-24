@@ -29,7 +29,6 @@
                         <h1 th:text="${room.number} + ' ' + ${room.building}">1125 ГУК-1</h1>
                     </div>
                     <div class="room-detail-actions">
-                        <button class="icon-btn" title="Поделиться">&#128279;</button>
                         <button class="icon-btn favorite-btn-icon" th:classappend="${room.isFavorite} ? 'active' : ''"
                                 th:data-room-id="${room.id}" onclick="toggleFavorite(this)" title="В избранное">
                             <span th:if="${room.isFavorite}">&#9733;</span>

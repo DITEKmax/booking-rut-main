@@ -195,6 +195,7 @@ public class Room extends BaseEntity {
             return 0.0;
         }
         return reviews.stream()
+                .filter(review -> !review.getIsDeleted())
                 .mapToInt(Review::getRating)
                 .average()
                 .orElse(0.0);

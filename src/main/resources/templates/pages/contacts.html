@@ -6,10 +6,6 @@
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
 
     <main class="main-content">
         <div class="container">
@@ -59,7 +55,15 @@
 
             <div class="map-section">
                 <h2>Расположение</h2>
-                <div id="map" style="height: 450px; border-radius: var(--radius-xl); box-shadow: var(--shadow);"></div>
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2244.0947892!2d37.603756!3d55.794700!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a4b8e0f0001%3A0x0!2zNTXCsDQ3JzQwLjkiTiAzN8KwMzYnMTMuNSJF!5e0!3m2!1sru!2sru!4v1234567890!5m2!1sru!2sru"
+                    width="100%"
+                    height="450"
+                    style="border:0; border-radius: var(--radius-xl); box-shadow: var(--shadow);"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
             </div>
         </div>
     </main>
@@ -67,33 +71,5 @@
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <script th:src="@{/js/main.js}"></script>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
-
-    <script>
-        // Initialize the map centered on RUT (MIIT) location
-        var map = L.map('map').setView([55.7947, 37.6061], 16);
-
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Add a marker for RUT (MIIT)
-        var marker = L.marker([55.7947, 37.6061]).addTo(map);
-        marker.bindPopup("<b>Российский университет транспорта (МИИТ)</b><br>ул. Образцова, д. 9, стр. 9<br>Москва, 127994").openPopup();
-
-        // Add a circle to highlight the campus area
-        var circle = L.circle([55.7947, 37.6061], {
-            color: '#2E3A4D',
-            fillColor: '#2E3A4D',
-            fillOpacity: 0.1,
-            radius: 200
-        }).addTo(map);
-    </script>
 </body>
 </html>

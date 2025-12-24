@@ -57,7 +57,7 @@ public class SecurityConfig {
 
                         // Teacher pages
                         .requestMatchers("/rooms/**", "/booking/**", "/favorites/**", "/reviews/**").authenticated()
-                        .requestMatchers("/my-bookings/**", "/my-reviews/**").authenticated()
+                        .requestMatchers("/my-bookings/**", "/my-reviews/**", "/room-issues/**").authenticated()
 
                         // All other requests require authentication
                         .anyRequest().authenticated()

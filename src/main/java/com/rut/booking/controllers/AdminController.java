@@ -4,11 +4,13 @@ import com.rut.booking.dto.BookingDto;
 import com.rut.booking.dto.CalendarEventDto;
 import com.rut.booking.dto.ReviewDto;
 import com.rut.booking.dto.RoomDto;
+import com.rut.booking.dto.RoomIssueDto;
 import com.rut.booking.models.enums.BookingStatus;
 import com.rut.booking.security.CustomUserDetails;
 import com.rut.booking.services.BookingService;
 import com.rut.booking.services.ReviewService;
 import com.rut.booking.services.RoomService;
+import com.rut.booking.services.RoomIssueService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,11 +29,13 @@ public class AdminController {
     private final BookingService bookingService;
     private final RoomService roomService;
     private final ReviewService reviewService;
+    private final RoomIssueService roomIssueService;
 
-    public AdminController(BookingService bookingService, RoomService roomService, ReviewService reviewService) {
+    public AdminController(BookingService bookingService, RoomService roomService, ReviewService reviewService, RoomIssueService roomIssueService) {
         this.bookingService = bookingService;
         this.roomService = roomService;
         this.reviewService = reviewService;
+        this.roomIssueService = roomIssueService;
     }
 
     @GetMapping
@@ -162,9 +166,11 @@ public class AdminController {
     @GetMapping("/dispatcher-issues")
     public String dispatcherIssues(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         List<ReviewDto> reviewsWithIssues = reviewService.getReviewsWithIssues();
+        List<RoomIssueDto> roomIssues = roomIssueService.getAllIssues();
         List<RoomDto> rooms = roomService.getAllActiveRooms();
 
         model.addAttribute("reviews", reviewsWithIssues);
+        model.addAttribute("roomIssues", roomIssues);
         model.addAttribute("rooms", rooms);
         model.addAttribute("user", userDetails);
 
@@ -178,6 +184,19 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("success", "Issues marked as relevant successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to mark issues as relevant: " + e.getMessage());
+        }
+        return "redirect:/admin/dispatcher-issues";
+    }
+
+    @PostMapping("/room-issues/{issueId}/mark-resolved")
+    public String markRoomIssueAsResolved(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                          @PathVariable Long issueId,
+                                          RedirectAttributes redirectAttributes) {
+        try {
+            roomIssueService.markIssueAsResolved(issueId, userDetails.getUserId());
+            redirectAttributes.addFlashAttribute("success", "Проблема отмечена как устранённая");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Не удалось отметить проблему: " + e.getMessage());
         }
         return "redirect:/admin/dispatcher-issues";
     }
@@ -204,5 +223,75 @@ public class AdminController {
             reviews = reviewService.getAllReviews();
         }
         return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/rooms")
+    public String manageRooms(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        List<RoomDto> rooms = roomService.getAllActiveRooms();
+        model.addAttribute("rooms", rooms);
+        model.addAttribute("user", userDetails);
+        return "admin/rooms";
+    }
+
+    @GetMapping("/rooms/create")
+    public String createRoomForm(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        model.addAttribute("roomTypes", RoomType.values());
+        model.addAttribute("user", userDetails);
+        return "admin/room-form";
+    }
+
+    @PostMapping("/rooms/create")
+    public String createRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
+                            @RequestParam String number,
+                            @RequestParam RoomType roomType,
+                            @RequestParam Integer capacity,
+                            @RequestParam(required = false) Boolean hasComputers,
+                            @RequestParam(required = false) Boolean hasProjector,
+                            @RequestParam(required = false) Boolean hasWhiteboard,
+                            @RequestParam(required = false) String description,
+                            @RequestParam(required = false) MultipartFile image,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            roomService.createRoom(number, roomType, capacity, hasComputers, hasProjector, hasWhiteboard, description, image);
+            redirectAttributes.addFlashAttribute("success", "Аудитория успешно создана");
+            return "redirect:/admin/rooms";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка при создании аудитории: " + e.getMessage());
+            return "redirect:/admin/rooms/create";
+        }
+    }
+
+    @GetMapping("/rooms/{id}/edit")
+    public String editRoomForm(@AuthenticationPrincipal CustomUserDetails userDetails,
+                              @PathVariable Long id,
+                              Model model) {
+        RoomDto room = roomService.getRoomById(id);
+        model.addAttribute("room", room);
+        model.addAttribute("roomTypes", RoomType.values());
+        model.addAttribute("user", userDetails);
+        return "admin/room-edit";
+    }
+
+    @PostMapping("/rooms/{id}/edit")
+    public String updateRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
+                            @PathVariable Long id,
+                            @RequestParam String number,
+                            @RequestParam RoomType roomType,
+                            @RequestParam Integer capacity,
+                            @RequestParam(required = false) Boolean hasComputers,
+                            @RequestParam(required = false) Boolean hasProjector,
+                            @RequestParam(required = false) Boolean hasWhiteboard,
+                            @RequestParam(required = false) String description,
+                            @RequestParam(required = false) Boolean isActive,
+                            @RequestParam(required = false) MultipartFile image,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            roomService.updateRoom(id, number, roomType, capacity, hasComputers, hasProjector, hasWhiteboard, description, isActive, image);
+            redirectAttributes.addFlashAttribute("success", "Аудитория успешно обновлена");
+            return "redirect:/admin/rooms";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка при обновлении аудитории: " + e.getMessage());
+            return "redirect:/admin/rooms/" + id + "/edit";
+        }
     }
 }

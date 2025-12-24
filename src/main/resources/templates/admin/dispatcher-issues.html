@@ -32,67 +32,125 @@
                 </div>
 
                 <p style="color: var(--text-secondary); margin-bottom: 20px;">
-                    На этой странице отображаются все отзывы, в которых пользователи сообщили о проблемах с аудиториями.
+                    На этой странице отображаются все сообщения о проблемах с аудиториями.
                     Проблемы включают: сломанное оборудование, отсутствие маркеров, проблемы с чистотой и т.д.
                 </p>
 
-                <!-- Issues Table -->
-                <div class="bookings-table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Дата</th>
-                                <th>Аудитория</th>
-                                <th>Пользователь</th>
-                                <th>Рейтинг</th>
-                                <th>Сообщенные проблемы</th>
-                                <th>Комментарий</th>
-                                <th>Изображение</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${#lists.isEmpty(reviews)}">
-                                <td colspan="8" class="no-data">Проблемы не сообщены</td>
-                            </tr>
-                            <tr th:each="review : ${reviews}">
-                                <td th:text="${review.id}">#123</td>
-                                <td th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025 10:00</td>
-                                <td class="room-cell">
-                                    <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="room-link">
-                                        <span th:text="'Ауд. ' + ${review.roomNumber}">Ауд. 1234</span>
-                                    </a>
-                                    <div style="margin-top: 8px;">
-                                        <form th:if="${!review.issuesMarkedRelevant}" th:action="@{/admin/dispatcher-issues/{id}/mark-relevant(id=${review.id})}" method="post" style="display: inline-block;">
-                                            <button type="submit" class="btn btn-success btn-sm">
-                                                <span style="margin-right: 4px;">✓</span>
-                                                Устранена
-                                            </button>
-                                        </form>
-                                        <span th:if="${review.issuesMarkedRelevant}" class="badge badge-resolved">
-                                            ✓ Устранено
-                                        </span>
-                                    </div>
-                                </td>
-                                <td th:text="${review.userName}">Имя пользователя</td>
-                                <td>
-                                    <span th:text="${review.rating}">5</span>
-                                </td>
-                                <td>
-                                    <div class="issues-list">
-                                        <span th:each="issue, iterStat : ${#strings.arraySplit(review.issues, ',')}"
-                                              class="issue-badge"
-                                              th:text="${issue}">Проблема</span>
-                                    </div>
-                                </td>
-                                <td class="purpose-cell" th:text="${review.comment}">Отличная аудитория!</td>
-                                <td>
-                                    <a th:if="${review.imagePath}" th:href="${review.imagePath}" target="_blank" class="btn btn-outline btn-sm">Просмотр</a>
-                                    <span th:unless="${review.imagePath}">-</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Standalone Room Issues -->
+                <div th:unless="${#lists.isEmpty(roomIssues)}" style="margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 16px;">Сообщения о проблемах</h3>
+                    <div class="issues-table-wrapper">
+                        <table class="issues-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">ID</th>
+                                    <th style="width: 140px;">Дата</th>
+                                    <th style="width: 180px;">Аудитория / Статус</th>
+                                    <th style="width: 150px;">Пользователь</th>
+                                    <th style="width: 200px;">Проблемы</th>
+                                    <th>Описание</th>
+                                    <th style="width: 100px;">Фото</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="issue : ${roomIssues}">
+                                    <td th:text="${issue.id}">#1</td>
+                                    <td th:text="${#temporals.format(issue.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025</td>
+                                    <td class="room-cell">
+                                        <a th:href="@{/rooms/{id}(id=${issue.roomId})}" class="room-link">
+                                            <span th:text="'Ауд. ' + ${issue.roomNumber}">Ауд. 1234</span>
+                                        </a>
+                                        <div style="margin-top: 8px;">
+                                            <form th:if="${!issue.isResolved}" th:action="@{/admin/room-issues/{id}/mark-resolved(id=${issue.id})}" method="post">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    Устранить
+                                                </button>
+                                            </form>
+                                            <span th:if="${issue.isResolved}" class="badge badge-resolved">
+                                                ✓ Устранено
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td th:text="${issue.userName}">Пользователь</td>
+                                    <td>
+                                        <div class="issues-list">
+                                            <span th:each="iss : ${#strings.arraySplit(issue.issues, ',')}"
+                                                  class="issue-badge" th:text="${iss}">Проблема</span>
+                                        </div>
+                                    </td>
+                                    <td class="description-cell">
+                                        <span th:text="${issue.description != null ? issue.description : '-'}">Описание</span>
+                                    </td>
+                                    <td>
+                                        <a th:if="${issue.imagePath}" th:href="${issue.imagePath}" target="_blank" class="btn btn-outline btn-sm">Просмотр</a>
+                                        <span th:unless="${issue.imagePath}">-</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Review Issues -->
+                <div th:unless="${#lists.isEmpty(reviews)}">
+                    <h3 style="margin-bottom: 16px;">Проблемы из отзывов</h3>
+                    <div class="issues-table-wrapper">
+                        <table class="issues-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">ID</th>
+                                    <th style="width: 140px;">Дата</th>
+                                    <th style="width: 180px;">Аудитория / Статус</th>
+                                    <th style="width: 150px;">Пользователь</th>
+                                    <th style="width: 80px;">Рейтинг</th>
+                                    <th style="width: 200px;">Проблемы</th>
+                                    <th>Комментарий</th>
+                                    <th style="width: 100px;">Фото</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="review : ${reviews}">
+                                    <td th:text="${review.id}">#123</td>
+                                    <td th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025 10:00</td>
+                                    <td class="room-cell">
+                                        <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="room-link">
+                                            <span th:text="'Ауд. ' + ${review.roomNumber}">Ауд. 1234</span>
+                                        </a>
+                                        <div style="margin-top: 8px;">
+                                            <form th:if="${!review.issuesMarkedRelevant}" th:action="@{/admin/dispatcher-issues/{id}/mark-relevant(id=${review.id})}" method="post">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    Устранить
+                                                </button>
+                                            </form>
+                                            <span th:if="${review.issuesMarkedRelevant}" class="badge badge-resolved">
+                                                ✓ Устранено
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td th:text="${review.userName}">Имя пользователя</td>
+                                    <td><span th:text="${review.rating}">5</span></td>
+                                    <td>
+                                        <div class="issues-list">
+                                            <span th:each="issue : ${#strings.arraySplit(review.issues, ',')}"
+                                                  class="issue-badge" th:text="${issue}">Проблема</span>
+                                        </div>
+                                    </td>
+                                    <td class="description-cell">
+                                        <span th:text="${review.comment != null ? review.comment : '-'}">Комментарий</span>
+                                    </td>
+                                    <td>
+                                        <a th:if="${review.imagePath}" th:href="${review.imagePath}" target="_blank" class="btn btn-outline btn-sm">Просмотр</a>
+                                        <span th:unless="${review.imagePath}">-</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${#lists.isEmpty(reviews) && #lists.isEmpty(roomIssues)}" class="no-data" style="padding: 40px; text-align: center;">
+                    <p>Проблемы не сообщены</p>
                 </div>
             </div>
         </div>
@@ -107,7 +165,6 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            max-width: 220px;
         }
 
         .issue-badge {
@@ -121,30 +178,36 @@
             white-space: nowrap;
         }
 
-        .bookings-table-container {
-            overflow-x: auto;
+        .issues-table-wrapper {
             width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
         }
 
-        .admin-table {
-            min-width: 1200px;
-            table-layout: fixed;
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
         }
 
-        .admin-table th:nth-child(1) { width: 50px; }   /* ID */
-        .admin-table th:nth-child(2) { width: 130px; }  /* Дата */
-        .admin-table th:nth-child(3) { width: 200px; }  /* Аудитория */
-        .admin-table th:nth-child(4) { width: 150px; }  /* Пользователь */
-        .admin-table th:nth-child(5) { width: 70px; }   /* Рейтинг */
-        .admin-table th:nth-child(6) { width: 220px; }  /* Сообщенные проблемы */
-        .admin-table th:nth-child(7) { width: 250px; }  /* Комментарий */
-        .admin-table th:nth-child(8) { width: 130px; }  /* Изображение */
+        .issues-table th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
 
-        .admin-table td {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            vertical-align: middle;
-            padding: 12px 8px;
+        .issues-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: top;
+        }
+
+        .issues-table tbody tr:hover {
+            background-color: #f8f9fa;
         }
 
         .room-cell {
@@ -166,7 +229,8 @@
 
         .room-cell .btn {
             font-size: 12px;
-            padding: 5px 10px;
+            padding: 6px 12px;
+            white-space: nowrap;
         }
 
         .room-cell form {
@@ -175,30 +239,42 @@
 
         .badge-resolved {
             display: inline-block;
-            background: #6c757d;
+            background: #28a745;
             color: white;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: 500;
-            vertical-align: middle;
         }
 
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
             color: white;
         }
 
-        .btn-success:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
         }
 
-        .purpose-cell {
-            max-width: 250px;
+        .description-cell {
+            max-width: 300px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .description-cell span {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1.25rem;
+            font-weight: 600;
         }
     </style>
 </body>

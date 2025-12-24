@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Управление аудиториями - РУТ Навигатор</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <a th:href="@{/admin}" class="admin-nav-link">Панель управления</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">Все бронирования</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Календарь</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Сообщенные проблемы</a>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/rooms}" class="admin-nav-link active">Управление аудиториями</a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h1>Управление аудиториями</h1>
+                    <a th:href="@{/admin/rooms/create}" class="btn btn-primary">Создать аудиторию</a>
+                </div>
+
+                <div th:if="${success}" class="alert alert-success">
+                    <span th:text="${success}">Успешно</span>
+                </div>
+
+                <div th:if="${error}" class="alert alert-error">
+                    <span th:text="${error}">Ошибка</span>
+                </div>
+
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Только администратор может создавать и редактировать аудитории.
+                </p>
+
+                <!-- Rooms List -->
+                <div class="bookings-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Номер</th>
+                                <th>Тип</th>
+                                <th>Вместимость</th>
+                                <th>Корпус / Этаж</th>
+                                <th>Оборудование</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="room : ${rooms}">
+                                <td><a th:href="@{/rooms/{id}(id=${room.id})}" th:text="${room.number}">1234</a></td>
+                                <td th:text="${room.roomType.displayName}">Лекционная</td>
+                                <td th:text="${room.capacity}">30</td>
+                                <td th:text="${room.building} + ' / ' + ${room.floor}">А / 1</td>
+                                <td>
+                                    <span th:if="${room.hasComputers}">💻</span>
+                                    <span th:if="${room.hasProjector}">📽</span>
+                                    <span th:if="${room.hasWhiteboard}">📝</span>
+                                </td>
+                                <td>
+                                    <span th:if="${room.isActive}" class="badge badge-success">Активна</span>
+                                    <span th:unless="${room.isActive}" class="badge badge-secondary">Неактивна</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/rooms/{id}/edit(id=${room.id})}" class="btn btn-sm btn-outline">Редактировать</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

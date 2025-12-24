@@ -82,6 +82,8 @@
                 <div class="room-main-actions">
                     <a th:unless="${hasReviewed}" th:href="@{/reviews/room/{id}/new(id=${room.id})}"
                        class="btn btn-light">Оценить</a>
+                    <a th:href="@{/room-issues/create(roomId=${room.id})}"
+                       class="btn btn-outline" style="border-color: #dc3545; color: #dc3545;">Сообщить о проблеме</a>
                     <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary">Забронировать</a>
                 </div>
             </div>

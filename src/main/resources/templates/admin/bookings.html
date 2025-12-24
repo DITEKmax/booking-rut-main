@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>All Bookings - RUT Booking</title>
+    <title>Все бронирования - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
@@ -11,60 +11,60 @@
             <!-- Admin Sidebar -->
             <aside class="admin-sidebar">
                 <nav class="admin-nav">
-                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
-                    <a th:href="@{/admin/bookings}" class="admin-nav-link active">All Bookings</a>
-                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
-                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
-                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Reported Issues</a>
+                    <a th:href="@{/admin}" class="admin-nav-link">Панель управления</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link active">Все бронирования</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Календарь</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Сообщенные проблемы</a>
                 </nav>
             </aside>
 
             <!-- Admin Content -->
             <div class="admin-content">
-                <h1>All Bookings</h1>
+                <h1>Все бронирования</h1>
 
                 <div th:if="${success}" class="alert alert-success">
-                    <span th:text="${success}">Success message</span>
+                    <span th:text="${success}">Успешно</span>
                 </div>
 
                 <div th:if="${error}" class="alert alert-error">
-                    <span th:text="${error}">Error message</span>
+                    <span th:text="${error}">Ошибка</span>
                 </div>
 
                 <!-- Filters -->
                 <form th:action="@{/admin/bookings}" method="get" class="filter-form admin-filters">
                     <div class="filter-row">
                         <div class="filter-group">
-                            <label for="status">Status</label>
+                            <label for="status">Статус</label>
                             <select name="status" id="status" class="filter-select">
-                                <option value="">All Statuses</option>
+                                <option value="">Все статусы</option>
                                 <option th:each="s : ${statuses}" th:value="${s.name()}"
-                                        th:text="${s.displayName}" th:selected="${selectedStatus == s}">Status</option>
+                                        th:text="${s.displayName}" th:selected="${selectedStatus == s}">Статус</option>
                             </select>
                         </div>
 
                         <div class="filter-group">
-                            <label for="roomId">Room</label>
+                            <label for="roomId">Аудитория</label>
                             <select name="roomId" id="roomId" class="filter-select">
-                                <option value="">All Rooms</option>
+                                <option value="">Все аудитории</option>
                                 <option th:each="r : ${rooms}" th:value="${r.id}"
-                                        th:text="'Room ' + ${r.number}" th:selected="${selectedRoomId == r.id}">Room</option>
+                                        th:text="'Аудитория ' + ${r.number}" th:selected="${selectedRoomId == r.id}">Аудитория</option>
                             </select>
                         </div>
 
                         <div class="filter-group">
-                            <label for="startDate">From Date</label>
+                            <label for="startDate">С даты</label>
                             <input type="date" name="startDate" id="startDate" th:value="${startDate}" class="form-control">
                         </div>
 
                         <div class="filter-group">
-                            <label for="endDate">To Date</label>
+                            <label for="endDate">По дату</label>
                             <input type="date" name="endDate" id="endDate" th:value="${endDate}" class="form-control">
                         </div>
 
                         <div class="filter-actions">
-                            <button type="submit" class="btn btn-primary">Apply</button>
-                            <a th:href="@{/admin/bookings}" class="btn btn-outline">Clear</a>
+                            <button type="submit" class="btn btn-primary">Применить</button>
+                            <a th:href="@{/admin/bookings}" class="btn btn-outline">Очистить</a>
                         </div>
                     </div>
                 </form>
@@ -75,37 +75,37 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Teacher</th>
-                                <th>Room</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Purpose</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>Преподаватель</th>
+                                <th>Аудитория</th>
+                                <th>Дата</th>
+                                <th>Время</th>
+                                <th>Цель</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${#lists.isEmpty(bookings)}">
-                                <td colspan="8" class="no-data">No bookings found</td>
+                                <td colspan="8" class="no-data">Бронирования не найдены</td>
                             </tr>
                             <tr th:each="booking : ${bookings}">
                                 <td th:text="${booking.id}">#123</td>
-                                <td th:text="${booking.teacherName}">Teacher Name</td>
+                                <td th:text="${booking.teacherName}">Имя преподавателя</td>
                                 <td th:text="${booking.roomNumber}">1234</td>
                                 <td th:text="${#temporals.format(booking.bookingDate, 'dd.MM.yyyy')}">01.01.2025</td>
                                 <td th:text="${booking.timeRange}">8:30 – 9:50</td>
-                                <td class="purpose-cell" th:text="${booking.purpose}">Lecture</td>
+                                <td class="purpose-cell" th:text="${booking.purpose}">Лекция</td>
                                 <td>
                                     <span class="status-badge" th:classappend="${booking.status.name()}"
-                                          th:text="${booking.status.displayName}">Status</span>
+                                          th:text="${booking.status.displayName}">Статус</span>
                                 </td>
                                 <td class="actions-cell">
                                     <a th:href="@{/admin/bookings/{id}(id=${booking.id})}"
-                                       class="btn btn-outline btn-sm">View</a>
+                                       class="btn btn-outline btn-sm">Просмотр</a>
                                     <button th:if="${booking.pending}"
                                             class="btn btn-danger btn-sm"
                                             onclick="showRejectModal(this)"
-                                            th:data-id="${booking.id}">Reject</button>
+                                            th:data-id="${booking.id}">Отклонить</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -118,16 +118,16 @@
     <!-- Reject Modal -->
     <div id="rejectModal" class="modal">
         <div class="modal-content">
-            <h3>Reject Booking</h3>
+            <h3>Отклонить бронирование</h3>
             <form id="rejectForm" method="post">
                 <div class="form-group">
-                    <label for="reason">Rejection Reason *</label>
+                    <label for="reason">Причина отклонения *</label>
                     <textarea id="reason" name="reason" class="form-control" rows="3" required
-                              placeholder="Please provide a reason for rejection..."></textarea>
+                              placeholder="Пожалуйста, укажите причину отклонения..."></textarea>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" onclick="hideRejectModal()">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Reject Booking</button>
+                    <button type="button" class="btn btn-outline" onclick="hideRejectModal()">Отмена</button>
+                    <button type="submit" class="btn btn-danger">Отклонить бронирование</button>
                 </div>
             </form>
         </div>

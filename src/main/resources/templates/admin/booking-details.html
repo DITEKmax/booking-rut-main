@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Booking Details - RUT Booking</title>
+    <title>Детали бронирования - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
@@ -11,111 +11,111 @@
             <!-- Admin Sidebar -->
             <aside class="admin-sidebar">
                 <nav class="admin-nav">
-                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
-                    <a th:href="@{/admin/bookings}" class="admin-nav-link active">All Bookings</a>
-                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
-                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
-                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Reported Issues</a>
+                    <a th:href="@{/admin}" class="admin-nav-link">Панель управления</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link active">Все бронирования</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Календарь</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Сообщенные проблемы</a>
                 </nav>
             </aside>
 
             <!-- Admin Content -->
             <div class="admin-content">
                 <div class="back-link">
-                    <a th:href="@{/admin/bookings}" class="btn btn-outline">&larr; Back to Bookings</a>
+                    <a th:href="@{/admin/bookings}" class="btn btn-outline">&larr; Назад к бронированиям</a>
                 </div>
 
-                <h1>Booking #<span th:text="${booking.id}">123</span></h1>
+                <h1>Бронирование #<span th:text="${booking.id}">123</span></h1>
 
                 <div class="booking-detail-card">
                     <div class="detail-section">
-                        <h3>Booking Information</h3>
+                        <h3>Информация о бронировании</h3>
                         <div class="detail-grid">
                             <div class="detail-row">
-                                <span class="detail-label">Status:</span>
+                                <span class="detail-label">Статус:</span>
                                 <span class="detail-value">
                                     <span class="status-badge" th:classappend="${booking.status.name()}"
-                                          th:text="${booking.status.displayName}">Status</span>
+                                          th:text="${booking.status.displayName}">Статус</span>
                                 </span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Created:</span>
+                                <span class="detail-label">Создано:</span>
                                 <span class="detail-value" th:text="${#temporals.format(booking.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="detail-section">
-                        <h3>Teacher Information</h3>
+                        <h3>Информация о преподавателе</h3>
                         <div class="detail-grid">
                             <div class="detail-row">
-                                <span class="detail-label">Name:</span>
-                                <span class="detail-value" th:text="${booking.teacherName}">Teacher Name</span>
+                                <span class="detail-label">Имя:</span>
+                                <span class="detail-value" th:text="${booking.teacherName}">Имя преподавателя</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="detail-section">
-                        <h3>Room Information</h3>
+                        <h3>Информация об аудитории</h3>
                         <div class="detail-grid">
                             <div class="detail-row">
-                                <span class="detail-label">Room:</span>
-                                <span class="detail-value" th:text="${booking.roomDisplayName}">Room 1234</span>
+                                <span class="detail-label">Аудитория:</span>
+                                <span class="detail-value" th:text="${booking.roomDisplayName}">Аудитория 1234</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Building:</span>
+                                <span class="detail-label">Корпус:</span>
                                 <span class="detail-value" th:text="${room.building}">A</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Floor:</span>
+                                <span class="detail-label">Этаж:</span>
                                 <span class="detail-value" th:text="${room.floor}">1</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Capacity:</span>
-                                <span class="detail-value" th:text="${room.capacity} + ' seats'">30 seats</span>
+                                <span class="detail-label">Вместимость:</span>
+                                <span class="detail-value" th:text="${room.capacity} + ' мест'">30 мест</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="detail-section">
-                        <h3>Schedule</h3>
+                        <h3>Расписание</h3>
                         <div class="detail-grid">
                             <div class="detail-row">
-                                <span class="detail-label">Date:</span>
-                                <span class="detail-value" th:text="${#temporals.format(booking.bookingDate, 'dd MMMM yyyy')}">01 January 2025</span>
+                                <span class="detail-label">Дата:</span>
+                                <span class="detail-value" th:text="${#temporals.format(booking.bookingDate, 'dd MMMM yyyy')}">01 января 2025</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Time:</span>
+                                <span class="detail-label">Время:</span>
                                 <span class="detail-value" th:text="${booking.timeRange}">8:30 – 9:50</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Period:</span>
-                                <span class="detail-value" th:text="${booking.classPeriod.displayName}">1st Period</span>
+                                <span class="detail-label">Пара:</span>
+                                <span class="detail-value" th:text="${booking.classPeriod.displayName}">1-я пара</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="detail-section">
-                        <h3>Purpose</h3>
-                        <p th:text="${booking.purpose}">Booking purpose</p>
+                        <h3>Цель</h3>
+                        <p th:text="${booking.purpose}">Цель бронирования</p>
                         <div th:if="${booking.notes != null}">
-                            <h4>Notes:</h4>
-                            <p th:text="${booking.notes}">Additional notes</p>
+                            <h4>Заметки:</h4>
+                            <p th:text="${booking.notes}">Дополнительные заметки</p>
                         </div>
                     </div>
 
                     <div th:if="${booking.rejectionReason != null}" class="detail-section error-section">
-                        <h3>Rejection Reason</h3>
-                        <p th:text="${booking.rejectionReason}">Rejection reason</p>
+                        <h3>Причина отклонения</h3>
+                        <p th:text="${booking.rejectionReason}">Причина отклонения</p>
                     </div>
 
                     <div th:if="${booking.pending}" class="detail-actions">
-                        <button class="btn btn-danger" onclick="showRejectModal()">Reject Booking</button>
+                        <button class="btn btn-danger" onclick="showRejectModal()">Отклонить бронирование</button>
                     </div>
 
                     <div th:if="${booking.approved}" class="detail-actions">
                         <a th:href="@{/booking/pdf/{id}(id=${booking.id})}" class="btn btn-primary" download>
-                            Download PDF
+                            Скачать PDF
                         </a>
                     </div>
                 </div>
@@ -126,16 +126,16 @@
     <!-- Reject Modal -->
     <div id="rejectModal" class="modal">
         <div class="modal-content">
-            <h3>Reject Booking</h3>
+            <h3>Отклонить бронирование</h3>
             <form th:action="@{/admin/bookings/{id}/reject(id=${booking.id})}" method="post">
                 <div class="form-group">
-                    <label for="reason">Rejection Reason *</label>
+                    <label for="reason">Причина отклонения *</label>
                     <textarea id="reason" name="reason" class="form-control" rows="3" required
-                              placeholder="Please provide a reason for rejection..."></textarea>
+                              placeholder="Пожалуйста, укажите причину отклонения..."></textarea>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" onclick="hideRejectModal()">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Reject Booking</button>
+                    <button type="button" class="btn btn-outline" onclick="hideRejectModal()">Отмена</button>
+                    <button type="submit" class="btn btn-danger">Отклонить бронирование</button>
                 </div>
             </form>
         </div>

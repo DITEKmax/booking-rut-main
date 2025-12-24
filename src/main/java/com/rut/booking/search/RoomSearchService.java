@@ -123,6 +123,7 @@ public class RoomSearchService {
 
             NativeQuery searchQuery = NativeQuery.builder()
                     .withQuery(boolQuery)
+                    .withMaxResults(100)
                     .build();
 
             SearchHits<RoomDocument> searchHits = elasticsearchOperations.search(

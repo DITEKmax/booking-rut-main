@@ -82,10 +82,10 @@
                                 <td class="actions-cell">
                                     <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="btn btn-outline btn-sm">Просмотр аудитории</a>
                                     <form th:if="${!review.issuesMarkedRelevant}" th:action="@{/admin/dispatcher-issues/{id}/mark-relevant(id=${review.id})}" method="post" style="display: inline; margin-left: 8px;">
-                                        <button type="submit" class="btn btn-primary btn-sm">Отметить актуальным</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Неисправность устранена</button>
                                     </form>
                                     <span th:if="${review.issuesMarkedRelevant}" class="badge" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
-                                        ✓ Отмечено актуальным
+                                        ✓ Устранено
                                     </span>
                                 </td>
                             </tr>
@@ -117,6 +117,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
+            max-width: 200px;
         }
 
         .issue-badge {
@@ -125,9 +126,56 @@
             background-color: #fff3cd;
             border: 1px solid #ffc107;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             color: #856404;
             white-space: nowrap;
+        }
+
+        .bookings-table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .admin-table {
+            min-width: 1200px;
+            table-layout: fixed;
+        }
+
+        .admin-table th:nth-child(1) { width: 50px; }   /* ID */
+        .admin-table th:nth-child(2) { width: 120px; }  /* Дата */
+        .admin-table th:nth-child(3) { width: 100px; }  /* Аудитория */
+        .admin-table th:nth-child(4) { width: 150px; }  /* Пользователь */
+        .admin-table th:nth-child(5) { width: 80px; }   /* Рейтинг */
+        .admin-table th:nth-child(6) { width: 200px; }  /* Сообщенные проблемы */
+        .admin-table th:nth-child(7) { width: 200px; }  /* Комментарий */
+        .admin-table th:nth-child(8) { width: 100px; }  /* Изображение */
+        .admin-table th:nth-child(9) { width: 200px; }  /* Действия */
+
+        .admin-table td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .actions-cell {
+            white-space: nowrap;
+        }
+
+        .actions-cell .btn {
+            display: inline-block;
+            margin: 2px;
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        .actions-cell form {
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .actions-cell .badge {
+            display: inline-block;
+            margin: 2px;
+            font-size: 11px;
         }
     </style>
 </body>

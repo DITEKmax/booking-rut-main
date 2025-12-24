@@ -29,7 +29,6 @@
                         <h1 th:text="${room.number} + ' ' + ${room.building}">1125 ГУК-1</h1>
                     </div>
                     <div class="room-detail-actions">
-                        <button class="icon-btn" title="Поделиться">&#128279;</button>
                         <button class="icon-btn favorite-btn-icon" th:classappend="${room.isFavorite} ? 'active' : ''"
                                 th:data-room-id="${room.id}" onclick="toggleFavorite(this)" title="В избранное">
                             <span th:if="${room.isFavorite}">&#9733;</span>
@@ -83,6 +82,8 @@
                 <div class="room-main-actions">
                     <a th:unless="${hasReviewed}" th:href="@{/reviews/room/{id}/new(id=${room.id})}"
                        class="btn btn-light">Оценить</a>
+                    <a th:href="@{/room-issues/create(roomId=${room.id})}"
+                       class="btn btn-outline" style="border-color: #dc3545; color: #dc3545;">Сообщить о проблеме</a>
                     <a th:href="@{/booking/room/{id}(id=${room.id})}" class="btn btn-primary">Забронировать</a>
                 </div>
             </div>
@@ -160,7 +161,8 @@
                     </div>
                     <div class="review-images">
                         <div th:if="${review.imagePath != null}">
-                            <img th:src="${review.imagePath}" alt="Фото отзыва">
+                            <img th:src="${review.imagePath}" alt="Фото отзыва" class="clickable-image"
+                                 onclick="openImageModal(this.src)" style="cursor: pointer;">
                         </div>
                         <div th:unless="${review.imagePath != null}" class="review-image-placeholder"></div>
                     </div>
@@ -183,6 +185,13 @@
         </div>
     </div>
 </main>
+
+<!-- Image Zoom Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="image-modal-close">&times;</span>
+    <img class="image-modal-content" id="modalImage">
+</div>
+
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script th:src="@{/js/main.js}"></script>
 <script th:inline="javascript">
@@ -277,6 +286,25 @@
 
     // Initial load
     loadSimilarRooms();
+
+    // Image modal functions
+    function openImageModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modal.style.display = 'flex';
+        modalImg.src = imageSrc;
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeImageModal();
+        }
+    });
 </script>
 </body>
 </html>

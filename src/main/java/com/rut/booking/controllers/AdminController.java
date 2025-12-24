@@ -6,6 +6,7 @@ import com.rut.booking.dto.ReviewDto;
 import com.rut.booking.dto.RoomDto;
 import com.rut.booking.dto.RoomIssueDto;
 import com.rut.booking.models.enums.BookingStatus;
+import com.rut.booking.models.enums.RoomType;
 import com.rut.booking.security.CustomUserDetails;
 import com.rut.booking.services.BookingService;
 import com.rut.booking.services.ReviewService;
@@ -17,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;

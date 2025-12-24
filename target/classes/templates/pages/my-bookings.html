@@ -64,7 +64,7 @@
 
                     <div class="booking-actions">
                         <a th:if="${booking.approved}" th:href="@{/booking/pdf/{id}(id=${booking.id})}"
-                           class="btn btn-primary btn-sm" download>Скачать PDF</a>
+                           class="btn btn-primary btn-sm">Скачать PDF</a>
                         <form th:if="${booking.canBeCancelled()}" th:action="@{/booking/cancel/{id}(id=${booking.id})}"
                               method="post" class="inline-form"
                               onsubmit="return confirm('Вы уверены, что хотите отменить это бронирование?')">

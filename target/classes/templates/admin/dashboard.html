@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Admin Dashboard - RUT Booking</title>
+    <title>Панель администратора - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
@@ -11,47 +11,49 @@
             <!-- Admin Sidebar -->
             <aside class="admin-sidebar">
                 <nav class="admin-nav">
-                    <a th:href="@{/admin}" class="admin-nav-link active">Dashboard</a>
-                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
-                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
-                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
+                    <a th:href="@{/admin}" class="admin-nav-link active">Панель управления</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">Все бронирования</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Календарь</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Сообщенные проблемы</a>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/rooms}" class="admin-nav-link">Управление аудиториями</a>
                 </nav>
             </aside>
 
             <!-- Admin Content -->
             <div class="admin-content">
-                <h1>Admin Dashboard</h1>
+                <h1>Панель администратора</h1>
 
                 <div class="stats-grid">
                     <div class="stat-card pending">
                         <div class="stat-value" th:text="${pendingCount}">0</div>
-                        <div class="stat-label">Pending Bookings</div>
-                        <a th:href="@{/admin/bookings(status='CREATED')}" class="stat-link">View</a>
+                        <div class="stat-label">Ожидающие бронирования</div>
+                        <a th:href="@{/admin/bookings(status='CREATED')}" class="stat-link">Просмотр</a>
                     </div>
 
                     <div class="stat-card approved">
                         <div class="stat-value" th:text="${approvedCount}">0</div>
-                        <div class="stat-label">Approved Bookings</div>
-                        <a th:href="@{/admin/bookings(status='APPROVED')}" class="stat-link">View</a>
+                        <div class="stat-label">Одобренные бронирования</div>
+                        <a th:href="@{/admin/bookings(status='APPROVED')}" class="stat-link">Просмотр</a>
                     </div>
 
                     <div class="stat-card rejected">
                         <div class="stat-value" th:text="${rejectedCount}">0</div>
-                        <div class="stat-label">Rejected Bookings</div>
-                        <a th:href="@{/admin/bookings(status='REJECTED')}" class="stat-link">View</a>
+                        <div class="stat-label">Отклоненные бронирования</div>
+                        <a th:href="@{/admin/bookings(status='REJECTED')}" class="stat-link">Просмотр</a>
                     </div>
                 </div>
 
                 <div class="quick-actions">
-                    <h2>Quick Actions</h2>
+                    <h2>Быстрые действия</h2>
                     <div class="actions-grid">
                         <a th:href="@{/admin/bookings}" class="action-card">
                             <span class="action-icon">&#128203;</span>
-                            <span class="action-text">View All Bookings</span>
+                            <span class="action-text">Все бронирования</span>
                         </a>
                         <a th:href="@{/admin/calendar}" class="action-card">
                             <span class="action-icon">&#128197;</span>
-                            <span class="action-text">View Calendar</span>
+                            <span class="action-text">Календарь</span>
                         </a>
                     </div>
                 </div>

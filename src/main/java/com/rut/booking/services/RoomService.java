@@ -13,10 +13,16 @@ import com.rut.booking.search.RoomSearchService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +34,7 @@ public class RoomService {
     private final FavoriteRepository favoriteRepository;
     private final DtoMapper dtoMapper;
     private final RoomSearchService roomSearchService;
+    private final String uploadDir = "./uploads/rooms";
 
     public RoomService(RoomRepository roomRepository, BookingRepository bookingRepository,
                        FavoriteRepository favoriteRepository, DtoMapper dtoMapper,
@@ -309,5 +316,97 @@ public class RoomService {
     @Transactional
     public Room save(Room room) {
         return roomRepository.save(room);
+    }
+
+    @Transactional
+    public RoomDto createRoom(String number, RoomType roomType, Integer capacity,
+                             Boolean hasComputers, Boolean hasProjector, Boolean hasWhiteboard,
+                             String description, MultipartFile image) {
+        Room room = new Room();
+        room.setNumber(number);
+        room.setRoomType(roomType);
+        room.setCapacity(capacity);
+        room.setHasComputers(hasComputers != null ? hasComputers : false);
+        room.setHasProjector(hasProjector != null ? hasProjector : false);
+        room.setHasWhiteboard(hasWhiteboard != null ? hasWhiteboard : false);
+        room.setDescription(description);
+        room.setIsActive(true);
+
+        // Handle image upload
+        if (image != null && !image.isEmpty()) {
+            String imagePath = saveRoomImage(image);
+            room.setImagePath(imagePath);
+        }
+
+        Room saved = roomRepository.save(room);
+
+        // Index in Elasticsearch
+        roomSearchService.indexRoom(saved.getId());
+
+        return dtoMapper.toRoomDto(saved);
+    }
+
+    @Transactional
+    public RoomDto updateRoom(Long roomId, String number, RoomType roomType, Integer capacity,
+                             Boolean hasComputers, Boolean hasProjector, Boolean hasWhiteboard,
+                             String description, Boolean isActive, MultipartFile image) {
+        Room room = findById(roomId);
+
+        room.setNumber(number);
+        room.setRoomType(roomType);
+        room.setCapacity(capacity);
+        room.setHasComputers(hasComputers != null ? hasComputers : false);
+        room.setHasProjector(hasProjector != null ? hasProjector : false);
+        room.setHasWhiteboard(hasWhiteboard != null ? hasWhiteboard : false);
+        room.setDescription(description);
+        room.setIsActive(isActive != null ? isActive : true);
+
+        // Handle image upload
+        if (image != null && !image.isEmpty()) {
+            // Delete old image if exists
+            if (room.getImagePath() != null) {
+                deleteRoomImage(room.getImagePath());
+            }
+            String imagePath = saveRoomImage(image);
+            room.setImagePath(imagePath);
+        }
+
+        Room saved = roomRepository.save(room);
+
+        // Reindex in Elasticsearch
+        roomSearchService.indexRoom(saved.getId());
+
+        return dtoMapper.toRoomDto(saved);
+    }
+
+    private String saveRoomImage(MultipartFile file) {
+        try {
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename != null && originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
+            String filename = UUID.randomUUID().toString() + extension;
+            Path filePath = uploadPath.resolve(filename);
+
+            Files.copy(file.getInputStream(), filePath);
+
+            return "/uploads/rooms/" + filename;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save room image: " + e.getMessage(), e);
+        }
+    }
+
+    private void deleteRoomImage(String imagePath) {
+        try {
+            Path filePath = Paths.get("." + imagePath);
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            System.err.println("Failed to delete room image: " + e.getMessage());
+        }
     }
 }

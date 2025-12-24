@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head}">
+    <title>Сообщить о проблеме - РУТ Навигатор</title>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="main-content">
+        <div class="review-modal-overlay">
+            <div class="review-modal">
+                <a th:href="${room != null} ? @{/rooms/{id}(id=${room.id})} : @{/rooms}" class="review-modal-close">&times;</a>
+
+                <h2>Сообщить о проблеме <span th:if="${room != null}" th:text="'в аудитории ' + ${room.number}"></span></h2>
+
+                <form th:action="@{/room-issues/create}" method="post" th:object="${issueRequest}"
+                      enctype="multipart/form-data" class="review-form">
+
+                    <!-- Room Selection -->
+                    <div class="form-group" th:if="${room == null}">
+                        <label for="roomId">Выберите аудиторию</label>
+                        <select id="roomId" th:field="*{roomId}" class="form-control" required>
+                            <option value="">-- Выберите аудиторию --</option>
+                            <option th:each="r : ${rooms}" th:value="${r.id}"
+                                    th:text="'Ауд. ' + ${r.number}">Ауд. 1234</option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('roomId')}" class="error-message"
+                              th:errors="*{roomId}">Ошибка выбора аудитории</span>
+                    </div>
+
+                    <input type="hidden" th:if="${room != null}" th:field="*{roomId}">
+
+                    <!-- Issue Selection -->
+                    <div class="form-group">
+                        <label>Что из следующего верно?</label>
+                        <div class="issue-chips">
+                            <button type="button" class="issue-chip" data-issue="Не работает проектор">Не работает проектор</button>
+                            <button type="button" class="issue-chip" data-issue="Нет маркеров">Нет маркеров</button>
+                            <button type="button" class="issue-chip" data-issue="Сломана парта/стул">Сломана парта/стул</button>
+                            <button type="button" class="issue-chip" data-issue="Не работает компьютер">Не работает компьютер</button>
+                            <button type="button" class="issue-chip" data-issue="Сломано окно">Сломано окно</button>
+                            <button type="button" class="issue-chip" data-issue="Грязно">Грязно</button>
+                        </div>
+                        <input type="hidden" th:field="*{issues}" id="selectedIssues">
+                        <span th:if="${#fields.hasErrors('issues')}" class="error-message"
+                              th:errors="*{issues}">Выберите хотя бы одну проблему</span>
+                    </div>
+
+                    <!-- Photo Upload -->
+                    <div class="form-group">
+                        <div class="photo-upload">
+                            <label class="photo-upload-slot" for="image">
+                                <span>&#8593;</span>
+                                <span>Загрузить фото</span>
+                            </label>
+                            <input type="file" id="image" name="image" accept="image/*" style="display: none;">
+                            <div id="photoSlot1" class="photo-upload-slot filled" style="display: none;"></div>
+                        </div>
+                        <div id="imagePreview" class="image-preview"></div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="description">Подробное описание (необязательно)</label>
+                        <textarea id="description" th:field="*{description}" class="form-control" rows="5"
+                                  placeholder="Опишите проблему подробнее..."
+                                  maxlength="2000"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-secondary">Отправить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        // Image preview
+        document.getElementById('image').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            const slot1 = document.getElementById('photoSlot1');
+            preview.innerHTML = '';
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    preview.appendChild(img);
+                    slot1.innerHTML = '<img src="' + e.target.result + '" alt="Фото">';
+                    slot1.style.display = 'flex';
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Issue chips toggle
+        document.querySelectorAll('.issue-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateSelectedIssues();
+            });
+        });
+
+        function updateSelectedIssues() {
+            const selected = [];
+            document.querySelectorAll('.issue-chip.selected').forEach(chip => {
+                selected.push(chip.dataset.issue);
+            });
+            document.getElementById('selectedIssues').value = selected.join(',');
+        }
+    </script>
+</body>
+</html>

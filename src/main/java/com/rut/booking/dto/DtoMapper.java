@@ -109,4 +109,22 @@ public class DtoMapper {
         dto.setStatus(booking.getStatus());
         return dto;
     }
+
+    public RoomIssueDto toRoomIssueDto(RoomIssue roomIssue) {
+        if (roomIssue == null) return null;
+        RoomIssueDto dto = new RoomIssueDto();
+        dto.setId(roomIssue.getId());
+        dto.setUserId(roomIssue.getUser() != null ? roomIssue.getUser().getId() : null);
+        dto.setUserName(roomIssue.getUser() != null ? roomIssue.getUser().getFullName() : null);
+        dto.setRoomId(roomIssue.getRoom() != null ? roomIssue.getRoom().getId() : null);
+        dto.setRoomNumber(roomIssue.getRoom() != null ? roomIssue.getRoom().getNumber() : null);
+        dto.setIssues(roomIssue.getIssues());
+        dto.setDescription(roomIssue.getDescription());
+        dto.setImagePath(roomIssue.getImagePath());
+        dto.setIsResolved(roomIssue.getIsResolved());
+        dto.setResolvedAt(roomIssue.getResolvedAt());
+        dto.setResolvedByName(roomIssue.getResolvedBy() != null ? roomIssue.getResolvedBy().getFullName() : null);
+        dto.setCreatedAt(roomIssue.getCreatedAt());
+        return dto;
+    }
 }

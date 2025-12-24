@@ -101,6 +101,11 @@
             <div th:unless="${#lists.isEmpty(reviews)}" class="reviews-list" style="margin-top: 24px;">
                 <div th:each="review : ${reviews}" class="my-review-card">
                     <div class="my-review-content">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 14px; font-weight: 600; color: var(--primary-color);">
+                                Аудитория <span th:text="${review.roomNumber}">1234</span>
+                            </span>
+                        </div>
                         <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="my-review-title"
                            th:text="${review.comment != null} ? ${review.comment} : 'Мой отзыв'">Мой очень полезный отзыв</a>
                         <div class="my-review-date">

@@ -38,6 +38,34 @@ public class PdfGenerationService {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
+    /**
+     * Loads a font that supports Cyrillic characters.
+     * Tries multiple system fonts with fallback options.
+     */
+    private PdfFont loadCyrillicFont() throws IOException {
+        // List of font paths to try, in order of preference
+        String[] fontPaths = {
+                "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+        };
+
+        for (String fontPath : fontPaths) {
+            try {
+                if (Files.exists(Paths.get(fontPath))) {
+                    return PdfFontFactory.createFont(fontPath, "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+                }
+            } catch (Exception e) {
+                // Continue to next font
+                System.err.println("Failed to load font from " + fontPath + ": " + e.getMessage());
+            }
+        }
+
+        // If all else fails, use Helvetica (won't display Cyrillic properly, but won't crash)
+        System.err.println("Warning: Could not load Cyrillic font, falling back to Helvetica");
+        return PdfFontFactory.createFont("Helvetica", "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_NOT_EMBEDDED);
+    }
+
     public String generateBookingConfirmationPdf(Booking booking) {
         try {
             Path storagePath = Paths.get(pdfStoragePath);
@@ -55,8 +83,8 @@ public class PdfGenerationService {
 
             document.setMargins(50, 50, 50, 50);
 
-            // Load Russian font - using FreeSans which supports Cyrillic
-            PdfFont font = PdfFontFactory.createFont("FreeSans", "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+            // Load Russian font - using system fonts that support Cyrillic
+            PdfFont font = loadCyrillicFont();
             document.setFont(font);
 
             // Header

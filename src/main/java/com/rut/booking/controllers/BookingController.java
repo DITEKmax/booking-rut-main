@@ -129,7 +129,8 @@ public class BookingController {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", filename);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+            headers.setContentLength(pdfBytes.length);
 
             return ResponseEntity.ok()
                     .headers(headers)

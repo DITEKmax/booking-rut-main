@@ -37,7 +37,11 @@ public class DtoMapper {
         dto.setDescription(room.getDescription());
         dto.setImagePath(room.getImagePath());
         dto.setAverageRating(room.getAverageRating());
-        dto.setReviewCount(room.getReviews() != null ? room.getReviews().size() : 0);
+        // Count only non-deleted reviews
+        dto.setReviewCount(room.getReviews() != null ?
+            (int) room.getReviews().stream()
+                .filter(r -> r.getIsDeleted() == null || !r.getIsDeleted())
+                .count() : 0);
         return dto;
     }
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>Dispatcher Issues - RUT Booking</title>
+    <title>Сообщенные проблемы - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
@@ -11,29 +11,29 @@
             <!-- Admin Sidebar -->
             <aside class="admin-sidebar">
                 <nav class="admin-nav">
-                    <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
-                    <a th:href="@{/admin/bookings}" class="admin-nav-link">All Bookings</a>
-                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Calendar</a>
-                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Reviews</a>
-                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link active">Reported Issues</a>
+                    <a th:href="@{/admin}" class="admin-nav-link">Панель управления</a>
+                    <a th:href="@{/admin/bookings}" class="admin-nav-link">Все бронирования</a>
+                    <a th:href="@{/admin/calendar}" class="admin-nav-link">Календарь</a>
+                    <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
+                    <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link active">Сообщенные проблемы</a>
                 </nav>
             </aside>
 
             <!-- Admin Content -->
             <div class="admin-content">
-                <h1>Reported Issues from Reviews</h1>
+                <h1>Сообщенные проблемы из отзывов</h1>
 
                 <div th:if="${success}" class="alert alert-success">
-                    <span th:text="${success}">Success message</span>
+                    <span th:text="${success}">Успешно</span>
                 </div>
 
                 <div th:if="${error}" class="alert alert-error">
-                    <span th:text="${error}">Error message</span>
+                    <span th:text="${error}">Ошибка</span>
                 </div>
 
                 <p style="color: var(--text-secondary); margin-bottom: 20px;">
-                    This page shows all reviews where users have reported problems with classrooms.
-                    Issues include: broken equipment, missing markers, cleanliness problems, etc.
+                    На этой странице отображаются все отзывы, в которых пользователи сообщили о проблемах с аудиториями.
+                    Проблемы включают: сломанное оборудование, отсутствие маркеров, проблемы с чистотой и т.д.
                 </p>
 
                 <!-- Issues Table -->
@@ -42,25 +42,25 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Date</th>
-                                <th>Room</th>
-                                <th>User</th>
-                                <th>Rating</th>
-                                <th>Issues Reported</th>
-                                <th>Comment</th>
-                                <th>Image</th>
-                                <th>Actions</th>
+                                <th>Дата</th>
+                                <th>Аудитория</th>
+                                <th>Пользователь</th>
+                                <th>Рейтинг</th>
+                                <th>Сообщенные проблемы</th>
+                                <th>Комментарий</th>
+                                <th>Изображение</th>
+                                <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${#lists.isEmpty(reviews)}">
-                                <td colspan="9" class="no-data">No issues reported</td>
+                                <td colspan="9" class="no-data">Проблемы не сообщены</td>
                             </tr>
                             <tr th:each="review : ${reviews}">
                                 <td th:text="${review.id}">#123</td>
                                 <td th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025 10:00</td>
-                                <td th:text="'Room ' + ${review.roomNumber}">Room 1234</td>
-                                <td th:text="${review.userName}">User Name</td>
+                                <td th:text="'Ауд. ' + ${review.roomNumber}">Ауд. 1234</td>
+                                <td th:text="${review.userName}">Имя пользователя</td>
                                 <td>
                                     <span class="rating-stars">
                                         <span th:each="i : ${#numbers.sequence(1, review.rating)}">⭐</span>
@@ -71,21 +71,21 @@
                                     <div class="issues-list">
                                         <span th:each="issue, iterStat : ${#strings.arraySplit(review.issues, ',')}"
                                               class="issue-badge"
-                                              th:text="${issue}">Issue</span>
+                                              th:text="${issue}">Проблема</span>
                                     </div>
                                 </td>
-                                <td class="purpose-cell" th:text="${review.comment}">Great room!</td>
+                                <td class="purpose-cell" th:text="${review.comment}">Отличная аудитория!</td>
                                 <td>
-                                    <a th:if="${review.imagePath}" th:href="${review.imagePath}" target="_blank" class="btn btn-outline btn-sm">View</a>
+                                    <a th:if="${review.imagePath}" th:href="${review.imagePath}" target="_blank" class="btn btn-outline btn-sm">Просмотр</a>
                                     <span th:unless="${review.imagePath}">-</span>
                                 </td>
                                 <td class="actions-cell">
-                                    <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="btn btn-outline btn-sm">View Room</a>
+                                    <a th:href="@{/rooms/{id}(id=${review.roomId})}" class="btn btn-outline btn-sm">Просмотр аудитории</a>
                                     <form th:if="${!review.issuesMarkedRelevant}" th:action="@{/admin/dispatcher-issues/{id}/mark-relevant(id=${review.id})}" method="post" style="display: inline; margin-left: 8px;">
-                                        <button type="submit" class="btn btn-primary btn-sm">Mark Relevant</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Отметить актуальным</button>
                                     </form>
                                     <span th:if="${review.issuesMarkedRelevant}" class="badge" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
-                                        ✓ Marked Relevant
+                                        ✓ Отмечено актуальным
                                     </span>
                                 </td>
                             </tr>
@@ -94,14 +94,14 @@
                 </div>
 
                 <div th:if="${!#lists.isEmpty(reviews)}" style="margin-top: 20px; padding: 15px; background: var(--light-bg); border-radius: var(--radius-md);">
-                    <h3 style="margin-bottom: 10px;">Issue Types:</h3>
+                    <h3 style="margin-bottom: 10px;">Типы проблем:</h3>
                     <ul style="list-style: none; padding: 0;">
-                        <li>🔧 <strong>Не работает проектор</strong> - Projector doesn't work</li>
-                        <li>✏️ <strong>Нет маркеров</strong> - No markers</li>
-                        <li>🪑 <strong>Сломана парта/стул</strong> - Broken furniture</li>
-                        <li>💻 <strong>Не работает компьютер</strong> - Computer doesn't work</li>
-                        <li>🪟 <strong>Сломано окно</strong> - Broken window</li>
-                        <li>🧹 <strong>Грязно</strong> - Dirty</li>
+                        <li>🔧 <strong>Не работает проектор</strong></li>
+                        <li>✏️ <strong>Нет маркеров</strong></li>
+                        <li>🪑 <strong>Сломана парта/стул</strong></li>
+                        <li>💻 <strong>Не работает компьютер</strong></li>
+                        <li>🪟 <strong>Сломано окно</strong></li>
+                        <li>🧹 <strong>Грязно</strong></li>
                     </ul>
                 </div>
             </div>

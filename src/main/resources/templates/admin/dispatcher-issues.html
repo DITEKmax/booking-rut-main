@@ -16,6 +16,7 @@
                     <a th:href="@{/admin/calendar}" class="admin-nav-link">Календарь</a>
                     <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
                     <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link active">Сообщенные проблемы</a>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/rooms}" class="admin-nav-link">Управление аудиториями</a>
                 </nav>
             </aside>
 
@@ -38,9 +39,9 @@
 
                 <!-- Standalone Room Issues -->
                 <div th:unless="${#lists.isEmpty(roomIssues)}" style="margin-bottom: 32px;">
-                    <h3 style="margin-bottom: 16px;">Сообщения о проблемах</h3>
-                    <div class="issues-table-wrapper">
-                        <table class="issues-table">
+                    <h2 style="color: var(--text-white); margin-bottom: 16px;">Сообщения о проблемах</h2>
+                    <div class="bookings-table-container">
+                        <table class="admin-table">
                             <thead>
                                 <tr>
                                     <th style="width: 50px;">ID</th>
@@ -93,9 +94,9 @@
 
                 <!-- Review Issues -->
                 <div th:unless="${#lists.isEmpty(reviews)}">
-                    <h3 style="margin-bottom: 16px;">Проблемы из отзывов</h3>
-                    <div class="issues-table-wrapper">
-                        <table class="issues-table">
+                    <h2 style="color: var(--text-white); margin-bottom: 16px;">Проблемы из отзывов</h2>
+                    <div class="bookings-table-container">
+                        <table class="admin-table">
                             <thead>
                                 <tr>
                                     <th style="width: 50px;">ID</th>
@@ -178,55 +179,6 @@
             white-space: nowrap;
         }
 
-        .issues-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            margin-bottom: 20px;
-        }
-
-        .issues-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .issues-table th {
-            background-color: #f8f9fa;
-            color: #495057;
-            font-weight: 600;
-            text-align: left;
-            padding: 12px;
-            border-bottom: 2px solid #dee2e6;
-            white-space: nowrap;
-        }
-
-        .issues-table td {
-            padding: 12px;
-            border-bottom: 1px solid #dee2e6;
-            vertical-align: top;
-        }
-
-        .issues-table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .room-cell {
-            text-align: left;
-        }
-
-        .room-link {
-            color: var(--primary-color, #0066cc);
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-block;
-            transition: color 0.2s ease;
-        }
-
-        .room-link:hover {
-            color: var(--primary-dark, #0052a3);
-            text-decoration: underline;
-        }
-
         .room-cell .btn {
             font-size: 12px;
             padding: 6px 12px;
@@ -239,23 +191,12 @@
 
         .badge-resolved {
             display: inline-block;
-            background: #28a745;
+            background: var(--success-color);
             color: white;
             padding: 6px 12px;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             font-size: 12px;
             font-weight: 500;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-            border-color: #bd2130;
         }
 
         .description-cell {
@@ -269,12 +210,6 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-        }
-
-        h3 {
-            color: #333;
-            font-size: 1.25rem;
-            font-weight: 600;
         }
     </style>
 </body>

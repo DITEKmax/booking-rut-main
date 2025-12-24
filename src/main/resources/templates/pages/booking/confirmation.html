@@ -54,7 +54,7 @@
 
                     <div class="confirmation-actions">
                         <a th:if="${booking.approved}" th:href="@{/booking/pdf/{id}(id=${booking.id})}"
-                           class="btn btn-primary" download>
+                           class="btn btn-primary">
                             Скачать PDF подтверждение
                         </a>
                         <a th:href="@{/my-bookings}" class="btn btn-secondary">Все бронирования</a>

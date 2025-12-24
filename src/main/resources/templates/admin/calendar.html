@@ -17,6 +17,7 @@
                     <a th:href="@{/admin/calendar}" class="admin-nav-link active">Календарь</a>
                     <a th:href="@{/admin/reviews}" class="admin-nav-link">Отзывы</a>
                     <a th:href="@{/admin/dispatcher-issues}" class="admin-nav-link">Сообщенные проблемы</a>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/rooms}" class="admin-nav-link">Управление аудиториями</a>
                 </nav>
             </aside>
 

@@ -64,16 +64,20 @@ public class RoomSearchService {
             Double avgRating = reviewRepository.getAverageRatingForRoom(room.getId());
             Integer reviewCount = activeReviews.size();
 
-            // Build equipment text for searchability
+            // Build equipment text for searchability with synonyms and variations
             StringBuilder equipmentText = new StringBuilder();
             if (Boolean.TRUE.equals(room.getHasProjector())) {
-                equipmentText.append("проектор projector ");
+                equipmentText.append("проектор проекторы projector проэктор проэкторы ");
+                equipmentText.append("мультимедиа multimedia презентация presentation ");
             }
             if (Boolean.TRUE.equals(room.getHasComputers())) {
-                equipmentText.append("компьютеры computers ");
+                equipmentText.append("компьютер компьютеры computer computers компы ");
+                equipmentText.append("ПК PC пк компьютерный компьютерная техника ");
+                equipmentText.append("ноутбук ноутбуки laptop монитор мониторы monitor ");
             }
             if (Boolean.TRUE.equals(room.getHasWhiteboard())) {
-                equipmentText.append("доска whiteboard маркеры markers ");
+                equipmentText.append("доска доски whiteboard board маркер маркеры marker markers ");
+                equipmentText.append("маркерная доска белая доска флипчарт flipchart ");
             }
 
             RoomDocument document = RoomDocument.builder()
@@ -108,7 +112,7 @@ public class RoomSearchService {
         try {
             Query multiMatchQuery = MultiMatchQuery.of(m -> m
                     .query(keyword)
-                    .fields("number^3", "building^2", "equipmentText^2", "description", "reviews", "roomTypeDisplayName")
+                    .fields("number^4", "building^3", "equipmentText^3", "roomTypeDisplayName^2", "description^1.5", "reviews")
                     .fuzziness("AUTO")
             )._toQuery();
 

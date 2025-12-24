@@ -40,10 +40,22 @@ public class PdfGenerationService {
 
     /**
      * Loads a font that supports Cyrillic characters.
-     * Tries multiple system fonts with fallback options.
+     * First tries to load from classpath (bundled font), then tries system fonts.
      */
     private PdfFont loadCyrillicFont() throws IOException {
-        // List of font paths to try, in order of preference
+        // First try to load bundled font from classpath
+        try {
+            var fontStream = getClass().getResourceAsStream("/fonts/DejaVuSans.ttf");
+            if (fontStream != null) {
+                byte[] fontBytes = fontStream.readAllBytes();
+                fontStream.close();
+                return PdfFontFactory.createFont(fontBytes, "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to load bundled font: " + e.getMessage());
+        }
+
+        // Fallback to system fonts
         String[] fontPaths = {
                 "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
@@ -56,14 +68,12 @@ public class PdfGenerationService {
                     return PdfFontFactory.createFont(fontPath, "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
                 }
             } catch (Exception e) {
-                // Continue to next font
                 System.err.println("Failed to load font from " + fontPath + ": " + e.getMessage());
             }
         }
 
-        // If all else fails, use Helvetica (won't display Cyrillic properly, but won't crash)
-        System.err.println("Warning: Could not load Cyrillic font, falling back to Helvetica");
-        return PdfFontFactory.createFont("Helvetica", "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_NOT_EMBEDDED);
+        // If all else fails, throw an exception instead of using Helvetica
+        throw new IOException("Could not load any Cyrillic font. Please ensure DejaVuSans.ttf is in resources/fonts/ or install system fonts.");
     }
 
     public String generateBookingConfirmationPdf(Booking booking) {

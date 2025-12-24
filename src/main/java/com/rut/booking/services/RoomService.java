@@ -341,7 +341,7 @@ public class RoomService {
         Room saved = roomRepository.save(room);
 
         // Index in Elasticsearch
-        roomSearchService.indexRoom(saved.getId());
+        roomSearchService.indexRoom(saved);
 
         return dtoMapper.toRoomDto(saved);
     }
@@ -374,7 +374,7 @@ public class RoomService {
         Room saved = roomRepository.save(room);
 
         // Reindex in Elasticsearch
-        roomSearchService.indexRoom(saved.getId());
+        roomSearchService.indexRoom(saved);
 
         return dtoMapper.toRoomDto(saved);
     }

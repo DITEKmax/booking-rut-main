@@ -79,9 +79,14 @@
     </main>
 
     <!-- Модальное окно для увеличенного просмотра -->
-    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-        <span class="image-modal-close">&times;</span>
-        <img class="image-modal-content" id="modalImage" alt="План корпуса">
+    <div id="imageModal" class="image-modal" onclick="closeImageModal(event)">
+        <span class="image-modal-close" onclick="closeImageModal(event)">&times;</span>
+        <img class="image-modal-content" id="modalImage" alt="План корпуса" onclick="event.stopPropagation()">
+        <div class="zoom-controls">
+            <button class="zoom-btn" onclick="event.stopPropagation(); zoomIn()">+</button>
+            <button class="zoom-btn" onclick="event.stopPropagation(); resetZoom()">Сброс</button>
+            <button class="zoom-btn" onclick="event.stopPropagation(); zoomOut()">−</button>
+        </div>
     </div>
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -163,6 +168,13 @@
             filterPlans();
         }
 
+        // Переменные для зума и перемещения
+        let scale = 1;
+        let panning = false;
+        let pointX = 0;
+        let pointY = 0;
+        let start = { x: 0, y: 0 };
+
         // Функция открытия модального окна
         function openImageModal(img) {
             const modal = document.getElementById('imageModal');
@@ -170,11 +182,136 @@
             modal.style.display = 'flex';
             modalImg.src = img.src;
             modalImg.alt = img.alt;
+
+            // Сброс зума
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+            setTransform();
         }
 
         // Функция закрытия модального окна
-        function closeImageModal() {
-            document.getElementById('imageModal').style.display = 'none';
+        function closeImageModal(event) {
+            // Закрываем только если клик по фону модального окна
+            if (event && event.target.id !== 'imageModal' && !event.target.classList.contains('image-modal-close')) {
+                return;
+            }
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+        }
+
+        // Установка трансформации
+        function setTransform() {
+            const modalImg = document.getElementById('modalImage');
+            modalImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
+
+        // Зум колесом мыши
+        function handleZoom(e) {
+            e.preventDefault();
+            const modalImg = document.getElementById('modalImage');
+            const xs = (e.clientX - pointX) / scale;
+            const ys = (e.clientY - pointY) / scale;
+            const delta = e.wheelDelta ? e.wheelDelta : -e.deltaY;
+
+            if (delta > 0) {
+                scale *= 1.2;
+            } else {
+                scale /= 1.2;
+            }
+
+            // Ограничение масштаба
+            scale = Math.min(Math.max(0.5, scale), 10);
+
+            pointX = e.clientX - xs * scale;
+            pointY = e.clientY - ys * scale;
+
+            setTransform();
+        }
+
+        // Начало перемещения
+        function handleMouseDown(e) {
+            e.preventDefault();
+            start = { x: e.clientX - pointX, y: e.clientY - pointY };
+            panning = true;
+        }
+
+        // Перемещение
+        function handleMouseMove(e) {
+            e.preventDefault();
+            if (!panning) return;
+
+            pointX = e.clientX - start.x;
+            pointY = e.clientY - start.y;
+            setTransform();
+        }
+
+        // Конец перемещения
+        function handleMouseUp(e) {
+            panning = false;
+        }
+
+        // Touch события для мобильных устройств
+        let initialDistance = 0;
+        let initialScale = 1;
+
+        function getTouchDistance(touches) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                initialDistance = getTouchDistance(e.touches);
+                initialScale = scale;
+            } else if (e.touches.length === 1) {
+                start = { x: e.touches[0].clientX - pointX, y: e.touches[0].clientY - pointY };
+                panning = true;
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = getTouchDistance(e.touches);
+                scale = initialScale * (currentDistance / initialDistance);
+                scale = Math.min(Math.max(0.5, scale), 10);
+                setTransform();
+            } else if (e.touches.length === 1 && panning) {
+                e.preventDefault();
+                pointX = e.touches[0].clientX - start.x;
+                pointY = e.touches[0].clientY - start.y;
+                setTransform();
+            }
+        }
+
+        function handleTouchEnd(e) {
+            panning = false;
+        }
+
+        // Функции для кнопок управления зумом
+        function zoomIn() {
+            scale *= 1.3;
+            scale = Math.min(scale, 10);
+            setTransform();
+        }
+
+        function zoomOut() {
+            scale /= 1.3;
+            scale = Math.max(scale, 0.5);
+            setTransform();
+        }
+
+        function resetZoom() {
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+            setTransform();
         }
 
         // Обработчики событий
@@ -188,10 +325,23 @@
 
             document.getElementById('floorFilter').addEventListener('change', filterPlans);
 
+            // Обработчики для модального окна
+            const modalImg = document.getElementById('modalImage');
+            modalImg.addEventListener('wheel', handleZoom);
+            modalImg.addEventListener('mousedown', handleMouseDown);
+            modalImg.addEventListener('mousemove', handleMouseMove);
+            modalImg.addEventListener('mouseup', handleMouseUp);
+            modalImg.addEventListener('mouseleave', handleMouseUp);
+
+            // Touch события
+            modalImg.addEventListener('touchstart', handleTouchStart);
+            modalImg.addEventListener('touchmove', handleTouchMove);
+            modalImg.addEventListener('touchend', handleTouchEnd);
+
             // Закрытие модального окна по Escape
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
-                    closeImageModal();
+                    closeImageModal({ target: { id: 'imageModal' } });
                 }
             });
         });
@@ -240,17 +390,20 @@
             background: var(--light-bg);
             border-radius: var(--radius-lg);
             overflow: hidden;
-            min-height: 300px;
+            height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
 
         .plan-image {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: contain;
             display: block;
             transition: var(--transition);
+            cursor: pointer;
         }
 
         .plan-footer {
@@ -271,6 +424,50 @@
             color: var(--text-primary);
         }
 
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 30px;
+            z-index: 10001;
+        }
+
+        .zoom-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .zoom-btn:active {
+            transform: scale(0.95);
+        }
+
+        .image-modal-content {
+            transition: transform 0.1s ease-out;
+            cursor: move;
+            user-select: none;
+        }
+
         @media (max-width: 768px) {
             .plans-grid {
                 grid-template-columns: 1fr;
@@ -282,6 +479,17 @@
 
             .filter-group {
                 width: 100%;
+            }
+
+            .zoom-controls {
+                bottom: 20px;
+                padding: 8px;
+            }
+
+            .zoom-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
             }
         }
     </style>

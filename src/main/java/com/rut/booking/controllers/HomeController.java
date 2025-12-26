@@ -75,9 +75,9 @@ public class HomeController {
         try {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
-            // Сканируем PNG файлы (приоритет)
+            // Сканируем PNG файлы (для превью)
             Resource[] pngResources = resolver.getResources("classpath:static/campus-plans/*.png");
-            // Сканируем SVG файлы (fallback)
+            // Сканируем SVG файлы (для детального просмотра)
             Resource[] svgResources = resolver.getResources("classpath:static/campus-plans/*.svg");
 
             Map<Integer, Set<Integer>> campusData = new TreeMap<>();
@@ -87,7 +87,7 @@ public class HomeController {
             Pattern pngPattern = Pattern.compile("(\\d+)-(\\d+)\\.png");
             Pattern svgPattern = Pattern.compile("(\\d+)-(\\d+)\\.svg");
 
-            // Сначала обрабатываем PNG файлы (приоритет)
+            // Сначала обрабатываем PNG файлы (для превью)
             for (Resource resource : pngResources) {
                 String filename = resource.getFilename();
                 if (filename != null) {
@@ -102,15 +102,15 @@ public class HomeController {
                         Map<String, Object> plan = new HashMap<>();
                         plan.put("building", building);
                         plan.put("floor", floor);
-                        plan.put("filename", filename);
-                        plan.put("path", "/campus-plans/" + filename);
-                        plan.put("format", "PNG");
+                        plan.put("previewFilename", filename);
+                        plan.put("previewPath", "/campus-plans/" + filename);
+                        plan.put("detailPath", "/campus-plans/" + filename); // По умолчанию PNG
                         plansByKey.put(key, plan);
                     }
                 }
             }
 
-            // Затем обрабатываем SVG файлы (только если PNG отсутствует)
+            // Обрабатываем SVG файлы (для детального просмотра)
             for (Resource resource : svgResources) {
                 String filename = resource.getFilename();
                 if (filename != null) {
@@ -120,16 +120,19 @@ public class HomeController {
                         int floor = Integer.parseInt(matcher.group(2));
                         String key = building + "-" + floor;
 
-                        // Пропускаем, если уже есть PNG для этого корпуса-этажа
-                        if (!plansByKey.containsKey(key)) {
+                        // Если уже есть PNG для этого плана, добавляем SVG для детального просмотра
+                        if (plansByKey.containsKey(key)) {
+                            plansByKey.get(key).put("detailPath", "/campus-plans/" + filename);
+                        } else {
+                            // Если PNG нет, используем SVG и для превью и для детального просмотра
                             campusData.computeIfAbsent(building, k -> new TreeSet<>()).add(floor);
 
                             Map<String, Object> plan = new HashMap<>();
                             plan.put("building", building);
                             plan.put("floor", floor);
-                            plan.put("filename", filename);
-                            plan.put("path", "/campus-plans/" + filename);
-                            plan.put("format", "SVG");
+                            plan.put("previewFilename", filename);
+                            plan.put("previewPath", "/campus-plans/" + filename);
+                            plan.put("detailPath", "/campus-plans/" + filename);
                             plansByKey.put(key, plan);
                         }
                     }

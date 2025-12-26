@@ -49,7 +49,7 @@ public class SecurityConfig {
                         // Public pages
                         .requestMatchers("/", "/home", "/contacts", "/licenses", "/policies", "/faq", "/campus-plan").permitAll()
                         .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/campus-plans/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
                         // Admin/Dispatcher pages

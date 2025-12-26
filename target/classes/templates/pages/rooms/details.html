@@ -264,7 +264,10 @@
 
                 if (rooms.length < limit) {
                     hasMore = false;
-                    document.getElementById('noMoreRooms').style.display = 'block';
+                    // Показываем сообщение "Больше нет подходящих аудиторий" только если уже были загружены комнаты
+                    if (offset > rooms.length) {
+                        document.getElementById('noMoreRooms').style.display = 'block';
+                    }
                 }
             })
             .catch(error => {

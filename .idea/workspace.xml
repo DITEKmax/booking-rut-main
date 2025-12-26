@@ -6,19 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="725f03ee-36af-4b2f-9221-d20a28ccdf4c" name="Changes" comment="Fix versions 4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rut/booking/controllers/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rut/booking/controllers/AdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/booking-details.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/booking-details.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/bookings.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/bookings.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/calendar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/fragments/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/fragments/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/booking/confirmation.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/booking/confirmation.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/contacts.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/contacts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/my-bookings.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/my-bookings.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/my-reviews.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/my-reviews.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/policies.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/policies.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/campus-plans/example-1-1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/templates/pages/rooms/details.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/pages/rooms/details.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,6 +44,11 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\maksd\IntelliJIDEA\booking-rut-main\src\main\resources\static\campus-plans" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="RutBookingApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.rut.booking.RutBookingApplication" />
@@ -123,7 +117,15 @@
       <option name="project" value="LOCAL" />
       <updated>1766231661570</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Fix versions 4">
+      <option name="closed" value="true" />
+      <created>1766609340607</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1766609340607</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="UnknownFeatures">

@@ -54,14 +54,15 @@
                     </div>
                     <div class="plan-content">
                         <div class="plan-image-container">
-                            <img th:src="@{${plan.path}}"
+                            <img th:src="@{${plan.previewPath}}"
+                                 th:attr="data-detail-src=@{${plan.detailPath}}"
                                  th:alt="'План корпуса ' + ${plan.building} + ', этаж ' + ${plan.floor}"
                                  class="plan-image clickable-image"
                                  onclick="openImageModal(this)" />
                         </div>
                     </div>
                     <div class="plan-footer">
-                        <a th:href="@{${plan.path}}"
+                        <a th:href="@{${plan.detailPath}}"
                            download
                            class="btn btn-outline btn-sm">
                             Скачать план
@@ -180,7 +181,8 @@
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImage');
             modal.style.display = 'flex';
-            modalImg.src = img.src;
+            // Используем data-detail-src для детального просмотра (SVG), если доступен
+            modalImg.src = img.getAttribute('data-detail-src') || img.src;
             modalImg.alt = img.alt;
 
             // Сброс зума
@@ -387,7 +389,7 @@
         }
 
         .plan-image-container {
-            background: var(--light-bg);
+            background: #2a2a2a;
             border-radius: var(--radius-lg);
             overflow: hidden;
             height: 300px;
@@ -462,10 +464,56 @@
             transform: scale(0.95);
         }
 
+        /* Модальное окно */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
         .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
             transition: transform 0.1s ease-out;
             cursor: move;
             user-select: none;
+            position: relative;
+            transform-origin: center center;
+        }
+
+        .image-modal-close {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10001;
+            transition: color 0.3s;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .image-modal-close:hover,
+        .image-modal-close:focus {
+            color: var(--accent-coral, #ff6b6b);
+            background: rgba(0, 0, 0, 0.7);
         }
 
         @media (max-width: 768px) {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head}">
-    <title>План кампуса - РУТ Навигатор</title>
+    <title>Планы корпусов - РУТ Навигатор</title>
 </head>
 <body>
     <header th:replace="~{fragments/header :: header}"></header>
@@ -9,83 +9,280 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1>План кампуса</h1>
+                <h1>Планы корпусов</h1>
             </div>
 
-            <div class="campus-plan-stub">
-                <div class="stub-card">
-                    <div class="stub-icon">&#128506;</div>
-                    <h2>Функция в разработке</h2>
-                    <p>Интерактивный план кампуса Российского университета транспорта находится в разработке.</p>
-                    <p>Скоро здесь появится возможность:</p>
-                    <ul class="feature-list">
-                        <li>Просматривать план всех корпусов университета</li>
-                        <li>Искать аудитории на интерактивной карте</li>
-                        <li>Строить маршруты между корпусами</li>
-                        <li>Находить важные объекты инфраструктуры</li>
-                    </ul>
-                    <div class="stub-actions">
-                        <a th:href="@{/}" class="btn btn-primary">На главную</a>
-                        <a th:href="@{/contacts}" class="btn btn-outline">Контакты</a>
+            <!-- Фильтры -->
+            <div class="search-filters" style="margin-bottom: var(--space-xl);">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="buildingFilter">Корпус:</label>
+                        <select id="buildingFilter" class="filter-select form-control">
+                            <option value="">Все корпуса</option>
+                            <option th:each="building : ${buildings}"
+                                    th:value="${building}"
+                                    th:text="'Корпус ' + ${building}"></option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="floorFilter">Этаж:</label>
+                        <select id="floorFilter" class="filter-select form-control">
+                            <option value="">Все этажи</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button type="button" class="btn btn-outline" onclick="resetFilters()">
+                            Сбросить фильтры
+                        </button>
                     </div>
                 </div>
             </div>
+
+            <!-- Сетка планов -->
+            <div th:if="${plans.isEmpty()}" class="empty-state">
+                <div class="stub-icon" style="font-size: 4rem; margin-bottom: var(--space-lg);">📐</div>
+                <h2>Планы корпусов не загружены</h2>
+                <p>В данный момент планы корпусов недоступны. Пожалуйста, обратитесь к администратору.</p>
+            </div>
+
+            <div th:if="${!plans.isEmpty()}" class="plans-grid">
+                <div th:each="plan : ${plans}"
+                     class="plan-card"
+                     th:attr="data-building=${plan.building}, data-floor=${plan.floor}">
+                    <div class="plan-header">
+                        <h3 th:text="'Корпус ' + ${plan.building} + ', Этаж ' + ${plan.floor}"></h3>
+                    </div>
+                    <div class="plan-content">
+                        <div class="plan-image-container">
+                            <img th:src="@{${plan.path}}"
+                                 th:alt="'План корпуса ' + ${plan.building} + ', этаж ' + ${plan.floor}"
+                                 class="plan-image clickable-image"
+                                 onclick="openImageModal(this)" />
+                        </div>
+                    </div>
+                    <div class="plan-footer">
+                        <a th:href="@{${plan.path}}"
+                           download
+                           class="btn btn-outline btn-sm">
+                            Скачать план
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="noResults" class="empty-state" style="display: none;">
+                <div class="stub-icon" style="font-size: 4rem; margin-bottom: var(--space-lg);">🔍</div>
+                <h2>Планы не найдены</h2>
+                <p>По выбранным фильтрам планы корпусов не найдены. Попробуйте изменить параметры поиска.</p>
+            </div>
         </div>
     </main>
+
+    <!-- Модальное окно для увеличенного просмотра -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close">&times;</span>
+        <img class="image-modal-content" id="modalImage" alt="План корпуса">
+    </div>
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <script th:src="@{/js/main.js}"></script>
 
-    <style>
-        .campus-plan-stub {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 60vh;
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Данные о корпусах и этажах
+        const campusData = /*[[${campusData}]]*/ {};
+
+        // Функция для обновления списка этажей
+        function updateFloorOptions() {
+            const buildingSelect = document.getElementById('buildingFilter');
+            const floorSelect = document.getElementById('floorFilter');
+            const selectedBuilding = buildingSelect.value;
+
+            // Очищаем список этажей
+            floorSelect.innerHTML = '<option value="">Все этажи</option>';
+
+            if (selectedBuilding && campusData[selectedBuilding]) {
+                const floors = Array.from(campusData[selectedBuilding]).sort((a, b) => a - b);
+                floors.forEach(floor => {
+                    const option = document.createElement('option');
+                    option.value = floor;
+                    option.textContent = 'Этаж ' + floor;
+                    floorSelect.appendChild(option);
+                });
+            } else if (!selectedBuilding) {
+                // Если корпус не выбран, показываем все уникальные этажи
+                const allFloors = new Set();
+                Object.values(campusData).forEach(floors => {
+                    floors.forEach(floor => allFloors.add(floor));
+                });
+                Array.from(allFloors).sort((a, b) => a - b).forEach(floor => {
+                    const option = document.createElement('option');
+                    option.value = floor;
+                    option.textContent = 'Этаж ' + floor;
+                    floorSelect.appendChild(option);
+                });
+            }
         }
 
-        .stub-card {
+        // Функция фильтрации планов
+        function filterPlans() {
+            const buildingFilter = document.getElementById('buildingFilter').value;
+            const floorFilter = document.getElementById('floorFilter').value;
+            const planCards = document.querySelectorAll('.plan-card');
+            const noResults = document.getElementById('noResults');
+
+            let visibleCount = 0;
+
+            planCards.forEach(card => {
+                const building = card.getAttribute('data-building');
+                const floor = card.getAttribute('data-floor');
+
+                const buildingMatch = !buildingFilter || building === buildingFilter;
+                const floorMatch = !floorFilter || floor === floorFilter;
+
+                if (buildingMatch && floorMatch) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Показываем сообщение, если планы не найдены
+            if (noResults) {
+                noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        }
+
+        // Функция сброса фильтров
+        function resetFilters() {
+            document.getElementById('buildingFilter').value = '';
+            document.getElementById('floorFilter').value = '';
+            updateFloorOptions();
+            filterPlans();
+        }
+
+        // Функция открытия модального окна
+        function openImageModal(img) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImg.src = img.src;
+            modalImg.alt = img.alt;
+        }
+
+        // Функция закрытия модального окна
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Обработчики событий
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFloorOptions();
+
+            document.getElementById('buildingFilter').addEventListener('change', function() {
+                updateFloorOptions();
+                filterPlans();
+            });
+
+            document.getElementById('floorFilter').addEventListener('change', filterPlans);
+
+            // Закрытие модального окна по Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+
+    <style>
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--space-xl);
+            margin-top: var(--space-xl);
+        }
+
+        .plan-card {
             background: var(--card-bg);
             border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .plan-card:hover {
             box-shadow: var(--shadow-lg);
-            padding: var(--space-2xl);
+            transform: translateY(-4px);
+        }
+
+        .plan-header {
+            background: var(--primary-dark);
+            color: white;
+            padding: var(--space-lg);
             text-align: center;
-            max-width: 600px;
         }
 
-        .stub-icon {
-            font-size: 5rem;
-            margin-bottom: var(--space-lg);
+        .plan-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
         }
 
-        .stub-card h2 {
-            color: var(--primary-dark);
-            margin-bottom: var(--space-md);
+        .plan-content {
+            padding: var(--space-lg);
         }
 
-        .stub-card p {
-            color: var(--text-secondary);
-            margin-bottom: var(--space-md);
-        }
-
-        .feature-list {
-            text-align: left;
-            margin: var(--space-lg) auto;
-            max-width: 400px;
-            color: var(--text-secondary);
-        }
-
-        .feature-list li {
-            margin-bottom: var(--space-sm);
-            padding-left: var(--space-sm);
-        }
-
-        .stub-actions {
+        .plan-image-container {
+            background: var(--light-bg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            min-height: 300px;
             display: flex;
-            gap: var(--space-md);
+            align-items: center;
             justify-content: center;
-            margin-top: var(--space-xl);
+        }
+
+        .plan-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .plan-footer {
+            padding: var(--space-lg);
+            padding-top: 0;
+            text-align: center;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
         }
     </style>
 </body>
